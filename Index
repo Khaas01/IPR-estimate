@@ -758,13 +758,28 @@
         }
     }
 
-    function scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }
+ function scrollToTop() {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
+}
 
+document.getElementById('nextButton').addEventListener('click', function() {
+    if (currentSection < sections.length - 1) {
+        currentSection++;
+        showSection(currentSection);
+        scrollToTop(); // Ensure this is called after updating the section
+    } else {
+        document.getElementById('estimateForm').dispatchEvent(new Event('submit'));
+    }
+});
+
+document.getElementById('backButton').addEventListener('click', function() {
+    if (currentSection > 0) {
+        currentSection--;
+        showSection(currentSection);
+        scrollToTop(); // Ensure this is called after updating the section
+    }
+});
     document.getElementById('nextButton').addEventListener('click', function() {
         if (currentSection < sections.length - 1) {
             currentSection++;
