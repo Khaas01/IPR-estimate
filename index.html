@@ -343,7 +343,7 @@
         </select>
     </div>
 
-    <!-- Measure the Roof Section -->
+      <!-- Measure the Roof Section -->
     <div id="measureRoofSection" style="display:none;">
         <h2>Measure the Roof</h2>
         <p>
@@ -353,12 +353,7 @@
         <iframe 
             src="https://www.oneclickestimate.com" 
             style="width:100%; height:800px; border:0;" 
-            title="Roof Measurement Tool"></iframe>
-        <div>
-            <button type="button" onclick="getLocation()">Get Current Location</button>
-            <p id="locationStatus"></p>
-            <input type="text" id="propertyAddress" class="uniform-input" placeholder="Property Address">
-        </div>
+            title="Roof Measurement Tool" id="measurementToolIframe"></iframe>
     </div>
 
 
@@ -740,47 +735,35 @@ const sections = [
     'solar-detach-reset-section'
 ];
 
+let storedLocation = {};
+
 function getLocation() {
-    const locationStatus = document.getElementById("locationStatus");
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
+        navigator.geolocation.getCurrentPosition(storePosition, showError);
     } else {
-        locationStatus.innerHTML = "Geolocation is not supported by this browser.";
+        console.error("Geolocation is not supported by this browser.");
     }
 }
 
-function showPosition(position) {
-    const locationStatus = document.getElementById("locationStatus");
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-    locationStatus.innerHTML = "Latitude: " + latitude + "<br>Longitude: " + longitude;
-    
-    // Use a geocoding service to convert latitude and longitude to address
-    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
-        .then(response => response.json())
-        .then(data => {
-            const address = data.display_name;
-            document.getElementById("propertyAddress").value = address;
-        })
-        .catch(error => {
-            locationStatus.innerHTML = "Unable to retrieve address.";
-        });
+function storePosition(position) {
+    storedLocation.latitude = position.coords.latitude;
+    storedLocation.longitude = position.coords.longitude;
+    console.log('Location stored:', storedLocation);
 }
 
 function showError(error) {
-    const locationStatus = document.getElementById("locationStatus");
     switch(error.code) {
         case error.PERMISSION_DENIED:
-            locationStatus.innerHTML = "User denied the request for Geolocation."
+            console.error("User denied the request for Geolocation.");
             break;
         case error.POSITION_UNAVAILABLE:
-            locationStatus.innerHTML = "Location information is unavailable."
+            console.error("Location information is unavailable.");
             break;
         case error.TIMEOUT:
-            locationStatus.innerHTML = "The request to get user location timed out."
+            console.error("The request to get user location timed out.");
             break;
         case error.UNKNOWN_ERROR:
-            locationStatus.innerHTML = "An unknown error occurred."
+            console.error("An unknown error occurred.");
             break;
     }
 }
@@ -793,7 +776,6 @@ function showSection(index) {
     document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
     document.getElementById('nextButton').textContent = (index === sections.length - 1) ? 'Submit' : 'Next';
 
-    // Add geolocation functionality for the measureRoofSection
     if (sections[index] === 'measureRoofSection') {
         getLocation();
     }
@@ -835,6 +817,19 @@ document.getElementById('estimateForm').addEventListener('submit', function(even
 });
 
 showSection(currentSection);
+
+// Event listener for the measurement tool's button to access stored location
+document.getElementById('measurementToolIframe').addEventListener('load', function() {
+    const iframeDoc = document.getElementById('measurementToolIframe').contentDocument;
+    const locationButton = iframeDoc.querySelector('#locationButton'); // Adjust the selector based on actual button ID or class
+    if (locationButton) {
+        locationButton.addEventListener('click', function() {
+            console.log('Accessing stored location:', storedLocation);
+            // Implement logic to pass the stored location to the measurement tool
+        });
+    }
+});
 </script>
+
 </body>
 </html>
