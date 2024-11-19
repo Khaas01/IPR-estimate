@@ -1,245 +1,247 @@
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base target="_top">
     <title>Iron Peak Roofing - Estimate Form</title>
     <style>
-        * {
-            box-sizing: border-box; /* Prevent overflow */
-        }
+    * {
+        box-sizing: border-box; /* Prevent overflow */
+    }
 
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fffff;
-            color: #333;
-            line-height: 1.6;
-     
-		}
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #fff; /* Corrected background color */
+        color: #333;
+        line-height: 1.6;
+    }
 
-        header {
-            text-align: center;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
+    header {
+        text-align: center;
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
 
-        header .logo {
-            max-width: 150px;
-            height: auto;
-            margin-bottom: 10px;
-        }
+    header .logo {
+        max-width: 150px;
+        height: auto;
+        margin-bottom: 10px;
+    }
 
+    h1 {
+        color: #0056b3;
+        font-size: 1.5em;
+        margin: 0;
+        font-weight: normal;
+    }
+
+    h2 {
+        color: #333;
+        border-bottom: 2px solid #0056b3;
+        padding-bottom: 10px;
+        font-weight: normal;
+    }
+
+    form {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: normal;
+    }
+
+    .uniform-input {
+        width: 100%; /* Ensures the input fields are contained */
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: border-color 0.3s ease;
+        background-color: #fff; /* Ensures a white background */
+        font-size: 16px; /* Matches font size of other inputs */
+    }
+
+    .uniform-input:focus {
+        border-color: #0056b3;
+        outline: none;
+        box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+    }
+
+    select.uniform-input {
+        -webkit-appearance: none; /* Removes default dropdown arrow on WebKit browsers */
+        -moz-appearance: none; /* Removes default dropdown arrow on Firefox */
+        appearance: none; /* Standardizes appearance */
+        background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"%3E%3Cpath fill="none" stroke="%23333" stroke-width="2" d="M3 6l4 4 4-4"%3E%3C/path%3E%3C/svg%3E');
+        background-repeat: no-repeat;
+        background-position: right 10px center; /* Positions the arrow on the right */
+        background-size: 12px 8px;
+    }
+
+    /* Ensures the date input has consistent styling with other inputs */
+    input[type="date"].uniform-input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: border-color 0.3s ease;
+        background-color: #fff;
+        font-size: 16px;
+    }
+
+    /* Focus effect for date input */
+    input[type="date"].uniform-input:focus {
+        border-color: #0056b3;
+        outline: none;
+        box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+    }
+
+    button {
+        display: inline-block;
+        background-color: #0056b3;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        width: 100%; /* Ensures the button fills the form width */
+    }
+
+    button:hover {
+        background-color: #004494;
+        transform: translateY(-1px);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    #navigationButtons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        gap: 10px; /* Added gap between buttons */
+    }
+
+    #backButton {
+        display: none; /* Initially hide the back button */
+        width: 48%;
+    }
+
+    /* Mobile-first adjustments */
+    @media (max-width: 600px) {
         h1 {
-            color: #0056b3;
             font-size: 1.5em;
-            margin: 0;
-            font-weight: normal;
-        }
-
-        h2 {
-            color: #333;
-            border-bottom: 2px solid #0056b3;
-            padding-bottom: 10px;
-            font-weight: normal;
         }
 
         form {
-            max-width: 100%;
-            margin: 0 auto;
             padding: 15px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: normal;
-        }
-
-        .uniform-input {
-            width: 100%; /* Ensures the input fields are contained */
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            transition: border-color 0.3s ease;
-            background-color: #fff; /* Ensures a white background */
-            font-size: 16px; /* Matches font size of other inputs */
-        }
-
-        .uniform-input:focus {
-            border-color: #0056b3;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
-        }
-
-        select.uniform-input {
-            -webkit-appearance: none; /* Removes default dropdown arrow on WebKit browsers */
-            -moz-appearance: none; /* Removes default dropdown arrow on Firefox */
-            appearance: none; /* Standardizes appearance */
-            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"%3E%3Cpath fill="none" stroke="%23333" stroke-width="2" d="M3 6l4 4 4-4"%3E%3C/path%3E%3C/svg%3E'); /* Adds custom dropdown arrow */
-            background-repeat: no-repeat;
-            background-position: right 10px center; /* Positions the arrow on the right */
-            background-size: 12px 8px;
-        }
-
-        /* Ensures the date input has consistent styling with other inputs */
-        input[type="date"].uniform-input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            transition: border-color 0.3s ease;
-            background-color: #fff;
-            font-size: 16px;
-        }
-
-        /* Focus effect for date input */
-        input[type="date"].uniform-input:focus {
-            border-color: #0056b3;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
         }
 
         button {
-            display: inline-block;
-            background-color: #0056b3;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            width: 100%; /* Ensures the button fills the form width */
+            padding: 10px;
         }
 
-        button:hover {
-            background-color: #004494;
-            transform: translateY(-1px);
+        #navigationButtons button {
+            width: 100%; /* Full width for buttons on mobile */
+        }
+    }
+
+    /* Larger screen styles */
+    @media (min-width: 601px) {
+        header .logo {
+            max-width: 200px;
         }
 
-        button:active {
-            transform: translateY(0);
+        h1 {
+            font-size: 1.8em;
         }
 
-        #navigationButtons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            gap: 10px; /* Added gap between buttons */
+        form {
+            max-width: 600px;
+        }
+
+        #navigationButtons button {
+            width: 48%; /* Split buttons on desktop */
         }
 
         #backButton {
-            display: none; /* Initially hide the back button */
-            width: 48%;
+            display: inline-block; /* Show the back button in desktop */
         }
+    }
 
-        /* Mobile-first adjustments */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-            }
+    /* Styling for radio buttons */
+    input[type="radio"] {
+        margin-right: 10px;
+        vertical-align: middle;
+        cursor: pointer;
+    }
 
-            form {
-                padding: 15px;
-            }
+    label {
+        display: inline-block;
+        margin: 5px 0;
+    }
 
-            button {
-                padding: 10px;
-            }
+    .radio-group {
+        display: flex;
+        flex-direction: column;
+    }
 
-            #navigationButtons button {
-                width: 100%; /* Full width for buttons on mobile */
-            }
-        }
+    .radio-group label {
+        margin-bottom: 10px;
+    }
 
-        /* Larger screen styles */
-        @media (min-width: 601px) {
-            header .logo {
-                max-width: 200px;
-            }
+    /* Universal Section Style */
+    .form-section {
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
 
-            h1 {
-                font-size: 1.8em;
-            }
+    .form-section .section-title {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
 
-            form {
-                max-width: 600px;
-            }
+    .form-section .form-label {
+        font-size: 1.1em;
+        font-weight: normal;
+        display: block;
+        margin-bottom: 8px;
+    }
 
-            #navigationButtons button {
-                width: 48%; /* Split buttons on desktop */
-            }
+    .form-section .form-options {
+        margin-top: 10px;
+    }
 
-            #backButton {
-                display: inline-block; /* Show the back button in desktop */
-            }
-        }
+    .form-section .form-radio {
+        margin-right: 10px;
+    }
 
-        /* Styling for radio buttons */
-        input[type="radio"] {
-            margin-right: 10px;
-            vertical-align: middle;
-            cursor: pointer;
-        }
-
-        label {
-            display: inline-block;
-            margin: 5px 0;
-        }
-
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .radio-group label {
-            margin-bottom: 10px;
-        }
-
-        /* Universal Section Style */
-        .form-section {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-
-        .form-section .section-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .form-section .form-label {
-            font-size: 1.1em;
-            font-weight: normal;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .form-section .form-options {
-            margin-top: 10px;
-        }
-
-        .form-section .form-radio {
-            margin-right: 10px;
-        }
-
-        .form-section .form-option-label {
-            font-size: 1em;
-        }
-    </style>
+    .form-section .form-option-label {
+        font-size: 1em;
+    }
+</style>
 </head>
 <body>
 <header>
+
+Test
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
 </header>
@@ -697,8 +699,11 @@
 </form>
 
 <script>
+   
+<script>
     let currentSection = 0;
     const sections = [
+        // List all section IDs
         'salesRepSection',
         'companySection',
         'projectTypeSection',
@@ -732,7 +737,6 @@
         'additional-charges-price-section',
         'solar-section',
         'solar-detach-reset-section'
-        
     ];
 
     function showSection(index) {
@@ -741,49 +745,19 @@
         });
 
         document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
-        document.getElementById('submitButton').style.display = (index === sections.length - 1) ? 'block' : 'none';
-        if (index === sections.length - 1) {
-            document.getElementById('nextButton').textContent = 'Submit';
-        } else {
-            document.getElementById('nextButton').textContent = 'Next';
-        }
-
-        // Adjust button widths for mobile and desktop
-        if (window.innerWidth <= 600) {
-            document.getElementById('nextButton').style.width = '100%';
-            document.getElementById('backButton').style.width = '100%';
-        } else {
-            document.getElementById('nextButton').style.width = '48%';
-            document.getElementById('backButton').style.width = '48%';
-        }
+        document.getElementById('nextButton').textContent = (index === sections.length - 1) ? 'Submit' : 'Next';
     }
 
- function scrollToTop() {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
-}
-
-document.getElementById('nextButton').addEventListener('click', function() {
-    if (currentSection < sections.length - 1) {
-        currentSection++;
-        showSection(currentSection);
-        scrollToTop(); // Ensure this is called after updating the section
-    } else {
-        document.getElementById('estimateForm').dispatchEvent(new Event('submit'));
+    function scrollToTop() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
     }
-});
 
-document.getElementById('backButton').addEventListener('click', function() {
-    if (currentSection > 0) {
-        currentSection--;
-        showSection(currentSection);
-        scrollToTop(); // Ensure this is called after updating the section
-    }
-});
     document.getElementById('nextButton').addEventListener('click', function() {
         if (currentSection < sections.length - 1) {
             currentSection++;
             showSection(currentSection);
+            scrollToTop();
         } else {
             document.getElementById('estimateForm').dispatchEvent(new Event('submit'));
         }
@@ -793,6 +767,7 @@ document.getElementById('backButton').addEventListener('click', function() {
         if (currentSection > 0) {
             currentSection--;
             showSection(currentSection);
+            scrollToTop();
         }
     });
 
@@ -804,12 +779,12 @@ document.getElementById('backButton').addEventListener('click', function() {
             data[key] = value;
         });
 
-        google.script.run.withSuccessHandler(function(response) {
-            alert('Form submitted successfully!');
-        }).submitFormData(data);
+        console.log('Form submitted successfully!', data);
+        // Replace this with your actual form submission logic
     });
 
     showSection(currentSection);
 </script>
+
 </body>
 </html>
