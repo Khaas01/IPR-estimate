@@ -343,7 +343,7 @@
         </select>
     </div>
 
-      <!-- Measure the Roof Section -->
+   <!-- Measure the Roof Section -->
     <div id="measureRoofSection" style="display:none;">
         <h2>Measure the Roof</h2>
         <p>
@@ -354,6 +354,10 @@
             src="https://www.oneclickestimate.com" 
             style="width:100%; height:800px; border:0;" 
             title="Roof Measurement Tool" id="measurementToolIframe"></iframe>
+        <div>
+            <button type="button" id="accessLocationButton">Access Stored Location</button>
+            <p id="locationStatus"></p>
+        </div>
     </div>
 
 
@@ -786,6 +790,15 @@ function scrollToTop() {
     document.documentElement.scrollTop = 0;
 }
 
+function accessStoredLocation() {
+    const locationStatus = document.getElementById("locationStatus");
+    if (storedLocation.latitude && storedLocation.longitude) {
+        locationStatus.innerHTML = `Latitude: ${storedLocation.latitude}<br>Longitude: ${storedLocation.longitude}`;
+    } else {
+        locationStatus.innerHTML = "Location not available.";
+    }
+}
+
 document.getElementById('nextButton').addEventListener('click', function() {
     if (currentSection < sections.length - 1) {
         currentSection++;
@@ -816,19 +829,9 @@ document.getElementById('estimateForm').addEventListener('submit', function(even
     // Replace this with your actual form submission logic
 });
 
-showSection(currentSection);
+document.getElementById('accessLocationButton').addEventListener('click', accessStoredLocation);
 
-// Event listener for the measurement tool's button to access stored location
-document.getElementById('measurementToolIframe').addEventListener('load', function() {
-    const iframeDoc = document.getElementById('measurementToolIframe').contentDocument;
-    const locationButton = iframeDoc.querySelector('#locationButton'); // Adjust the selector based on actual button ID or class
-    if (locationButton) {
-        locationButton.addEventListener('click', function() {
-            console.log('Accessing stored location:', storedLocation);
-            // Implement logic to pass the stored location to the measurement tool
-        });
-    }
-});
+showSection(currentSection);
 </script>
 
 </body>
