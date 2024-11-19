@@ -683,78 +683,62 @@
     </div>
 </form>
 
-<script>
-    let currentSection = 0;
-    const sections = [
-        'salesRepSection',
-        'companySection',
-        'projectTypeSection',
-        'propertyOwnerSection',
-        'insuranceInfoSection',
-        'roofingTypeSection',
-        'measureRoofSection',
-        'asphalt-shingle-section',
-        'shingle-repair-section',
-        'shingle-replacement-section',
-        'tile-roofing-section',
-        'tile-repair-section',
-        'tile-underlayment-section',
-        'tile-remove-replace-section',
-        'tile-roof-rr-section',
-        'modified-bitumen-section',
-        'coating-section',
-        'secondary-roof-section',
-        'secondary-roofing-type-section',
-        'secondary-roof-type-shingles-section',
-        'secondary-roof-type-tile-section',
-        'secondary-roof-type-modified-bitumen-section',
-        'secondary-roof-type-coating-section',
-        'third-roof-type-section',
-        'third-roof-type-style-section',
-        'third-roof-type-shingles-section',
-        'third-roof-type-tiles-section',
-        'third-roof-type-coatings-section',
-        'additional-charges-section',
-        'additional-charges-description-section',
-        'additional-charges-price-section',
-        'solar-section',
-        'solar-detach-reset-section'
-        
-    ];
+let currentSection = 0;
+const sections = [
+    'salesRepSection',
+    'companySection',
+    'projectTypeSection',
+    'propertyOwnerSection',
+    'insuranceInfoSection',
+    'roofingTypeSection',
+    'measureRoofSection',
+    'asphalt-shingle-section',
+    'shingle-repair-section',
+    'shingle-replacement-section',
+    'tile-roofing-section',
+    'tile-repair-section',
+    'tile-underlayment-section',
+    'tile-remove-replace-section',
+    'tile-roof-rr-section',
+    'modified-bitumen-section',
+    'coating-section',
+    'secondary-roof-section',
+    'secondary-roofing-type-section',
+    'secondary-roof-type-shingles-section',
+    'secondary-roof-type-tile-section',
+    'secondary-roof-type-modified-bitumen-section',
+    'secondary-roof-type-coating-section',
+    'third-roof-type-section',
+    'third-roof-type-style-section',
+    'third-roof-type-shingles-section',
+    'third-roof-type-tiles-section',
+    'third-roof-type-coatings-section',
+    'additional-charges-section',
+    'additional-charges-description-section',
+    'additional-charges-price-section',
+    'solar-section',
+    'solar-detach-reset-section'
+];
 
-    function showSection(index) {
-        sections.forEach((sectionId, i) => {
-            document.getElementById(sectionId).style.display = (i === index) ? 'block' : 'none';
-        });
+function showSection(index) {
+    sections.forEach((sectionId, i) => {
+        document.getElementById(sectionId).style.display = (i === index) ? 'block' : 'none';
+    });
 
-        document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
-        document.getElementById('submitButton').style.display = (index === sections.length - 1) ? 'block' : 'none';
-        if (index === sections.length - 1) {
-            document.getElementById('nextButton').textContent = 'Submit';
-        } else {
-            document.getElementById('nextButton').textContent = 'Next';
-        }
+    document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
+    document.getElementById('nextButton').textContent = (index === sections.length - 1) ? 'Submit' : 'Next';
+}
 
-        // Adjust button widths for mobile and desktop
-        if (window.innerWidth <= 600) {
-            document.getElementById('nextButton').style.width = '100%';
-            document.getElementById('backButton').style.width = '100%';
-        } else {
-            document.getElementById('nextButton').style.width = '48%';
-            document.getElementById('backButton').style.width = '48%';
-        }
-    }
-
- function scrollToTop() {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
+function scrollToTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
 }
 
 document.getElementById('nextButton').addEventListener('click', function() {
     if (currentSection < sections.length - 1) {
         currentSection++;
         showSection(currentSection);
-        scrollToTop(); // Ensure this is called after updating the section
+        scrollToTop();
     } else {
         document.getElementById('estimateForm').dispatchEvent(new Event('submit'));
     }
@@ -764,39 +748,23 @@ document.getElementById('backButton').addEventListener('click', function() {
     if (currentSection > 0) {
         currentSection--;
         showSection(currentSection);
-        scrollToTop(); // Ensure this is called after updating the section
+        scrollToTop();
     }
 });
-    document.getElementById('nextButton').addEventListener('click', function() {
-        if (currentSection < sections.length - 1) {
-            currentSection++;
-            showSection(currentSection);
-        } else {
-            document.getElementById('estimateForm').dispatchEvent(new Event('submit'));
-        }
+
+document.getElementById('estimateForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
     });
 
-    document.getElementById('backButton').addEventListener('click', function() {
-        if (currentSection > 0) {
-            currentSection--;
-            showSection(currentSection);
-        }
-    });
+    console.log('Form submitted successfully!', data);
+    // Replace this with your actual form submission logic
+});
 
-    document.getElementById('estimateForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-        const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value;
-        });
-
-        google.script.run.withSuccessHandler(function(response) {
-            alert('Form submitted successfully!');
-        }).submitFormData(data);
-    });
-
-    showSection(currentSection);
-</script>
+showSection(currentSection);
+    </script>
 </body>
 </html>
