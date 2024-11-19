@@ -6,9 +6,9 @@
     <base target="_top">
     <title>Iron Peak Roofing - Estimate Form</title>
     <style>
-        * {
-            box-sizing: border-box; /* Prevent overflow */
-        }
+    * {
+        box-sizing: border-box; /* Prevent overflow */
+    }
 
     body {
         font-family: 'Arial', sans-serif;
@@ -236,7 +236,7 @@
     .form-section .form-option-label {
         font-size: 1em;
     }
-    </style>
+</style>
 </head>
 <body>
 <header>
