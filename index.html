@@ -737,7 +737,7 @@ const sections = [
     'solar-section',
     'solar-detach-reset-section'
 ];
-<script>
+
 function getLocation() {
     const locationStatus = document.getElementById("locationStatus");
     if (navigator.geolocation) {
@@ -770,6 +770,7 @@ function showError(error) {
             break;
     }
 }
+
 function showSection(index) {
     sections.forEach((sectionId, i) => {
         document.getElementById(sectionId).style.display = (i === index) ? 'block' : 'none';
@@ -777,6 +778,11 @@ function showSection(index) {
 
     document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
     document.getElementById('nextButton').textContent = (index === sections.length - 1) ? 'Submit' : 'Next';
+
+    // Add geolocation functionality for the measureRoofSection
+    if (sections[index] === 'measureRoofSection') {
+        getLocation();
+    }
 }
 
 function scrollToTop() {
@@ -815,6 +821,6 @@ document.getElementById('estimateForm').addEventListener('submit', function(even
 });
 
 showSection(currentSection);
-    </script>
+</script>
 </body>
 </html>
