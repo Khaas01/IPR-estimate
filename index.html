@@ -343,7 +343,7 @@
         </select>
     </div>
 
-   <!-- Measure the Roof Section -->
+     <!-- Measure the Roof Section -->
     <div id="measureRoofSection" style="display:none;">
         <h2>Measure the Roof</h2>
         <p>
@@ -711,6 +711,7 @@ const sections = [
     'insuranceInfoSection',
     'roofingTypeSection',
     'measureRoofSection',
+    'propertyAddressSection',
     'asphalt-shingle-section',
     'shingle-repair-section',
     'shingle-replacement-section',
@@ -753,6 +754,23 @@ function storePosition(position) {
     storedLocation.latitude = position.coords.latitude;
     storedLocation.longitude = position.coords.longitude;
     console.log('Location stored:', storedLocation);
+    fetchAddressFromCoordinates(storedLocation.latitude, storedLocation.longitude);
+}
+
+function fetchAddressFromCoordinates(latitude, longitude) {
+    const geocodingAPI = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+    fetch(geocodingAPI)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.address) {
+                const address = `${data.address.road}, ${data.address.city}, ${data.address.state}, ${data.address.postcode}`;
+                document.getElementById('propertyAddress').value = address;
+                document.getElementById('propertyAddressSection').style.display = 'block';
+            } else {
+                console.error('Unable to fetch address:', data);
+            }
+        })
+        .catch(error => console.error('Error fetching address:', error));
 }
 
 function showError(error) {
@@ -833,6 +851,5 @@ document.getElementById('accessLocationButton').addEventListener('click', access
 
 showSection(currentSection);
 </script>
-
 </body>
 </html>
