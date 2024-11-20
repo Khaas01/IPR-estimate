@@ -36,7 +36,35 @@ const sections = [
     'solar-detach-reset-section'
 ];
 
+function nextSection() {
+    const projectType = document.querySelector('input[name="projectType"]:checked')?.value;
+    const selectedCompany = document.getElementById('companyName').value;
 
+    switch (sections[currentSection]) {
+       
+        case 'companySection':
+            if (selectedCompany === 'Iron Peak Roofing') {
+                currentSection = sections.indexOf('propertyOwnerSection');
+            } else {
+                currentSection = sections.indexOf('someOtherSection'); // Adjust based on your sections
+            }
+            break;
+        case 'propertyOwnerSection':
+            currentSection = sections.indexOf('projectTypeSection');
+            break;
+        case 'projectTypeSection':
+            if (projectType === 'Cash' || projectType === 'Finance') {
+                currentSection = sections.indexOf('roofingTypeSection');
+            } else if (projectType === 'Insurance') {
+                currentSection = sections.indexOf('insuranceInfoSection');
+            } else {
+                currentSection++;
+            }
+            break;
+        default:
+            currentSection++;
+            break;
+    }
 
     showSection(currentSection);
     scrollToTop();
