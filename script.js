@@ -37,14 +37,18 @@ const sections = [
 ];
 
 function nextSection() {
+    console.log("Current Section:", currentSection);
     currentSection++;
+    console.log("Next Section:", currentSection);
     showSection(currentSection);
     scrollToTop();
 }
 
 function showSection(index) {
+    console.log("Showing Section Index:", index);
     sections.forEach((sectionId, i) => {
         document.getElementById(sectionId).style.display = (i === index) ? 'block' : 'none';
+        console.log(sectionId, (i === index) ? 'block' : 'none');
     });
 
     document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
