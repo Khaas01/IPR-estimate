@@ -37,20 +37,14 @@ const sections = [
 ];
 
 function nextSection() {
-    console.log("Current Section:", currentSection);
-    currentSection++;
-    console.log("Next Section:", currentSection);
-    showSection(currentSection);
-    scrollToTop();
+    if (currentSection < sections.length - 1) {
+        currentSection++;
+        showSection(currentSection);
+        scrollToTop();
+    }
 }
 
-function nextSection() {
-    console.log("Current Section:", currentSection);
-    currentSection++;
-    console.log("Next Section:", currentSection);
-    showSection(currentSection);
-    scrollToTop();
-}
+document.getElementById('nextButton').addEventListener('click', nextSection);
 
 document.getElementById('backButton').addEventListener('click', function() {
     if (currentSection > 0) {
@@ -59,6 +53,24 @@ document.getElementById('backButton').addEventListener('click', function() {
         scrollToTop();
     }
 });
+
+function showSection(index) {
+    sections.forEach((sectionId, i) => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.style.display = (i === index) ? 'block' : 'none';
+        }
+    });
+
+    document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
+    document.getElementById('nextButton').textContent = (index === sections.length - 1) ? 'Submit' : 'Next';
+
+    if (sections[index] === 'measureRoofSection') {
+        getLocation();
+    }
+}
+
+
 function scrollToTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
