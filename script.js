@@ -44,11 +44,24 @@ function nextSection() {
     scrollToTop();
 }
 
+function nextSection() {
+    console.log("Current Section:", currentSection);
+    currentSection++;
+    console.log("Next Section:", currentSection);
+    showSection(currentSection);
+    scrollToTop();
+}
+
 function showSection(index) {
     console.log("Showing Section Index:", index);
     sections.forEach((sectionId, i) => {
-        document.getElementById(sectionId).style.display = (i === index) ? 'block' : 'none';
-        console.log(sectionId, (i === index) ? 'block' : 'none');
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.style.display = (i === index) ? 'block' : 'none';
+            console.log(sectionId, (i === index) ? 'block' : 'none');
+        } else {
+            console.warn(`Element with ID ${sectionId} not found.`);
+        }
     });
 
     document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
@@ -121,7 +134,7 @@ function showError(error) {
     }
 }
 
-document.getElementById('nextButton').addEventListener('click', function() {
+ddocument.getElementById('nextButton').addEventListener('click', function() {
     nextSection();
 });
 
