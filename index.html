@@ -751,11 +751,11 @@ function getLocation() {
     }
 }
 
+
 function storePosition(position) {
     storedLocation.latitude = position.coords.latitude;
     storedLocation.longitude = position.coords.longitude;
     console.log('Location stored:', storedLocation);
-    fetchAddressFromCoordinates(storedLocation.latitude, storedLocation.longitude);
 }
 
 function fetchAddressFromCoordinates(latitude, longitude) {
@@ -764,14 +764,22 @@ function fetchAddressFromCoordinates(latitude, longitude) {
         .then(response => response.json())
         .then(data => {
             if (data && data.address) {
-                const address = `${data.address.road}, ${data.address.city}, ${data.address.state}, ${data.address.postcode}`;
-                document.getElementById('propertyAddress').value = address;
-                document.getElementById('propertyAddressSection').style.display = 'block';
+                const address = `${data.address.house_number} ${data.address.road}, ${data.address.city}, ${data.address.state}, ${data.address.postcode}`;
+                document.getElementById('locationStatus').innerHTML = address; // Updating the locationStatus with the address
             } else {
                 console.error('Unable to fetch address:', data);
             }
         })
         .catch(error => console.error('Error fetching address:', error));
+}
+
+function accessStoredLocation() {
+    const locationStatus = document.getElementById("locationStatus");
+    if (storedLocation.latitude && storedLocation.longitude) {
+        fetchAddressFromCoordinates(storedLocation.latitude, storedLocation.longitude);
+    } else {
+        locationStatus.innerHTML = "Location not available.";
+    }
 }
 
 function showError(error) {
@@ -824,7 +832,7 @@ function fetchAddressFromCoordinates(latitude, longitude) {
         .then(response => response.json())
         .then(data => {
             if (data && data.address) {
-                const address = `${data.address.road}, ${data.address.city}, ${data.address.state}, ${data.address.postcode}`;
+                const address = `${data.address.house_number} ${data.address.road}, ${data.address.city}, ${data.address.state}, ${data.address.postcode}`;
                 document.getElementById('locationStatus').innerHTML = address; // Updating the locationStatus with the address
             } else {
                 console.error('Unable to fetch address:', data);
