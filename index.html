@@ -812,10 +812,25 @@ function scrollToTop() {
 function accessStoredLocation() {
     const locationStatus = document.getElementById("locationStatus");
     if (storedLocation.latitude && storedLocation.longitude) {
-        locationStatus.innerHTML = `Latitude: ${storedLocation.latitude}<br>Longitude: ${storedLocation.longitude}`;
+        fetchAddressFromCoordinates(storedLocation.latitude, storedLocation.longitude);
     } else {
         locationStatus.innerHTML = "Location not available.";
     }
+}
+
+function fetchAddressFromCoordinates(latitude, longitude) {
+    const geocodingAPI = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+    fetch(geocodingAPI)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.address) {
+                const address = `${data.address.road}, ${data.address.city}, ${data.address.state}, ${data.address.postcode}`;
+                document.getElementById('locationStatus').innerHTML = address; // Updating the locationStatus with the address
+            } else {
+                console.error('Unable to fetch address:', data);
+            }
+        })
+        .catch(error => console.error('Error fetching address:', error));
 }
 
 document.getElementById('nextButton').addEventListener('click', function() {
