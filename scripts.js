@@ -41,7 +41,9 @@ function nextSection() {
     const selectedCompany = document.getElementById('companyName').value;
 
     switch (sections[currentSection]) {
-       
+       case 'salesRepSection':
+            currentSection = sections.indexOf('companySection');
+            break; 
         case 'companySection':
             if (selectedCompany === 'Iron Peak Roofing') {
                 currentSection = sections.indexOf('propertyOwnerSection');
