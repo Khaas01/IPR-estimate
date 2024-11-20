@@ -70,11 +70,12 @@ function showSection(index) {
     }
 }
 
-
 function scrollToTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
 }
+
+showSection(currentSection);
 
 let storedLocation = {};
 
