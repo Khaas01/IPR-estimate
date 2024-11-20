@@ -52,27 +52,13 @@ function nextSection() {
     scrollToTop();
 }
 
-function showSection(index) {
-    console.log("Showing Section Index:", index);
-    sections.forEach((sectionId, i) => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.style.display = (i === index) ? 'block' : 'none';
-            console.log(sectionId, (i === index) ? 'block' : 'none');
-        } else {
-            console.warn(`Element with ID ${sectionId} not found.`);
-        }
-    });
-
-    // Hide the back button on the first section
-    document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
-    document.getElementById('nextButton').textContent = (index === sections.length - 1) ? 'Submit' : 'Next';
-
-    if (sections[index] === 'measureRoofSection') {
-        getLocation();
+document.getElementById('backButton').addEventListener('click', function() {
+    if (currentSection > 0) {
+        currentSection--;
+        showSection(currentSection);
+        scrollToTop();
     }
-}
-
+});
 function scrollToTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
