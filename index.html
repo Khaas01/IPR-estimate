@@ -744,17 +744,23 @@ const sections = [
     'solar-detach-reset-section'
 ];
 
-function nextSection() {
+ffunction nextSection() {
     const projectType = document.querySelector('input[name="projectType"]:checked')?.value;
+    const selectedCompany = document.getElementById('companyName').value;
     console.log("Current section:", sections[currentSection]);
     console.log("Project Type:", projectType);
+    console.log("Selected Company:", selectedCompany);
 
     switch (sections[currentSection]) {
         case 'salesRepSection':
             currentSection = sections.indexOf('companySection');
             break;
         case 'companySection':
-            currentSection = sections.indexOf('propertyOwnerSection');
+            if (selectedCompany === 'Iron Peak Roofing') {
+                currentSection = sections.indexOf('propertyOwnerSection');
+            } else {
+                currentSection = sections.indexOf('someOtherSection'); // Adjust based on your sections
+            }
             break;
         case 'propertyOwnerSection':
             currentSection = sections.indexOf('projectTypeSection');
