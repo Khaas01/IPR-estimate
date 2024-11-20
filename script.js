@@ -67,7 +67,6 @@ function nextSection() {
             break;
     }
 
-
     showSection(currentSection);
     scrollToTop();
 }
