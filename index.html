@@ -60,23 +60,23 @@
             font-weight: normal;
         }
 
-        .uniform-input {
-            width: 100%; /* Ensures the input fields are contained */
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            transition: border-color 0.3s ease;
-            background-color: #fff; /* Ensures a white background */
-            font-size: 16px; /* Matches font size of other inputs */
-        }
+  .uniform-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow */
+    transition: border-color 0.3s ease;
+    background-color: #fff;
+    font-size: 16px;
+}
 
-        .uniform-input:focus {
-            border-color: #0056b3;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
-        }
-
+.uniform-input:focus {
+    border-color: #0056b3;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+}
         select.uniform-input {
             -webkit-appearance: none; /* Removes default dropdown arrow on WebKit browsers */
             -moz-appearance: none; /* Removes default dropdown arrow on Firefox */
@@ -106,27 +106,28 @@
             box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
         }
 
-        button {
-            display: inline-block;
-            background-color: #0056b3;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            width: 100%; /* Ensures the button fills the form width */
-        }
+      button {
+    display: inline-block;
+    background-color: #0056b3;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow */
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+}
 
-        button:hover {
-            background-color: #004494;
-            transform: translateY(-1px);
-        }
+button:hover {
+    background-color: #004494;
+    transform: translateY(-1px);
+}
 
-        button:active {
-            transform: translateY(0);
-        }
+button:active {
+    transform: translateY(0);
+}
 
         #navigationButtons {
             display: flex;
