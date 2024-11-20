@@ -751,23 +751,38 @@ function nextSection() {
     console.log("Current section:", currentSection);
     console.log("Project Type:", projectType);
 
-    if (currentSection === sections.indexOf('projectTypeSection')) {
-        if (projectType === 'Cash' || projectType === 'Finance') {
-            currentSection = sections.indexOf('roofingTypeSection');
-        } else if (projectType === 'Insurance') {
-            currentSection = sections.indexOf('insuranceInfoSection');
-        } else {
+    switch (sections[currentSection]) {
+        case 'salesRepSection':
+            currentSection = sections.indexOf('companySection');
+            break;
+
+        case 'companySection':
+            currentSection = sections.indexOf('propertyOwnerSection');
+            break;
+
+        case 'propertyOwnerSection':
+            currentSection = sections.indexOf('projectTypeSection');
+            break;
+
+        case 'projectTypeSection':
+            if (projectType === 'Cash' || projectType === 'Finance') {
+                currentSection = sections.indexOf('roofingTypeSection');
+            } else if (projectType === 'Insurance') {
+                currentSection = sections.indexOf('insuranceInfoSection');
+            } else {
+                currentSection++;
+            }
+            break;
+
+        default:
             currentSection++;
-        }
-    } else {
-        currentSection++;
+            break;
     }
 
     console.log("Next section:", currentSection);
     showSection(currentSection);
     scrollToTop();
 }
-
 let storedLocation = {};
 
 function getLocation() {
