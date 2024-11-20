@@ -1,4 +1,3 @@
-  <script>
 let currentSection = 0;
 const sections = [
     'salesRepSection',
@@ -37,12 +36,9 @@ const sections = [
     'solar-detach-reset-section'
 ];
 
-ffunction nextSection() {
+function nextSection() {
     const projectType = document.querySelector('input[name="projectType"]:checked')?.value;
     const selectedCompany = document.getElementById('companyName').value;
-    console.log("Current section:", sections[currentSection]);
-    console.log("Project Type:", projectType);
-    console.log("Selected Company:", selectedCompany);
 
     switch (sections[currentSection]) {
         case 'salesRepSection':
@@ -72,7 +68,6 @@ ffunction nextSection() {
             break;
     }
 
-    console.log("Next section:", sections[currentSection]);
     showSection(currentSection);
     scrollToTop();
 }
@@ -153,13 +148,7 @@ function showError(error) {
 }
 
 document.getElementById('nextButton').addEventListener('click', function() {
-    if (currentSection < sections.length - 1) {
-        currentSection++;
-        showSection(currentSection);
-        scrollToTop();
-    } else {
-        document.getElementById('estimateForm').dispatchEvent(new Event('submit'));
-    }
+    nextSection();
 });
 
 document.getElementById('backButton').addEventListener('click', function() {
@@ -185,4 +174,3 @@ document.getElementById('estimateForm').addEventListener('submit', function(even
 document.getElementById('accessLocationButton').addEventListener('click', accessStoredLocation);
 
 showSection(currentSection);
-</script>
