@@ -64,6 +64,7 @@ function showSection(index) {
         }
     });
 
+    // Hide the back button on the first section
     document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
     document.getElementById('nextButton').textContent = (index === sections.length - 1) ? 'Submit' : 'Next';
 
