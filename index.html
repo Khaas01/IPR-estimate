@@ -265,29 +265,11 @@ button:active {
         <label for="companyName">What Company are we providing this estimate for?</label><br>
         <select id="companyName" name="companyName" class="uniform-input" required>
             <option value="Iron Peak Roofing">Iron Peak Roofing</option>
-            <option value="Capitol Energy">Capital Energy</option>
+            <option value="Capitol Energy">Capitol Energy</option>
         </select>
     </div>
-
-    <!-- Project Type Section -->
-    <div id="projectTypeSection" style="display:none;">
-        <h2>Project Type</h2>
-        <label>Project Type:</label><br>
-        <label>
-            <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required>
-            Cash
-        </label><br>
-        <label>
-            <input type="radio" id="projectTypeFinance" name="projectType" value="Finance" required>
-            Finance
-        </label><br>
-        <label>
-            <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required>
-            Insurance
-        </label>
-    </div>
-
-    <!-- Property Owner Section -->
+    
+     <!-- Property Owner Section -->
     <div id="propertyOwnerSection" style="display:none;">
         <h2>Property Owner Information</h2>
         <label for="ownerName">Owner's Name:</label>
@@ -312,6 +294,26 @@ button:active {
         <input type="email" class="uniform-input" id="ownerEmail" name="ownerEmail" required>
     </div>
 
+
+    <!-- Project Type Section -->
+    <div id="projectTypeSection" style="display:none;">
+        <h2>Project Type</h2>
+        <label>Project Type:</label><br>
+        <label>
+            <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required>
+            Cash
+        </label><br>
+        <label>
+            <input type="radio" id="projectTypeFinance" name="projectType" value="Finance" required>
+            Finance
+        </label><br>
+        <label>
+            <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required>
+            Insurance
+        </label>
+    </div>
+
+   
     <!-- Insurance Information Section -->
     <div id="insuranceInfoSection" style="display:none;">
         <h2>Insurance Information</h2>
@@ -707,8 +709,8 @@ let currentSection = 0;
 const sections = [
     'salesRepSection',
     'companySection',
-    'projectTypeSection',
     'propertyOwnerSection',
+    'projectTypeSection',
     'insuranceInfoSection',
     'roofingTypeSection',
     'measureRoofSection',
