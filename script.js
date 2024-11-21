@@ -39,7 +39,7 @@ const sections = [
 ];
 
 function showSection(sectionId) {
-    const sections = document.querySelectorAll('div[id$="Section"]');
+    const sections = document.querySelectorAll('div');
     sections.forEach(section => {
         section.style.display = (section.id === sectionId) ? 'block' : 'none';
     });
@@ -69,26 +69,28 @@ function nextProjectTypeSection() {
     }
 }
 
-function nextRoofingTypeSectionButton() {
-    const selectedRoofingType = document.querySelector('select[name="roofingType"]').value;
-    switch (selectedRoofingType) {
-        case 'Asphalt Shingles':
-            showSection('asphalt-shingle-section');
-            break;
-        case 'Tile':
-            showSection('tile-roofing-section');
-            break;
-        case 'Modified Bitumen (Flat roof rolled roofing)':
-            showSection('modified-bitumen-section');
-            break;
-        case 'Flat Roof Coating':
-            showSection('coating-section');
-            break;
-        default:
-            console.error('Invalid roofing type selected');
-            break;
-    }
-}
+
+ function nextRoofingTypeSectionButton() {
+     const selectedRoofingType = document.querySelector('select[name="roofingType"]').value;
+     switch (selectedRoofingType) {
+         case 'Asphalt Shingles':
+             showSection('asphalt-shingle-section');
+             break;
+         case 'Tile':
+             showSection('tile-roofing-section');
+             break;
+         case 'Modified Bitumen (Flat roof rolled roofing)':
+             showSection('modified-bitumen-section');
+             break;
+         case 'Flat Roof Coating':
+             showSection('coating-section');
+             break;
+         default:
+             console.error('Invalid roofing type selected');
+             break;
+     }
+ }
+ ```
 
 let storedLocation = {};
 
