@@ -89,6 +89,7 @@ function navigateToRoofingTypeSection() {
     }
 }
 
+
 let storedLocation = {};
 
 function getLocation() {
