@@ -10,7 +10,7 @@
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
-    Version 24
+    Version 25
 
 </header>
 
@@ -71,28 +71,27 @@
     </div>
 
 
-    <!-- Project Type Section -->
-    <div id="projectTypeSection" style="display:none;">
-        <h2>Project Type</h2>
-        <label>Project Type:</label><br>
-        <label>
-            <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required>
-            Cash
-        </label><br>
-        <label>
-            <input type="radio" id="projectTypeFinance" name="projectType" value="Finance" required>
-            Finance
-        </label><br>
-        <label>
-            <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required>
-            Insurance
-        </label>
-        <div id="navigationButtons">
+   <!-- Project Type Section -->
+<div id="projectTypeSection" style="display:none;">
+    <h2>Project Type</h2>
+    <label>Project Type:</label><br>
+    <label>
+        <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required>
+        Cash
+    </label><br>
+    <label>
+        <input type="radio" id="projectTypeFinance" name="projectType" value="Finance" required>
+        Finance
+    </label><br>
+    <label>
+        <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required>
+        Insurance
+    </label>
+    <div id="navigationButtons">
         <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('projectTypeSection')">Next</button>
+        <button type="button" onclick="nextProjectTypeSection()">Next</button>
     </div>
-    </div>
-
+</div>
    
     <!-- Insurance Information Section -->
     <div id="insuranceInfoSection" style="display:none;">
