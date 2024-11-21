@@ -154,7 +154,7 @@ button:active {
     }
 
     #navigationButtons button {
-        width: 48%; /* Full width for buttons on mobile */
+        width: 100%; /* Full width for buttons on mobile */
         margin-bottom: 10px; /* Add margin for spacing */
     }
 
