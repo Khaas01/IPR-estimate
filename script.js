@@ -39,6 +39,7 @@ const sections = [
 ];
 
 function showSection(sectionId) {
+    console.log(`Navigating to section: ${sectionId}`);
     const sections = document.querySelectorAll('div[id$="Section"]');
     sections.forEach(section => {
         section.style.display = (section.id === sectionId) ? 'block' : 'none';
@@ -46,7 +47,6 @@ function showSection(sectionId) {
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId); // Add the new section to the history stack
     }
-}
 
 function goBack() {
     sectionHistory.pop(); // Remove the current section
@@ -72,6 +72,7 @@ function navigateToRoofingTypeSection() {
     const selectedRoofingType = document.querySelector('input[name="roofingType"]:checked');
     if (selectedRoofingType) {
         const roofingTypeValue = selectedRoofingType.value;
+        console.log(`Selected roofing type: ${roofingTypeValue}`);
         if (roofingTypeValue === 'Asphalt Shingles') {
             showSection('asphalt-shingle-section');
         } else if (roofingTypeValue === 'Tile') {
