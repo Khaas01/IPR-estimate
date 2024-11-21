@@ -48,7 +48,6 @@ function showSection(sectionId) {
         sectionHistory.push(sectionId); // Add the new section to the history stack
     }
 }
-
 function goBack() {
     sectionHistory.pop(); // Remove the current section
     const previousSection = sectionHistory[sectionHistory.length - 1]; // Get the previous section
