@@ -47,6 +47,7 @@ function showSection(sectionId) {
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId); // Add the new section to the history stack
     }
+}
 
 function goBack() {
     sectionHistory.pop(); // Remove the current section
