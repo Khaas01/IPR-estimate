@@ -39,7 +39,7 @@ const sections = [
 ];
 
 function showSection(sectionId) {
-    const sections = document.querySelectorAll('div[id$="Section"]');
+    const sections = document.querySelectorAll('div[id]');
     sections.forEach(section => {
         section.style.display = (section.id === sectionId) ? 'block' : 'none';
     });
