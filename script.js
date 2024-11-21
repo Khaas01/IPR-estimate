@@ -60,6 +60,14 @@ document.querySelectorAll('input[name="projectType"]').forEach(input => {
         document.getElementById('nextToInsurance').style.display = (this.value === 'Insurance') ? 'inline-block' : 'none';
     });
 });
+function nextProjectTypeSection() {
+    const selectedProjectType = document.querySelector('input[name="projectType"]:checked').value;
+    if (selectedProjectType === 'Cash' || selectedProjectType === 'Finance') {
+        showSection('roofingTypeSection');
+    } else if (selectedProjectType === 'Insurance') {
+        showSection('insuranceInfoSection');
+    }
+}
 
 let storedLocation = {};
 
