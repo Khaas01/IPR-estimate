@@ -68,7 +68,7 @@ function nextProjectTypeSection() {
         showSection('insuranceInfoSection');
     }
 }
- function navigateToRoofingTypeSection() {
+function navigateToRoofingTypeSection() {
     const roofingType = document.getElementById('roofingType').value;
     switch (roofingType) {
         case 'Asphalt Shingles':
@@ -77,7 +77,7 @@ function nextProjectTypeSection() {
         case 'Tile':
             showSection('tile-roofing-section');
             break;
-        case 'Modified Bitumen':
+        case 'Modified Bitumen (Flat roof rolled roofing)':
             showSection('modified-bitumen-section');
             break;
         case 'Flat Roof Coating':
