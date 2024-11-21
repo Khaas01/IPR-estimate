@@ -10,7 +10,7 @@
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
-    Version 23
+    Version 24
 
 </header>
 
@@ -39,7 +39,7 @@
     </select>
     <!-- Navigation Buttons -->
     <div id="navigationButtons">
-        <button type="button" id="backButton" onclick="window.history.back();">Back</button>
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
     </div>
 </div>
@@ -65,7 +65,7 @@
         <input type="email" class="uniform-input" id="ownerEmail" name="ownerEmail" required>
     <!-- Navigation Buttons -->
     <div id="navigationButtons">
-        <button type="button" id="backButton" onclick="window.history.back();">Back</button>
+      <button type="button" id="backButton" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('projectTypeSection')">Next</button>
     </div>
     </div>
@@ -88,7 +88,7 @@
             Insurance
         </label>
         <div id="navigationButtons">
-        <button type="button" id="backButton" onclick="window.history.back();">Back</button>
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('projectTypeSection')">Next</button>
     </div>
     </div>
