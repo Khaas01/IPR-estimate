@@ -70,21 +70,16 @@ function nextProjectTypeSection() {
 }
 function navigateToRoofingTypeSection() {
     const roofingType = document.getElementById('roofingType').value;
-    switch (roofingType) {
-        case 'Asphalt Shingles':
-            showSection('asphalt-shingle-section');
-            break;
-        case 'Tile':
-            showSection('tile-roofing-section');
-            break;
-        case 'Modified Bitumen (Flat roof rolled roofing)':
-            showSection('modified-bitumen-section');
-            break;
-        case 'Flat Roof Coating':
-            showSection('coating-section');
-            break;
-        default:
-            console.error('Unknown roofing type:', roofingType);
+    if (roofingType === 'Asphalt Shingles') {
+        showSection('asphalt-shingle-section');
+    } else if (roofingType === 'Tile') {
+        showSection('tile-roofing-section');
+    } else if (roofingType === 'Modified Bitumen (Flat roof rolled roofing)') {
+        showSection('modified-bitumen-section');
+    } else if (roofingType === 'Flat Roof Coating') {
+        showSection('coating-section');
+    } else {
+        console.error('Unknown roofing type:', roofingType);
     }
 }
 
