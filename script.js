@@ -36,46 +36,19 @@ const sections = [
     'solar-detach-reset-section'
 ];
 
-function nextSection() {
-    if (currentSection < sections.length - 1) {
-        currentSection++;
-        showSection(currentSection);
-        scrollToTop();
-    }
-}
-
-document.getElementById('nextButton').addEventListener('click', nextSection);
-
-document.getElementById('backButton').addEventListener('click', function() {
-    if (currentSection > 0) {
-        currentSection--;
-        showSection(currentSection);
-        scrollToTop();
-    }
-});
-
-function showSection(index) {
-    sections.forEach((sectionId, i) => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.style.display = (i === index) ? 'block' : 'none';
-        }
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('div[id$="Section"]');
+    sections.forEach(section => {
+        section.style.display = (section.id === sectionId) ? 'block' : 'none';
     });
-
-    document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
-    document.getElementById('nextButton').textContent = (index === sections.length - 1) ? 'Submit' : 'Next';
-
-    if (sections[index] === 'measureRoofSection') {
-        getLocation();
-    }
 }
 
-function scrollToTop() {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-}
-
-showSection(currentSection);
+document.querySelectorAll('input[name="projectType"]').forEach(input => {
+    input.addEventListener('change', function() {
+        document.getElementById('nextToRoofing').style.display = (this.value === 'Cash' || this.value === 'Finance') ? 'inline-block' : 'none';
+        document.getElementById('nextToInsurance').style.display = (this.value === 'Insurance') ? 'inline-block' : 'none';
+    });
+});
 
 let storedLocation = {};
 
