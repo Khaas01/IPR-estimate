@@ -39,7 +39,7 @@ const sections = [
 ];
 
 function showSection(sectionId) {
-    const sections = document.querySelectorAll('div[id]');
+    const sections = document.querySelectorAll('div[id$="Section"]');
     sections.forEach(section => {
         section.style.display = (section.id === sectionId) ? 'block' : 'none';
     });
@@ -89,7 +89,6 @@ function nextProjectTypeSection() {
              break;
      }
  }
- ```
 
 let storedLocation = {};
 
