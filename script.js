@@ -38,8 +38,8 @@ const sections = [
     'solar-detach-reset-section'
 ];
 
-function showSection(sectionId) {
-    const sections = document.querySelectorAll('div[id]');
+ffunction showSection(sectionId) {
+    const sections = document.querySelectorAll('div[id$="Section"]');
     sections.forEach(section => {
         section.style.display = (section.id === sectionId) ? 'block' : 'none';
     });
@@ -68,7 +68,6 @@ function nextProjectTypeSection() {
         showSection('insuranceInfoSection');
     }
 }
-
  
 
 let storedLocation = {};
