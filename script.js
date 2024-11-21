@@ -1,4 +1,5 @@
-let currentSection = 0;
+let currentSection = 'salesRepSection'; // Set to the ID of the sales rep section
+
 const sections = [
     'salesRepSection',
     'companySection',
@@ -111,8 +112,6 @@ function showError(error) {
     }
 }
 
-
-
 document.getElementById('estimateForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const formData = new FormData(this);
@@ -124,4 +123,4 @@ document.getElementById('estimateForm').addEventListener('submit', function(even
     console.log('Form submitted successfully!', data);
 });
 
-showSection(currentSection);
+showSection(currentSection); // Show the initial section
