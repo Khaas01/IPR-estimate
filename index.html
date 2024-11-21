@@ -10,7 +10,7 @@
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
-    Version 38
+    Version 39
 
 </header>
 
@@ -118,14 +118,23 @@
 
 <div id="roofingTypeSection" style="display:none;">
     <h2>Predominant Roofing Type</h2>
-    <label for="roofingType">What is the predominant roofing type?</label>
-    <select id="roofingType" name="roofingType" class="uniform-input" required>
-        <option value="" disabled selected>Select Roofing Type</option>
-        <option value="Asphalt Shingles">Asphalt Shingles</option>
-        <option value="Tile">Tile</option>
-        <option value="Modified Bitumen (Flat roof rolled roofing)">Modified Bitumen (Flat roof rolled roofing)</option>
-        <option value="Flat Roof Coating">Flat Roof Coating</option>
-    </select>
+    <label>What is the predominant roofing type?</label><br>
+    <label>
+        <input type="radio" id="roofingTypeAsphalt" name="roofingType" value="Asphalt Shingles" required>
+        Asphalt Shingles
+    </label><br>
+    <label>
+        <input type="radio" id="roofingTypeTile" name="roofingType" value="Tile" required>
+        Tile
+    </label><br>
+    <label>
+        <input type="radio" id="roofingTypeModified" name="roofingType" value="Modified Bitumen (Flat roof rolled roofing)" required>
+        Modified Bitumen (Flat roof rolled roofing)
+    </label><br>
+    <label>
+        <input type="radio" id="roofingTypeCoating" name="roofingType" value="Flat Roof Coating" required>
+        Flat Roof Coating
+    </label>
     <div id="navigationButtons">
         <button type="button" id="backButton" onclick="goBack()">Back</button>
         <button type="button" onclick="navigateToRoofingTypeSection()">Next</button>
