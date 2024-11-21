@@ -135,47 +135,60 @@ button:active {
             width: 48%;
         }
 
-        /* Mobile-first adjustments */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-            }
+       /* Mobile-first adjustments */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5em;
+    }
 
-            form {
-                padding: 15px;
-            }
+    form {
+        padding: 15px;
+    }
 
-            button {
-                padding: 10px;
-            }
+    button {
+        padding: 10px;
+    }
 
-            #navigationButtons button {
-                width: 100%; /* Full width for buttons on mobile */
-            }
-        }
+    #navigationButtons {
+        flex-direction: column;
+    }
 
-        /* Larger screen styles */
-        @media (min-width: 601px) {
-            header .logo {
-                max-width: 200px;
-            }
+    #navigationButtons button {
+        width: 100%; /* Full width for buttons on mobile */
+        margin-bottom: 10px; /* Add margin for spacing */
+    }
 
-            h1 {
-                font-size: 1.8em;
-            }
+    #backButton {
+        display: block; /* Ensure back button is visible */
+    }
+}
 
-            form {
-                max-width: 600px;
-            }
+/* Larger screen styles */
+@media (min-width: 601px) {
+    header .logo {
+        max-width: 200px;
+    }
 
-            #navigationButtons button {
-                width: 48%; /* Split buttons on desktop */
-            }
+    h1 {
+        font-size: 1.8em;
+    }
 
-            #backButton {
-                display: inline-block; /* Show the back button in desktop */
-            }
-        }
+    form {
+        max-width: 600px;
+    }
+
+    #navigationButtons {
+        flex-direction: row;
+    }
+
+    #navigationButtons button {
+        width: 48%; /* Split buttons on desktop */
+    }
+
+    #backButton {
+        display: inline-block; /* Show the back button in desktop */
+    }
+}
 
         /* Styling for radio buttons */
         input[type="radio"] {
