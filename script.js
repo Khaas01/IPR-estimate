@@ -91,7 +91,6 @@ function storePosition(position) {
     storedLocation.latitude = position.coords.latitude;
     storedLocation.longitude = position.coords.longitude;
     console.log('Location stored:', storedLocation);
-    accessStoredLocation(); // Automatically access the location once stored
 }
 
 function fetchAddressFromCoordinates(latitude, longitude) {
