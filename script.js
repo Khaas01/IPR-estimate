@@ -111,14 +111,7 @@ function showError(error) {
     }
 }
 
-document.getElementById('nextButton').addEventListener('click', nextSection);
-document.getElementById('backButton').addEventListener('click', function() {
-    if (currentSection > 0) {
-        currentSection--;
-        showSection(currentSection);
-        scrollToTop();
-    }
-});
+
 
 document.getElementById('estimateForm').addEventListener('submit', function(event) {
     event.preventDefault();
