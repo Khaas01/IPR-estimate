@@ -1,4 +1,5 @@
 let currentSection = 'salesRepSection'; // Set to the ID of the sales rep section
+const sectionHistory = [currentSection]; // History stack to keep track of visited sections
 
 const sections = [
     'salesRepSection',
@@ -42,7 +43,17 @@ function showSection(sectionId) {
     sections.forEach(section => {
         section.style.display = (section.id === sectionId) ? 'block' : 'none';
     });
+    if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
+        sectionHistory.push(sectionId); // Add the new section to the history stack
+    }
 }
+
+function goBack() {
+    sectionHistory.pop(); // Remove the current section
+    const previousSection = sectionHistory[sectionHistory.length - 1]; // Get the previous section
+    showSection(previousSection); // Show the previous section
+}
+
 document.querySelectorAll('input[name="projectType"]').forEach(input => {
     input.addEventListener('change', function() {
         document.getElementById('nextToRoofing').style.display = (this.value === 'Cash' || this.value === 'Finance') ? 'inline-block' : 'none';
