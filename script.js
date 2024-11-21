@@ -68,7 +68,25 @@ function nextProjectTypeSection() {
         showSection('insuranceInfoSection');
     }
 }
- 
+ function navigateToRoofingTypeSection() {
+    const roofingType = document.getElementById('roofingType').value;
+    switch (roofingType) {
+        case 'Asphalt Shingles':
+            showSection('asphalt-shingle-section');
+            break;
+        case 'Tile':
+            showSection('tile-roofing-section');
+            break;
+        case 'Modified Bitumen':
+            showSection('modified-bitumen-section');
+            break;
+        case 'Flat Roof Coating':
+            showSection('coating-section');
+            break;
+        default:
+            console.error('Unknown roofing type:', roofingType);
+    }
+}
 
 let storedLocation = {};
 
