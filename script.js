@@ -43,7 +43,6 @@ function showSection(sectionId) {
         section.style.display = (section.id === sectionId) ? 'block' : 'none';
     });
 }
-
 document.querySelectorAll('input[name="projectType"]').forEach(input => {
     input.addEventListener('change', function() {
         document.getElementById('nextToRoofing').style.display = (this.value === 'Cash' || this.value === 'Finance') ? 'inline-block' : 'none';
