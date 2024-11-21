@@ -100,7 +100,7 @@ function fetchAddressFromCoordinates(latitude, longitude) {
         .then(data => {
             if (data && data.address) {
                 const address = `${data.address.house_number} ${data.address.road}, ${data.address.city}, ${data.address.state}, ${data.address.postcode}`;
-                document.getElementById('locationStatus').innerHTML = address; // Updating the locationStatus with the address
+                document.getElementById('locationStatus').innerHTML = address;
             } else {
                 console.error('Unable to fetch address:', data);
             }
@@ -109,15 +109,17 @@ function fetchAddressFromCoordinates(latitude, longitude) {
 }
 
 function accessStoredLocation() {
-    const locationStatus = document.getElementById("locationStatus");
     if (storedLocation.latitude && storedLocation.longitude) {
         fetchAddressFromCoordinates(storedLocation.latitude, storedLocation.longitude);
     } else {
-        locationStatus.innerHTML = "Location not available.";
+        document.getElementById("locationStatus").innerHTML = "Location not available.";
     }
 }
 
-document.getElementById('accessLocationButton').addEventListener('click', accessStoredLocation);
+document.getElementById('accessLocationButton').addEventListener('click', function() {
+    getLocation(); // Ensure location request is triggered
+    accessStoredLocation();
+});
 
 function showError(error) {
     switch(error.code) {
@@ -136,10 +138,7 @@ function showError(error) {
     }
 }
 
-ddocument.getElementById('nextButton').addEventListener('click', function() {
-    nextSection();
-});
-
+document.getElementById('nextButton').addEventListener('click', nextSection);
 document.getElementById('backButton').addEventListener('click', function() {
     if (currentSection > 0) {
         currentSection--;
@@ -157,9 +156,6 @@ document.getElementById('estimateForm').addEventListener('submit', function(even
     });
 
     console.log('Form submitted successfully!', data);
-    // Replace this with your actual form submission logic
 });
-
-document.getElementById('accessLocationButton').addEventListener('click', accessStoredLocation);
 
 showSection(currentSection);
