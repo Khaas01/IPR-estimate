@@ -135,7 +135,7 @@ button:active {
             width: 48%;
         }
 
-       /* Mobile-first adjustments */
+/* Mobile-first adjustments */
 @media (max-width: 600px) {
     h1 {
         font-size: 1.5em;
@@ -150,12 +150,13 @@ button:active {
     }
 
     #navigationButtons {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
     }
 
     #navigationButtons button {
-        width: 100%; /* Full width for buttons on mobile */
-        margin-bottom: 10px; /* Add margin for spacing */
+        width: 48%; /* 48% width for buttons on mobile */
+        margin-bottom: 0; /* Remove bottom margin */
     }
 
     #backButton {
