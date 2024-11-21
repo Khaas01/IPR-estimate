@@ -10,7 +10,7 @@
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
-    Version 21
+    Version 22
 
 </header>
 
@@ -32,19 +32,20 @@
 
     <!-- Company Section -->
     <div id="companySection" style="display:none;">
-        <h2>Company Information</h2>
-        <label for="companyName">What Company are we providing this estimate for?</label><br>
-        <select id="companyName" name="companyName" class="uniform-input" required>
-            <option value="Iron Peak Roofing">Iron Peak Roofing</option>
-            <option value="Capitol Energy">Capitol Energy</option>
-        </select>
-        <!-- Navigation Buttons -->
-<div id="navigationButtons">
-    <button type="button" id="backButton" onclick="window.history.back();">Back</button>
-    <button type="button" id="nextButton" onclick="handleNextButton()">Next</button>
+    <h2>Company Information</h2>
+    <label for="companyName">What Company are we providing this estimate for?</label><br>
+    <select id="companyName" name="companyName" class="uniform-input" required>
+        <option value="Iron Peak Roofing">Iron Peak Roofing</option>
+        <option value="Capitol Energy">Capital Energy</option>
+    </select>
+    <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="window.history.back();">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
-    </div>
+
     
      <!-- Property Owner Section -->
     <div id="propertyOwnerSection" style="display:none;">
