@@ -1,5 +1,5 @@
-let currentSection = 'salesRepSection'; // Set to the ID of the sales rep section
-const sectionHistory = [currentSection]; // History stack to keep track of visited sections
+let currentSection = 'salesRepSection';
+const sectionHistory = [currentSection];
 
 const sections = [
     'salesRepSection',
@@ -69,15 +69,9 @@ function goBack() {
     }
 }
 
-
 document.addEventListener('DOMContentLoaded', function() {
     // Show initial section
     showSection(sectionHistory[0]);
-
-    const button = document.getElementById('nextButton');
-    if (button) {
-        button.addEventListener('click', nextProjectTypeSection);
-    }
 
     function nextProjectTypeSection() {
         const selectedProjectType = document.querySelector('input[name="projectType"]:checked');
@@ -131,5 +125,3 @@ document.addEventListener('DOMContentLoaded', function() {
     window.nextProjectTypeSection = nextProjectTypeSection;
     window.navigateFromRoofingType = navigateFromRoofingType;
 });
-
-
