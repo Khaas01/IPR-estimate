@@ -264,4 +264,34 @@ button:active {
         .form-section .form-option-label {
             font-size: 1em;
         }
+.review-summary {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 20px 0;
+}
 
+.review-summary h3 {
+    color: #333;
+    margin-top: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.review-summary p {
+    margin: 10px 0;
+    line-height: 1.4;
+}
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
