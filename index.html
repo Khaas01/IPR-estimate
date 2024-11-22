@@ -423,32 +423,30 @@
     </div>
 </div>
 
+
 <!-- Third Roof Type Section -->
 <div id="third-roof-type-section" style="display:none;">
     <h2>Third Roof Type</h2>
-    <!-- Question: Is there a third roofing type? -->
-    <label>Is there a third roofing type?</label>
+    <label>Is there a third type of roofing material we are replacing?</label>
     <div>
         <label>
-            <input type="radio" id="third-roof-type-yes" name="third-roof-type" value="yes">
+            <input type="radio" id="third-roof-yes" name="third-roof" value="Yes">
             Yes
         </label><br>
         <label>
-            <input type="radio" id="third-roof-type-no" name="third-roof-type" value="no">
+            <input type="radio" id="third-roof-no" name="third-roof" value="No">
             No
         </label>
-     <!-- Navigation Buttons -->
-    <div id="navigationButtons">
-        <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
     </div>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromThirdRoof()">Next</button>
     </div>
 </div>
 
 <!-- Third Roof Type Style Section -->
 <div id="third-roof-type-style-section" style="display:none;">
     <h2>Third Roof Type Style</h2>
-    <!-- Question: Third Roof Type Style -->
     <label>Third Roof Type Style</label>
     <div>
         <label>
@@ -467,11 +465,10 @@
             <input type="radio" id="third-roof-style-coating" name="third-roof-style" value="Coating">
             Coating
         </label>
-     <!-- Navigation Buttons -->
-    <div id="navigationButtons">
-        <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
     </div>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromThirdRoofStyle()">Next</button>
     </div>
 </div>
 
@@ -484,7 +481,7 @@
   <!-- Navigation Buttons -->
     <div id="navigationButtons">
         <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
     </div>
 </div>
 
@@ -497,7 +494,7 @@
   <!-- Navigation Buttons -->
     <div id="navigationButtons">
         <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
     </div>
 </div>
 
@@ -510,7 +507,7 @@
   <!-- Navigation Buttons -->
     <div id="navigationButtons">
         <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
     </div>
 </div>
 
@@ -524,7 +521,7 @@
   <!-- Navigation Buttons -->
     <div id="navigationButtons">
         <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
     </div>
 </div>
 
