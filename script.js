@@ -153,19 +153,17 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    let nextSection;
     switch(selectedShingleType.value) {
         case 'Shingle Roof Repair':
-            nextSection = 'shingle-repair-section';
+            showSection('shingle-repair-section');
             break;
         case 'Shingle Roof Replacement':
-            nextSection = 'shingle-replacement-section';
+            showSection('shingle-replacement-section');
             break;
         default:
             console.error("Unknown shingle type selected");
-            return;
     }
-
+}
     // Hide all sections first
     hideAllSections();
 
