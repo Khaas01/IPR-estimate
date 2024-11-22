@@ -10,7 +10,7 @@
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
-    Version 59
+    Version 60
 
 </header>
 
@@ -312,7 +312,6 @@
 <!-- Secondary Roof Type Section -->
 <div id="secondary-roof-section" style="display:none;">
     <h2>Secondary Roof Type</h2>
-    <!-- Question: Is there a secondary type of roofing material we are replacing? -->
     <label>Is there a secondary type of roofing material we are replacing?</label>
     <div>
         <label>
@@ -323,6 +322,10 @@
             <input type="radio" id="secondary-roof-no" name="secondary-roof" value="No">
             No
         </label>
+    </div>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromSecondaryRoof()">Next</button>
     </div>
 </div>
 
