@@ -38,19 +38,24 @@ const sections = [
     'solar-detach-reset-section'
 ];
 
+// Helper function to hide all sections
+function hideAllSections() {
+    document.querySelectorAll('div[id$="Section"]').forEach(section => {
+        section.style.display = 'none';
+    });
+}
+
 function showSection(sectionId) {
     if (!sectionId) return;
+    
+    // First hide all sections
+    hideAllSections();
     
     const targetSection = document.getElementById(sectionId);
     if (!targetSection) {
         console.error(`Section ${sectionId} not found`);
         return;
     }
-
-    // Hide all sections
-    document.querySelectorAll('div[id$="Section"]').forEach(section => {
-        section.style.display = 'none';
-    });
 
     // Show target section
     targetSection.style.display = 'block';
@@ -59,18 +64,37 @@ function showSection(sectionId) {
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId);
     }
+    
+    // Debug log
+    console.log('Current section history:', sectionHistory);
 }
 
 function goBack() {
     if (sectionHistory.length > 1) {
-        sectionHistory.pop(); // Remove the current section
-        const previousSection = sectionHistory[sectionHistory.length - 1]; // Get the previous section
-        showSection(previousSection); // Show the previous section
+        // First hide all sections
+        hideAllSections();
+        
+        // Remove current section from history
+        sectionHistory.pop();
+        
+        // Get previous section
+        const previousSection = sectionHistory[sectionHistory.length - 1];
+        
+        // Show the previous section
+        const targetSection = document.getElementById(previousSection);
+        if (targetSection) {
+            targetSection.style.display = 'block';
+        }
+        
+        // Debug log
+        console.log('Went back to:', previousSection);
+        console.log('Current section history:', sectionHistory);
     }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     // Show initial section
+    hideAllSections();
     showSection(sectionHistory[0]);
 
     function nextProjectTypeSection() {
