@@ -151,12 +151,35 @@ function navigateFromShingleType() {
     }
 }
 
+function navigateFromSecondaryRoof() {
+    const selectedOption = document.querySelector('input[name="secondary-roof"]:checked');
+    
+    if (!selectedOption) {
+        alert("Please select Yes or No.");
+        return;
+    }
+
+    switch(selectedOption.value) {
+        case 'Yes':
+            showSection('secondary-roofing-type-section');
+            break;
+        case 'No':
+            showSection('additional-charges-section');
+            break;
+        default:
+            console.error("Unknown selection for secondary roof");
+    }
+}
+
+
+
 // Make functions globally available
 window.showSection = showSection;
 window.goBack = goBack;
 window.nextProjectTypeSection = nextProjectTypeSection;
 window.navigateFromRoofingType = navigateFromRoofingType;
 window.navigateFromShingleType = navigateFromShingleType;
+window.navigateFromSecondaryRoof = navigateFromSecondaryRoof;
 
 // Initialize the form when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
