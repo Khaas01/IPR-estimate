@@ -10,7 +10,7 @@
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
-    Version 60
+    Version 61
 
 </header>
 
@@ -464,15 +464,20 @@
 <!-- Additional Charges Section -->
 <div id="additional-charges-section" style="display:none;">
     <h2>Additional Charges</h2>
-    <!-- Question: Are there any additional roofing charges that need to be added to this estimate? -->
     <label>Are there any additional roofing charges that need to be added to this estimate?</label>
     <div>
-        <input type="radio" id="additional-charges-yes" name="additional-charges" value="yes">
-        <label for="additional-charges-yes">Yes</label>
+        <label>
+            <input type="radio" id="additional-charges-yes" name="additional-charges" value="Yes">
+            Yes
+        </label><br>
+        <label>
+            <input type="radio" id="additional-charges-no" name="additional-charges" value="No">
+            No
+        </label>
     </div>
-    <div>
-        <input type="radio" id="additional-charges-no" name="additional-charges" value="no">
-        <label for="additional-charges-no">No</label>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromAdditionalCharges()">Next</button>
     </div>
 </div>
 
