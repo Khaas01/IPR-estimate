@@ -35,7 +35,8 @@ const sections = [
     'additional-charges-description-section',
     'additional-charges-price-section',
     'solar-section',
-    'solar-detach-reset-section'
+    'solar-detach-reset-section',
+    'review-section' 
 ];
 
 // Helper function to hide all sections
@@ -271,6 +272,26 @@ function navigateFromThirdRoofStyle() {
             console.error("Unknown third roof style selected");
     }
 }
+function navigateFromSolar() {
+    const selectedOption = document.querySelector('input[name="solar"]:checked');
+    
+    if (!selectedOption) {
+        alert("Please select Yes or No.");
+        return;
+    }
+
+    switch(selectedOption.value) {
+        case 'yes':
+            showSection('solar-detach-reset-section');
+            break;
+        case 'no':
+            // This should be the final section or next logical section
+            showSection('review-section');  // Assuming there's a review section
+            break;
+        default:
+            console.error("Unknown selection for solar panels");
+    }
+}
 
 // Make ALL functions globally available
 window.showSection = showSection;
@@ -284,6 +305,7 @@ window.navigateFromSecondaryRoofingType = navigateFromSecondaryRoofingType;
 window.navigateFromTileRoofingType = navigateFromTileRoofingType;
 window.navigateFromThirdRoof = navigateFromThirdRoof;
 window.navigateFromThirdRoofStyle = navigateFromThirdRoofStyle;
+window.navigateFromSolar = navigateFromSolar;
 
 
 // Initialize the form
