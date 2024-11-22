@@ -60,12 +60,22 @@ document.querySelectorAll('input[name="projectType"]').forEach(input => {
         document.getElementById('nextToInsurance').style.display = (this.value === 'Insurance') ? 'inline-block' : 'none';
     });
 });
+ document.addEventListener('DOMContentLoaded', function() {
+      const button = document.getElementById('nextButton');
+      button.addEventListener('click', nextProjectTypeSection);
+     
 function nextProjectTypeSection() {
-    const selectedProjectType = document.querySelector('input[name="projectType"]:checked').value;
-    if (selectedProjectType === 'Cash' || selectedProjectType === 'Finance') {
-        showSection('roofingTypeSection');
-    } else if (selectedProjectType === 'Insurance') {
-        showSection('insuranceInfoSection');
+    const selectedProjectTypeElement = document.querySelector('input[name="projectType"]:checked');
+    if (selectedProjectTypeElement) {
+        const selectedProjectType = selectedProjectTypeElement.value;
+        if (selectedProjectType === 'Cash' || selectedProjectType === 'Finance') {
+            showSection('roofingTypeSection');
+        } else if (selectedProjectType === 'Insurance') {
+            showSection('insuranceInfoSection');
+        }
+    } else {
+        console.error("No project type selected.");
+        alert("Please select a project type.");
     }
 }
 function navigateToRoofingTypeSection() {
