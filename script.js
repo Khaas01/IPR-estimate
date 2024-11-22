@@ -203,6 +203,29 @@ function navigateFromSecondaryRoofingType() {
     }
 }
 
+function navigateFromTileRoofingType() {
+    const selectedTileType = document.querySelector('input[name="tile-roofing-type"]:checked');
+    
+    if (!selectedTileType) {
+        alert("Please select a tile roofing type.");
+        return;
+    }
+
+    switch(selectedTileType.value) {
+        case 'Repair/Partial Roof':
+            showSection('tile-repair-section');
+            break;
+        case 'Underlayment Replacement':
+            showSection('tile-underlayment-section');
+            break;
+        case 'Remove and Replace':
+            showSection('tile-remove-replace-section');
+            break;
+        default:
+            console.error("Unknown tile roofing type selected");
+    }
+}
+
 // Make ALL functions globally available
 window.showSection = showSection;
 window.goBack = goBack;
@@ -212,6 +235,7 @@ window.navigateFromShingleType = navigateFromShingleType;
 window.navigateFromSecondaryRoof = navigateFromSecondaryRoof;
 window.navigateFromAdditionalCharges = navigateFromAdditionalCharges;
 window.navigateFromSecondaryRoofingType = navigateFromSecondaryRoofingType;
+window.navigateFromTileRoofingType = navigateFromTileRoofingType;
 
 
 // Initialize the form
