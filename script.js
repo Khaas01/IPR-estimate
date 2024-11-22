@@ -48,6 +48,7 @@ function showSection(sectionId) {
         sectionHistory.push(sectionId); // Add the new section to the history stack
     }
 }
+
 function goBack() {
     sectionHistory.pop(); // Remove the current section
     const previousSection = sectionHistory[sectionHistory.length - 1]; // Get the previous section
@@ -60,6 +61,7 @@ document.querySelectorAll('input[name="projectType"]').forEach(input => {
         document.getElementById('nextToInsurance').style.display = (this.value === 'Insurance') ? 'inline-block' : 'none';
     });
 });
+
 document.addEventListener('DOMContentLoaded', function() {
     const button = document.getElementById('nextButton');
     if (button) { // Add a null check to ensure the button exists
@@ -83,22 +85,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function showSection(sectionId) {
-        console.log(`Navigating to section: ${sectionId}`);
-        const sections = document.querySelectorAll('div[id$="Section"]');
-        sections.forEach(section => {
-            section.style.display = (section.id === sectionId) ? 'block' : 'none';
-        });
-    }
-
-    function goBack() {
-        sectionHistory.pop(); // Remove the current section
-        const previousSection = sectionHistory[sectionHistory.length - 1]; // Get the previous section
-        showSection(previousSection); // Show the previous section
-    }
-
-    const sectionHistory = ['salesRepSection']; // Initial section
-
-    showSection(sectionHistory[0]); // Show the initial section
+    window.nextProjectTypeSection = nextProjectTypeSection;
+    window.goBack = goBack;
 });
 
+const sectionHistory = ['salesRepSection']; // Initial section
+showSection(sectionHistory[0]); // Show the initial section
