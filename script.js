@@ -338,99 +338,95 @@ function submitForm(formData) {
     showSection('salesRepSection');
 }
 function displayReview() {
+    console.log("displayReview function called"); // Debug log
     const reviewContent = document.getElementById('review-content');
+    if (!reviewContent) {
+        console.error("review-content element not found");
+        return;
+    }
+    
     let reviewHTML = '<div class="review-summary">';
     
-    // Add timestamp and user info
-    const currentDate = new Date().toISOString();
-    reviewHTML += `<p><strong>Date Created:</strong> ${currentDate}</p>`;
+    // Format the current date/time
+    const currentDate = new Date().toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZoneName: 'short'
+    });
     
-    // Sales Rep Information
-    reviewHTML += '<h3>Sales Representative Information</h3>';
-    reviewHTML += `<p><strong>Name:</strong> ${document.getElementById('salesRepName').value}</p>`;
-    reviewHTML += `<p><strong>Email:</strong> ${document.getElementById('salesRepEmail').value}</p>`;
-    reviewHTML += `<p><strong>Phone:</strong> ${document.getElementById('salesRepPhone').value}</p>`;
+    reviewHTML += `
+        <div class="review-header">
+            <p><strong>Date Created:</strong> ${currentDate}</p>
+            <p><strong>Created By:</strong> ${document.getElementById('salesRepName')?.value || 'Not specified'}</p>
+        </div>
+    `;
 
-    // Company Information
-    reviewHTML += '<h3>Company Information</h3>';
-    reviewHTML += `<p><strong>Company:</strong> ${document.getElementById('companyName').value}</p>`;
-
-    // Property Owner Information
-    reviewHTML += '<h3>Property Owner Information</h3>';
-    reviewHTML += `<p><strong>Name:</strong> ${document.getElementById('ownerName').value}</p>`;
-    reviewHTML += `<p><strong>Address:</strong> ${document.getElementById('ownerAddress').value}</p>`;
-    reviewHTML += `<p><strong>City:</strong> ${document.getElementById('ownerCity').value}</p>`;
-    reviewHTML += `<p><strong>State:</strong> ${document.getElementById('ownerState').value}</p>`;
-    reviewHTML += `<p><strong>Zip:</strong> ${document.getElementById('ownerZip').value}</p>`;
-    reviewHTML += `<p><strong>Phone:</strong> ${document.getElementById('ownerPhone').value}</p>`;
-    reviewHTML += `<p><strong>Email:</strong> ${document.getElementById('ownerEmail').value}</p>`;
-
-    // Project Type
-    const projectType = document.querySelector('input[name="projectType"]:checked');
-    if (projectType) {
-        reviewHTML += '<h3>Project Type</h3>';
-        reviewHTML += `<p><strong>Type:</strong> ${projectType.value}</p>`;
-    }
-
-    // Insurance Information (if applicable)
-    if (projectType && projectType.value === 'Insurance') {
-        reviewHTML += '<h3>Insurance Information</h3>';
-        reviewHTML += `<p><strong>Insurance Company:</strong> ${document.getElementById('insuranceCompany').value}</p>`;
-        reviewHTML += `<p><strong>Insurance Phone:</strong> ${document.getElementById('insurancePhone').value}</p>`;
-        reviewHTML += `<p><strong>Claim Number:</strong> ${document.getElementById('claimNumber').value}</p>`;
-        reviewHTML += `<p><strong>Policy Number:</strong> ${document.getElementById('policyNumber').value}</p>`;
-        reviewHTML += `<p><strong>Date of Loss:</strong> ${document.getElementById('dateOfLoss').value}</p>`;
-    }
-
-    // Roofing Information
-    const roofingType = document.querySelector('input[name="roofingType"]:checked');
-    if (roofingType) {
-        reviewHTML += '<h3>Roofing Information</h3>';
-        reviewHTML += `<p><strong>Primary Roofing Type:</strong> ${roofingType.value}</p>`;
-    }
-
-    // Secondary Roof Information
-    const secondaryRoof = document.querySelector('input[name="secondary-roof"]:checked');
-    if (secondaryRoof && secondaryRoof.value === 'Yes') {
-        const secondaryRoofType = document.querySelector('input[name="secondary-roofing-type"]:checked');
-        if (secondaryRoofType) {
-            reviewHTML += '<h3>Secondary Roof Information</h3>';
-            reviewHTML += `<p><strong>Secondary Roofing Type:</strong> ${secondaryRoofType.value}</p>`;
+    // Collect and display all form data
+    const formData = collectFormData();
+    Object.entries(formData).forEach(([section, data]) => {
+        if (Object.keys(data).length > 0) {
+            reviewHTML += `
+                <div class="review-section">
+                    <h3>${section}</h3>
+                    ${Object.entries(data).map(([key, value]) => 
+                        `<p><strong>${key}:</strong> ${value || 'Not specified'}</p>`
+                    ).join('')}
+                </div>
+            `;
         }
-    }
-
-    // Third Roof Information
-    const thirdRoof = document.querySelector('input[name="third-roof"]:checked');
-    if (thirdRoof && thirdRoof.value === 'Yes') {
-        const thirdRoofStyle = document.querySelector('input[name="third-roof-style"]:checked');
-        if (thirdRoofStyle) {
-            reviewHTML += '<h3>Third Roof Information</h3>';
-            reviewHTML += `<p><strong>Third Roofing Type:</strong> ${thirdRoofStyle.value}</p>`;
-        }
-    }
-
-    // Additional Charges
-    const additionalCharges = document.querySelector('input[name="additional-charges"]:checked');
-    if (additionalCharges && additionalCharges.value === 'Yes') {
-        reviewHTML += '<h3>Additional Charges</h3>';
-        reviewHTML += `<p><strong>Description:</strong> ${document.getElementById('additional-charges-description').value}</p>`;
-        reviewHTML += `<p><strong>Amount:</strong> $${document.getElementById('additional-charges-price').value}</p>`;
-    }
-
-    // Solar Information
-    const solar = document.querySelector('input[name="solar"]:checked');
-    if (solar) {
-        reviewHTML += '<h3>Solar Panel Information</h3>';
-        reviewHTML += `<p><strong>Solar Panels Present:</strong> ${solar.value}</p>`;
-        if (solar.value === 'yes') {
-            reviewHTML += `<p><strong>Panels to Remove:</strong> ${document.getElementById('solar-detach-reset').value}</p>`;
-        }
-    }
+    });
 
     reviewHTML += '</div>';
+    console.log("Review HTML:", reviewHTML); // Debug log
     reviewContent.innerHTML = reviewHTML;
 }
 
+function collectFormData() {
+    return {
+        "Sales Representative Information": {
+            "Name": document.getElementById('salesRepName')?.value,
+            "Email": document.getElementById('salesRepEmail')?.value,
+            "Phone": document.getElementById('salesRepPhone')?.value
+        },
+        "Company Information": {
+            "Company": document.getElementById('companyName')?.value
+        },
+        "Property Owner Information": {
+            "Name": document.getElementById('ownerName')?.value,
+            "Address": document.getElementById('ownerAddress')?.value,
+            "City": document.getElementById('ownerCity')?.value,
+            "State": document.getElementById('ownerState')?.value,
+            "Zip": document.getElementById('ownerZip')?.value,
+            "Phone": document.getElementById('ownerPhone')?.value,
+            "Email": document.getElementById('ownerEmail')?.value
+        },
+        "Project Details": {
+            "Project Type": document.querySelector('input[name="projectType"]:checked')?.value,
+            "Primary Roofing Type": document.querySelector('input[name="roofingType"]:checked')?.value
+        },
+        "Insurance Information": document.querySelector('input[name="projectType"]:checked')?.value === 'Insurance' ? {
+            "Insurance Company": document.getElementById('insuranceCompany')?.value,
+            "Insurance Phone": document.getElementById('insurancePhone')?.value,
+            "Claim Number": document.getElementById('claimNumber')?.value,
+            "Policy Number": document.getElementById('policyNumber')?.value,
+            "Date of Loss": document.getElementById('dateOfLoss')?.value
+        } : {},
+        "Secondary Roof Information": document.querySelector('input[name="secondary-roof"]:checked')?.value === 'Yes' ? {
+            "Type": document.querySelector('input[name="secondary-roofing-type"]:checked')?.value
+        } : {},
+        "Third Roof Information": document.querySelector('input[name="third-roof"]:checked')?.value === 'Yes' ? {
+            "Type": document.querySelector('input[name="third-roof-style"]:checked')?.value
+        } : {},
+        "Solar Panel Information": {
+            "Solar Panels Present": document.querySelector('input[name="solar"]:checked')?.value,
+            "Number of Panels": document.querySelector('input[name="solar"]:checked')?.value === 'yes' ? 
+                document.getElementById('solar-detach-reset')?.value : 'N/A'
+        }
+    };
+}
 function submitForm() {
     // You can add form validation here
     const confirmSubmit = confirm('Are you sure you want to submit this estimate?');
@@ -444,7 +440,7 @@ function submitForm() {
     }
 }
 
-// Modify the navigateFromSolar function to call displayReview
+// In your navigateFromSolar function
 function navigateFromSolar() {
     const selectedOption = document.querySelector('input[name="solar"]:checked');
     
@@ -459,13 +455,16 @@ function navigateFromSolar() {
             break;
         case 'no':
             showSection('review-section');
-            displayReview(); // Add this call
+            displayReview(); // Make sure this is called
             break;
         default:
             console.error("Unknown selection for solar panels");
     }
 }
 
+// Also update the solar-detach-reset-section navigation
+// Make sure the button onclick calls both functions:
+// <button type="button" onclick="showSection('review-section'); displayReview();">Next</button>
 // Make ALL functions globally available
 window.showSection = showSection;
 window.goBack = goBack;
@@ -482,6 +481,7 @@ window.navigateFromSolar = navigateFromSolar;
 window.handleFormSubmit = handleFormSubmit;
 window.submitForm = submitForm;
 window.displayReview = displayReview;
+
 
 // Initialize the form
 document.addEventListener('DOMContentLoaded', function() {
