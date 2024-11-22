@@ -10,7 +10,7 @@
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
-    Version 63
+    Version 64
 
 </header>
 
@@ -152,10 +152,7 @@
             src="https://www.oneclickestimate.com" 
             style="width:100%; height:500px; border:0;" 
             title="Roof Measurement Tool" id="measurementToolIframe"></iframe>
-        <div>
-            <button type="button" id="accessLocationButton">Access Stored Location</button>
-            <p id="locationStatus"></p>
-        </div>
+      
     </div>
 
 
@@ -227,9 +224,10 @@
             <input type="radio" id="tile-remove-replace" name="tile-work-type" value="Remove and Replace">
             Remove and Replace
         </label>
-          <div id="navigationButtons">
+           <!-- Navigation Buttons -->
+    <div id="navigationButtons">
         <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="nextProjectTypeSection()">Next</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
     </div>
     </div>
 </div>
@@ -240,9 +238,10 @@
     <!-- Question: How many Sq of tile are we repairing? -->
     <label for="tile-repair-sq">How many Sq of tile are we repairing?</label>
     <input type="text" id="tile-repair-sq" name="tile-repair-sq" class="uniform-input" placeholder="Enter the number of squares">
-  <div id="navigationButtons">
+    <!-- Navigation Buttons -->
+    <div id="navigationButtons">
         <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="nextProjectTypeSection()">Next</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
     </div>
 </div>
 
@@ -252,9 +251,10 @@
     <!-- Question: How many Sq of tile underlayment are we replacing? -->
     <label for="tile-underlayment-sq">How many Sq of tile underlayment are we replacing?</label>
     <input type="text" id="tile-underlayment-sq" name="tile-underlayment-sq" class="uniform-input" placeholder="Enter the number of squares">
-  <div id="navigationButtons">
+    <!-- Navigation Buttons -->
+    <div id="navigationButtons">
         <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="nextProjectTypeSection()">Next</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
     </div>
 </div>
 
@@ -276,9 +276,10 @@
             <input type="radio" id="tile-sandcast" name="tile-type" value="SandCast">
             SandCast
         </label>
-          <div id="navigationButtons">
+          <!-- Navigation Buttons -->
+    <div id="navigationButtons">
         <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="nextProjectTypeSection()">Next</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
     </div>
     </div>
 </div>
@@ -289,6 +290,11 @@
     <!-- Question: How many squares of tile roofing are we removing and replacing? -->
     <label for="tile-roof-rr">How many squares of tile roofing are we removing and replacing?</label>
     <input type="text" id="tile-roof-rr" name="tile-roof-rr" class="uniform-input" placeholder="Enter number of squares of tile roofing">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 
@@ -298,6 +304,11 @@
     <!-- Question: How many square of modified bitumen are we replacing? -->
     <label for="modified-bitumen-sq">How many square of modified bitumen are we replacing?</label>
     <input type="text" id="modified-bitumen-sq" name="modified-bitumen-sq" class="uniform-input" placeholder="Enter the number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 <!-- Coating Section -->
@@ -306,6 +317,11 @@
     <!-- Question: How many square of roof surface are we re-coating? -->
     <label for="coating-squares">How many square of roof surface are we re-coating?</label>
     <input type="text" id="coating-squares" name="coating-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 
@@ -351,6 +367,11 @@
             <input type="radio" id="secondary-roof-coating" name="secondary-roof-type" value="Coating">
             Coating
         </label>
+          <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
     </div>
 </div>
 
@@ -360,6 +381,11 @@
     <!-- Question: How many squares of shingles are we replacing? -->
     <label for="shingles-squares">How many squares of shingles are we replacing?</label>
     <input type="text" id="shingles-squares" name="shingles-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 <!-- Secondary Roof Type - Tile Section -->
@@ -368,6 +394,11 @@
     <!-- Question: How many squares of tile underlayment are we replacing? -->
     <label for="tile-underlayment-squares">How many squares of tile underlayment are we replacing?</label>
     <input type="text" id="tile-underlayment-squares" name="tile-underlayment-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 <!-- Secondary Roof Type - Modified Bitumen Section -->
@@ -376,6 +407,11 @@
     <!-- Question: How many squares of modified bitumen are we replacing? -->
     <label for="modified-bitumen-squares">How many squares of modified bitumen are we replacing?</label>
     <input type="text" id="modified-bitumen-squares" name="modified-bitumen-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 <!-- Secondary Roof Type - Coating Section -->
@@ -384,6 +420,11 @@
     <!-- Question: How many squares of roof coating are we applying? -->
     <label for="coating-squares">How many squares of roof coating are we applying?</label>
     <input type="text" id="coating-squares" name="coating-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 <!-- Third Roof Type Section -->
@@ -400,6 +441,11 @@
             <input type="radio" id="third-roof-type-no" name="third-roof-type" value="no">
             No
         </label>
+     <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
     </div>
 </div>
 
@@ -425,6 +471,11 @@
             <input type="radio" id="third-roof-style-coating" name="third-roof-style" value="Coating">
             Coating
         </label>
+     <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
     </div>
 </div>
 
@@ -434,6 +485,11 @@
     <!-- Question: How many squares of shingles are we replacing? -->
     <label for="shingles-squares">How many squares of shingles are we replacing?</label>
     <input type="text" id="shingles-squares" name="shingles-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 <!-- Third Roof Type - Tiles Section -->
@@ -442,6 +498,11 @@
     <!-- Question: How many squares of tile underlayment are we replacing? -->
     <label for="tiles-squares">How many squares of tile underlayment are we replacing?</label>
     <input type="text" id="tiles-squares" name="tiles-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 <!-- Third Roof Type - Modified Section -->
@@ -450,6 +511,11 @@
     <!-- Question: How many squares of modified bitumen are we replacing? -->
     <label for="modified-squares">How many squares of modified bitumen are we replacing?</label>
     <input type="text" id="modified-squares" name="modified-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 
@@ -459,6 +525,11 @@
     <!-- Question: How many squares of roof surface are we re-coating? -->
     <label for="coatings-squares">How many squares of roof surface are we re-coating?</label>
     <input type="text" id="coatings-squares" name="coatings-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 <!-- Additional Charges Section -->
@@ -487,6 +558,11 @@
     <!-- Question: What additional roofing related items require additional charges? -->
     <label for="additional-charges-description">What additional roofing related items require additional charges?</label>
     <textarea id="additional-charges-description" name="additional-charges-description" class="uniform-input" placeholder="Enter details"></textarea>
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 <!-- Additional Charges - Price Section -->
@@ -495,6 +571,11 @@
     <!-- Question: How much are we charging to complete these additional roofing related items? -->
     <label for="additional-charges-price">How much are we charging to complete these additional roofing related items?</label>
     <input type="text" id="additional-charges-price" name="additional-charges-price" class="uniform-input" placeholder="Enter price">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
 </div>
 
 <!-- Solar Section -->
@@ -509,6 +590,11 @@
     <div>
         <input type="radio" id="solar-no" name="solar" value="no">
         <label for="solar-no">No</label>
+      <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+    </div>
     </div>
 </div>
 
