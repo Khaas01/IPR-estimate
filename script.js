@@ -89,5 +89,4 @@ document.addEventListener('DOMContentLoaded', function() {
     window.goBack = goBack;
 });
 
-const sectionHistory = ['salesRepSection']; // Initial section
 showSection(sectionHistory[0]); // Show the initial section
