@@ -173,4 +173,5 @@ document.getElementById('estimateForm').addEventListener('submit', function(even
 });
 
 showSection(currentSection); // Show the initial section
+     });
 
