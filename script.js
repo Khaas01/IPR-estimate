@@ -145,28 +145,43 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function navigateFromShingleType() {
-        // First hide all sections
-        hideAllSections();
-        
-        const selectedShingleType = document.querySelector('input[name="shingleType"]:checked');
-        
-        if (!selectedShingleType) {
-            alert("Please select a shingle roof type.");
-            return;
-        }
+  function navigateFromShingleType() {
+    const selectedShingleType = document.querySelector('input[name="shingleType"]:checked');
+    
+    if (!selectedShingleType) {
+        alert("Please select a shingle roof type.");
+        return;
+    }
 
-        switch(selectedShingleType.value) {
-            case 'Shingle Roof Repair':
-                showSection('shingle-repair-section');
-                break;
-            case 'Shingle Roof Replacement':
-                showSection('shingle-replacement-section');
-                break;
-            default:
-                console.error("Unknown shingle type selected");
+    let nextSection;
+    switch(selectedShingleType.value) {
+        case 'Shingle Roof Repair':
+            nextSection = 'shingle-repair-section';
+            break;
+        case 'Shingle Roof Replacement':
+            nextSection = 'shingle-replacement-section';
+            break;
+        default:
+            console.error("Unknown shingle type selected");
+            return;
+    }
+
+    // Hide all sections first
+    hideAllSections();
+
+    // Show and update history for the next section
+    const targetSection = document.getElementById(nextSection);
+    if (targetSection) {
+        targetSection.style.display = 'block';
+        if (sectionHistory[sectionHistory.length - 1] !== nextSection) {
+            sectionHistory.push(nextSection);
         }
     }
+
+    // Debug logging
+    console.log('Navigating to:', nextSection);
+    console.log('Current section history:', sectionHistory);
+}
 
     // Make functions available globally
     window.showSection = showSection;
