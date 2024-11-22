@@ -92,6 +92,8 @@ function goBack() {
     }
 }
 
+// Keep all your existing code up to the DOMContentLoaded event listener
+
 document.addEventListener('DOMContentLoaded', function() {
     // Show initial section
     hideAllSections();
@@ -144,29 +146,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function navigateFromShingleType() {
-    const selectedShingleType = document.querySelector('input[name="shingleType"]:checked');
-    
-    if (!selectedShingleType) {
-        alert("Please select a shingle roof type.");
-        return;
-    }
+        // First hide all sections
+        hideAllSections();
+        
+        const selectedShingleType = document.querySelector('input[name="shingleType"]:checked');
+        
+        if (!selectedShingleType) {
+            alert("Please select a shingle roof type.");
+            return;
+        }
 
-    switch(selectedShingleType.value) {
-        case 'Shingle Roof Repair':
-            showSection('shingle-repair-section');
-            break;
-        case 'Shingle Roof Replacement':
-            showSection('shingle-replacement-section');
-            break;
-        default:
-            console.error("Unknown shingle type selected");
+        switch(selectedShingleType.value) {
+            case 'Shingle Roof Repair':
+                showSection('shingle-repair-section');
+                break;
+            case 'Shingle Roof Replacement':
+                showSection('shingle-replacement-section');
+                break;
+            default:
+                console.error("Unknown shingle type selected");
+        }
     }
-}
 
     // Make functions available globally
     window.showSection = showSection;
     window.goBack = goBack;
     window.nextProjectTypeSection = nextProjectTypeSection;
     window.navigateFromRoofingType = navigateFromRoofingType;
-    window.navigateFromShingleType = navigateFromShingleType; 
+    window.navigateFromShingleType = navigateFromShingleType;
 });
