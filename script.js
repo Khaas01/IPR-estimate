@@ -39,13 +39,25 @@ const sections = [
 ];
 
 function showSection(sectionId) {
-    console.log(`Navigating to section: ${sectionId}`);
-    const sections = document.querySelectorAll('div[id$="Section"]');
-    sections.forEach(section => {
-        section.style.display = (section.id === sectionId) ? 'block' : 'none';
+    if (!sectionId) return;
+    
+    const targetSection = document.getElementById(sectionId);
+    if (!targetSection) {
+        console.error(`Section ${sectionId} not found`);
+        return;
+    }
+
+    // Hide all sections
+    document.querySelectorAll('div[id$="Section"]').forEach(section => {
+        section.style.display = 'none';
     });
+
+    // Show target section
+    targetSection.style.display = 'block';
+    
+    // Update history
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
-        sectionHistory.push(sectionId); // Add the new section to the history stack
+        sectionHistory.push(sectionId);
     }
 }
 
@@ -70,20 +82,25 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error("No button with ID 'nextButton' found.");
     }
 
-    function nextProjectTypeSection() {
-        const selectedProjectTypeElement = document.querySelector('input[name="projectType"]:checked');
-        if (selectedProjectTypeElement) {
-            const selectedProjectType = selectedProjectTypeElement.value;
-            if (selectedProjectType === 'Cash' || selectedProjectType === 'Finance') {
-                showSection('roofingTypeSection');
-            } else if (selectedProjectType === 'Insurance') {
-                showSection('insuranceInfoSection');
-            }
-        } else {
-            console.error("No project type selected.");
-            alert("Please select a project type.");
-        }
+  function nextProjectTypeSection() {
+    const selectedProjectType = document.querySelector('input[name="projectType"]:checked');
+    if (!selectedProjectType) {
+        alert("Please select a project type.");
+        return;
     }
+    
+    switch(selectedProjectType.value) {
+        case 'Cash':
+        case 'Finance':
+            showSection('roofingTypeSection');
+            break;
+        case 'Insurance':
+            showSection('insuranceInfoSection');
+            break;
+        default:
+            console.error("Unknown project type selected");
+    }
+}
 
     window.nextProjectTypeSection = nextProjectTypeSection;
     window.goBack = goBack;
