@@ -226,6 +226,52 @@ function navigateFromTileRoofingType() {
     }
 }
 
+function navigateFromThirdRoof() {
+    const selectedOption = document.querySelector('input[name="third-roof"]:checked');
+    
+    if (!selectedOption) {
+        alert("Please select Yes or No.");
+        return;
+    }
+
+    switch(selectedOption.value) {
+        case 'Yes':
+            showSection('third-roof-type-style-section');
+            break;
+        case 'No':
+            showSection('additional-charges-section');
+            break;
+        default:
+            console.error("Unknown selection for third roof");
+    }
+}
+
+function navigateFromThirdRoofStyle() {
+    const selectedRoofingType = document.querySelector('input[name="third-roof-style"]:checked');
+    
+    if (!selectedRoofingType) {
+        alert("Please select a roofing type.");
+        return;
+    }
+
+    switch(selectedRoofingType.value) {
+        case 'Shingles':
+            showSection('third-roof-type-shingles-section');
+            break;
+        case 'Tile':
+            showSection('third-roof-type-tiles-section');
+            break;
+        case 'Modified':
+            showSection('third-roof-type-modified-section');
+            break;
+        case 'Coating':
+            showSection('third-roof-type-coatings-section');
+            break;
+        default:
+            console.error("Unknown third roof style selected");
+    }
+}
+
 // Make ALL functions globally available
 window.showSection = showSection;
 window.goBack = goBack;
@@ -236,6 +282,8 @@ window.navigateFromSecondaryRoof = navigateFromSecondaryRoof;
 window.navigateFromAdditionalCharges = navigateFromAdditionalCharges;
 window.navigateFromSecondaryRoofingType = navigateFromSecondaryRoofingType;
 window.navigateFromTileRoofingType = navigateFromTileRoofingType;
+window.navigateFromThirdRoof = navigateFromThirdRoof;
+window.navigateFromThirdRoofStyle = navigateFromThirdRoofStyle;
 
 
 // Initialize the form
