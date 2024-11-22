@@ -152,7 +152,71 @@ button:active {
 .submit-button:active {
     background-color: #1e7e34;
 }
+/* Add these styles to your styles.css */
+#navigationButtons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
 
+#navigationButtons button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    min-width: 100px;
+}
+
+#backButton {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+#backButton:hover {
+    background-color: #5a6268;
+}
+
+.review-summary {
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.review-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.review-section {
+    margin: 15px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.review-section h3 {
+    color: #495057;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.review-section p {
+    margin: 5px 0;
+    color: #212529;
+}
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
 
 /* Mobile-first adjustments */
 @media (max-width: 600px) {
