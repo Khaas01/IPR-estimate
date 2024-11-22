@@ -292,6 +292,52 @@ function navigateFromSolar() {
             console.error("Unknown selection for solar panels");
     }
 }
+function handleFormSubmit(event) {
+    event.preventDefault(); // Prevent default form submission
+    
+    // Get all form data
+    const formData = new FormData(document.getElementById('estimateForm'));
+    const formObject = {};
+    
+    // Convert FormData to a regular object
+    formData.forEach((value, key) => {
+        formObject[key] = value;
+    });
+    
+    // Add timestamp
+    formObject.submittedAt = new Date().toISOString();
+    
+    // You can add validation here if needed
+    if (validateForm(formObject)) {
+        submitForm(formObject);
+    }
+}
+
+function validateForm(formData) {
+    // Add your validation logic here
+    // Example validation:
+    if (!formData.salesRepName || !formData.ownerName) {
+        alert('Please fill in all required fields');
+        return false;
+    }
+    return true;
+}
+
+function submitForm(formData) {
+    // Here you would typically send the data to your server
+    // For now, let's just log it and show a success message
+    console.log('Form submitted:', formData);
+    
+    // Show success message
+    alert('Estimate form submitted successfully!');
+    
+    // Optional: Reset form
+    document.getElementById('estimateForm').reset();
+    
+    // Return to first section
+    showSection('salesRepSection');
+}
+
 
 // Make ALL functions globally available
 window.showSection = showSection;
@@ -306,6 +352,7 @@ window.navigateFromTileRoofingType = navigateFromTileRoofingType;
 window.navigateFromThirdRoof = navigateFromThirdRoof;
 window.navigateFromThirdRoofStyle = navigateFromThirdRoofStyle;
 window.navigateFromSolar = navigateFromSolar;
+window.handleFormSubmit = handleFormSubmit;
 
 
 // Initialize the form
