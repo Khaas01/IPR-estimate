@@ -38,9 +38,8 @@ const sections = [
     'solar-detach-reset-section'
 ];
 
-// Helper function to hide all sections
 function hideAllSections() {
-    document.querySelectorAll('div[id$="Section"]').forEach(section => {
+    document.querySelectorAll('div[id$="Section"], div[id$="-section"]').forEach(section => {
         section.style.display = 'none';
     });
 }
@@ -48,7 +47,6 @@ function hideAllSections() {
 function showSection(sectionId) {
     if (!sectionId) return;
     
-    // First hide all sections
     hideAllSections();
     
     const targetSection = document.getElementById(sectionId);
@@ -57,45 +55,26 @@ function showSection(sectionId) {
         return;
     }
 
-    // Show target section
     targetSection.style.display = 'block';
     
-    // Update history
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId);
     }
-    
-    // Debug log
-    console.log('Current section history:', sectionHistory);
 }
 
 function goBack() {
     if (sectionHistory.length > 1) {
-        // First hide all sections
         hideAllSections();
-        
-        // Remove current section from history
         sectionHistory.pop();
-        
-        // Get previous section
         const previousSection = sectionHistory[sectionHistory.length - 1];
-        
-        // Show the previous section
         const targetSection = document.getElementById(previousSection);
         if (targetSection) {
             targetSection.style.display = 'block';
         }
-        
-        // Debug log
-        console.log('Went back to:', previousSection);
-        console.log('Current section history:', sectionHistory);
     }
 }
 
-// Keep all your existing code up to the DOMContentLoaded event listener
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Show initial section
     hideAllSections();
     showSection(sectionHistory[0]);
 
@@ -145,41 +124,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-  function navigateFromShingleType() {
-    const selectedShingleType = document.querySelector('input[name="shingleType"]:checked');
-    
-    if (!selectedShingleType) {
-        alert("Please select a shingle roof type.");
-        return;
-    }
+    function navigateFromShingleType() {
+        const selectedShingleType = document.querySelector('input[name="shingleType"]:checked');
+        
+        if (!selectedShingleType) {
+            alert("Please select a shingle roof type.");
+            return;
+        }
 
-    switch(selectedShingleType.value) {
-        case 'Shingle Roof Repair':
-            showSection('shingle-repair-section');
-            break;
-        case 'Shingle Roof Replacement':
-            showSection('shingle-replacement-section');
-            break;
-        default:
-            console.error("Unknown shingle type selected");
-    }
-}
-    // Hide all sections first
-    hideAllSections();
-
-    // Show and update history for the next section
-    const targetSection = document.getElementById(nextSection);
-    if (targetSection) {
-        targetSection.style.display = 'block';
-        if (sectionHistory[sectionHistory.length - 1] !== nextSection) {
-            sectionHistory.push(nextSection);
+        switch(selectedShingleType.value) {
+            case 'Shingle Roof Repair':
+                showSection('shingle-repair-section');
+                break;
+            case 'Shingle Roof Replacement':
+                showSection('shingle-replacement-section');
+                break;
+            default:
+                console.error("Unknown shingle type selected");
         }
     }
-
-    // Debug logging
-    console.log('Navigating to:', nextSection);
-    console.log('Current section history:', sectionHistory);
-}
 
     // Make functions available globally
     window.showSection = showSection;
