@@ -177,6 +177,31 @@ function navigateFromAdditionalCharges() {
             console.error("Unknown selection for additional charges");
     }
 }
+function navigateFromSecondaryRoofingType() {
+    const selectedRoofingType = document.querySelector('input[name="secondary-roofing-type"]:checked');
+    
+    if (!selectedRoofingType) {
+        alert("Please select a roofing type.");
+        return;
+    }
+
+    switch(selectedRoofingType.value) {
+        case 'Shingles':
+            showSection('secondary-roof-type-shingles-section');
+            break;
+        case 'Tiles':
+            showSection('secondary-roof-type-tile-section');
+            break;
+        case 'Modified Bitumen':
+            showSection('secondary-roof-type-modified-bitumen-section');
+            break;
+        case 'Coating':
+            showSection('secondary-roof-type-coating-section');
+            break;
+        default:
+            console.error("Unknown secondary roofing type selected");
+    }
+}
 
 // Make ALL functions globally available
 window.showSection = showSection;
@@ -186,6 +211,8 @@ window.navigateFromRoofingType = navigateFromRoofingType;
 window.navigateFromShingleType = navigateFromShingleType;
 window.navigateFromSecondaryRoof = navigateFromSecondaryRoof;
 window.navigateFromAdditionalCharges = navigateFromAdditionalCharges;
+window.navigateFromSecondaryRoofingType = navigateFromSecondaryRoofingType;
+
 
 // Initialize the form
 document.addEventListener('DOMContentLoaded', function() {
