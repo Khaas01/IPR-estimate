@@ -574,33 +574,33 @@
 <!-- Solar Section -->
 <div id="solar-section" style="display:none;">
     <h2>Solar</h2>
-    <!-- Question: Are there any solar panels that have to be removed to complete the repair? -->
     <label>Are there any solar panels that have to be removed to complete the repair?</label>
     <div>
-        <input type="radio" id="solar-yes" name="solar" value="yes">
-        <label for="solar-yes">Yes</label>
+        <label>
+            <input type="radio" id="solar-yes" name="solar" value="yes">
+            Yes
+        </label><br>
+        <label>
+            <input type="radio" id="solar-no" name="solar" value="no">
+            No
+        </label>
     </div>
-    <div>
-        <input type="radio" id="solar-no" name="solar" value="no">
-        <label for="solar-no">No</label>
-      <!-- Navigation Buttons -->
     <div id="navigationButtons">
-        <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
-    </div>
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromSolar()">Next</button>
     </div>
 </div>
-
-
 
 <!-- Solar - Detach and Reset Section -->
 <div id="solar-detach-reset-section" style="display:none;">
     <h2>Solar - Detach and Reset</h2>
-    <!-- New Question: How many solar panels are we detaching and resetting to complete the roof repair? -->
     <label for="solar-detach-reset">How many solar panels are we detaching and resetting to complete the roof repair?</label>
     <input type="text" id="solar-detach-reset" name="solar-detach-reset" class="uniform-input" placeholder="Enter number of panels">
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('review-section')">Next</button>
+    </div>
 </div>
-
  
 </form>
     <script src="script.js"></script> <!-- Link to the external JavaScript file -->
