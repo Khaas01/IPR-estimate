@@ -60,118 +60,45 @@ document.querySelectorAll('input[name="projectType"]').forEach(input => {
         document.getElementById('nextToInsurance').style.display = (this.value === 'Insurance') ? 'inline-block' : 'none';
     });
 });
- document.addEventListener('DOMContentLoaded', function() {
-      const button = document.getElementById('nextButton');
-      button.addEventListener('click', nextProjectTypeSection);
-     
-function nextProjectTypeSection() {
-    const selectedProjectTypeElement = document.querySelector('input[name="projectType"]:checked');
-    if (selectedProjectTypeElement) {
-        const selectedProjectType = selectedProjectTypeElement.value;
-        if (selectedProjectType === 'Cash' || selectedProjectType === 'Finance') {
-            showSection('roofingTypeSection');
-        } else if (selectedProjectType === 'Insurance') {
-            showSection('insuranceInfoSection');
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    const button = document.getElementById('nextButton');
+    if (button) { // Add a null check to ensure the button exists
+        button.addEventListener('click', nextProjectTypeSection);
     } else {
-        console.error("No project type selected.");
-        alert("Please select a project type.");
+        console.error("No button with ID 'nextButton' found.");
     }
-}
-function navigateToRoofingTypeSection() {
-    const selectedRoofingType = document.querySelector('input[name="roofingType"]:checked');
-    if (selectedRoofingType) {
-        const roofingTypeValue = selectedRoofingType.value;
-        console.log(`Selected roofing type: ${roofingTypeValue}`);
-        if (roofingTypeValue === 'Asphalt Shingles') {
-            showSection('asphalt-shingle-section');
-        } else if (roofingTypeValue === 'Tile') {
-            showSection('tile-roofing-section');
-        } else if (roofingTypeValue === 'Modified Bitumen (Flat roof rolled roofing)') {
-            showSection('modified-bitumen-section');
-        } else if (roofingTypeValue === 'Flat Roof Coating') {
-            showSection('coating-section');
-        } else {
-            console.error('Unknown roofing type:', roofingTypeValue);
-        }
-    } else {
-        console.error('No roofing type selected');
-    }
-}
 
-
-let storedLocation = {};
-
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(storePosition, showError);
-    } else {
-        console.error("Geolocation is not supported by this browser.");
-    }
-}
-
-function storePosition(position) {
-    storedLocation.latitude = position.coords.latitude;
-    storedLocation.longitude = position.coords.longitude;
-    console.log('Location stored:', storedLocation);
-}
-
-function fetchAddressFromCoordinates(latitude, longitude) {
-    const geocodingAPI = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-    fetch(geocodingAPI)
-        .then(response => response.json())
-        .then(data => {
-            if (data && data.address) {
-                const address = `${data.address.house_number} ${data.address.road}, ${data.address.city}, ${data.address.state}, ${data.address.postcode}`;
-                document.getElementById('locationStatus').innerHTML = address;
-            } else {
-                console.error('Unable to fetch address:', data);
+    function nextProjectTypeSection() {
+        const selectedProjectTypeElement = document.querySelector('input[name="projectType"]:checked');
+        if (selectedProjectTypeElement) {
+            const selectedProjectType = selectedProjectTypeElement.value;
+            if (selectedProjectType === 'Cash' || selectedProjectType === 'Finance') {
+                showSection('roofingTypeSection');
+            } else if (selectedProjectType === 'Insurance') {
+                showSection('insuranceInfoSection');
             }
-        })
-        .catch(error => console.error('Error fetching address:', error));
-}
-
-function accessStoredLocation() {
-    if (storedLocation.latitude && storedLocation.longitude) {
-        fetchAddressFromCoordinates(storedLocation.latitude, storedLocation.longitude);
-    } else {
-        document.getElementById("locationStatus").innerHTML = "Location not available.";
+        } else {
+            console.error("No project type selected.");
+            alert("Please select a project type.");
+        }
     }
-}
 
-document.getElementById('accessLocationButton').addEventListener('click', function() {
-    getLocation(); // Ensure location request is triggered
-    accessStoredLocation();
-});
-
-function showError(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            console.error("User denied the request for Geolocation.");
-            break;
-        case error.POSITION_UNAVAILABLE:
-            console.error("Location information is unavailable.");
-            break;
-        case error.TIMEOUT:
-            console.error("The request to get user location timed out.");
-            break;
-        case error.UNKNOWN_ERROR:
-            console.error("An unknown error occurred.");
-            break;
+    function showSection(sectionId) {
+        console.log(`Navigating to section: ${sectionId}`);
+        const sections = document.querySelectorAll('div[id$="Section"]');
+        sections.forEach(section => {
+            section.style.display = (section.id === sectionId) ? 'block' : 'none';
+        });
     }
-}
 
-document.getElementById('estimateForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const formData = new FormData(this);
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key] = value;
-    });
+    function goBack() {
+        sectionHistory.pop(); // Remove the current section
+        const previousSection = sectionHistory[sectionHistory.length - 1]; // Get the previous section
+        showSection(previousSection); // Show the previous section
+    }
 
-    console.log('Form submitted successfully!', data);
+    const sectionHistory = ['salesRepSection']; // Initial section
+
+    showSection(sectionHistory[0]); // Show the initial section
 });
-
-showSection(currentSection); // Show the initial section
-     });
 
