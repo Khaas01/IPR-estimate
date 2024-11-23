@@ -1,170 +1,241 @@
-/* General Page Styles */
+/* Reset and Base Styles */
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
-    padding: 20px;
-    background-color: #f5f5f5;
+    padding: 0;
+    background-color: #ffffff;
+    color: #333;
+    line-height: 1.6;
 }
 
 /* Header Styles */
 header {
     text-align: center;
-    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
 }
 
-.logo {
-    max-width: 300px;
+header .logo {
+    max-width: 150px;
     height: auto;
+    margin-bottom: 10px;
 }
 
+/* Typography */
 h1 {
-    color: #333;
-    margin-top: 20px;
+    color: #0056b3;
+    font-size: 1.5em;
+    margin: 0;
+    font-weight: normal;
 }
 
 h2 {
-    color: #444;
-    margin-bottom: 20px;
+    color: #333;
+    border-bottom: 2px solid #0056b3;
+    padding-bottom: 10px;
+    font-weight: normal;
 }
 
 /* Form Container */
 form {
-    max-width: 800px;
+    max-width: 100%;
     margin: 0 auto;
-    background-color: white;
-    padding: 30px;
+    padding: 15px;
+    background: white;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Input Fields */
 .uniform-input {
     width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+    background-color: #fff;
     font-size: 16px;
 }
 
-/* Labels */
-label {
-    display: block;
-    margin: 10px 0 5px;
-    color: #333;
-    font-weight: bold;
+.uniform-input:focus {
+    border-color: #0056b3;
+    outline: none;
+    box-shadow: 0 0 15px rgba(0, 86, 179, 0.5);
 }
 
-/* Radio Button Groups */
-input[type="radio"] {
-    margin-right: 10px;
-    cursor: pointer;
+/* Select Input Styling */
+select.uniform-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"%3E%3Cpath fill="none" stroke="%23333" stroke-width="2" d="M3 6l4 4 4-4"%3E%3C/path%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px 8px;
 }
 
-/* Navigation Buttons Container */
-#navigationButtons {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
+/* Date Input Styling */
+input[type="date"].uniform-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 16px;
 }
 
 /* Button Styles */
 button {
-    padding: 10px 20px;
-    border-radius: 4px;
+    display: inline-block;
+    background-color: #0056b3;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     font-size: 16px;
-    min-width: 100px;
-    border: none;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
 }
 
-button[onclick*="goBack"], #backButton {
-    background-color: #0366d6;
-    color: white;
+button:hover {
+    background-color: #004494;
+    transform: translateY(-1px);
 }
 
-button[onclick*="goBack"]:hover, #backButton:hover {
-    background-color: #0256bd;
+button:active {
+    transform: translateY(0);
 }
 
-.submit-button {
-    background-color: #28a745;
-    color: white;
+/* Navigation Buttons */
+#navigationButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 10px;
 }
 
-.submit-button:hover {
-    background-color: #218838;
+#backButton {
+    display: none;
+    width: 48%;
 }
 
-/* Review Section Styles */
-.review-summary {
-    margin: 20px 0;
-    padding: 20px;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
+/* Radio Button Styles */
+input[type="radio"] {
+    margin-right: 10px;
+    vertical-align: middle;
+    cursor: pointer;
 }
 
-.review-header {
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #dee2e6;
-}
-
-.review-section {
-    margin: 15px 0;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-}
-
-.review-section h3 {
-    color: #495057;
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-.review-section p {
+label {
+    display: inline-block;
     margin: 5px 0;
-    color: #212529;
+    font-weight: normal;
 }
 
-/* Section Display */
-[id$="Section"], [id*="-section"] {
-    margin-bottom: 30px;
+.radio-group {
+    display: flex;
+    flex-direction: column;
 }
 
-/* Error States */
-.error {
-    color: #dc3545;
-    font-size: 14px;
-    margin-top: 5px;
+.radio-group label {
+    margin-bottom: 10px;
 }
 
-input.error {
-    border-color: #dc3545;
+/* Form Section Styles */
+.form-section {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
 }
 
-/* Responsive Design */
+.form-section .section-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.form-section .form-label {
+    font-size: 1.1em;
+    font-weight: normal;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.form-section .form-options {
+    margin-top: 10px;
+}
+
+.form-section .form-radio {
+    margin-right: 10px;
+}
+
+.form-section .form-option-label {
+    font-size: 1em;
+}
+
+/* Mobile-first Media Queries */
 @media (max-width: 600px) {
-    body {
-        padding: 10px;
+    h1 {
+        font-size: 1.5em;
     }
 
     form {
         padding: 15px;
     }
 
-    .logo {
-        max-width: 200px;
+    button {
+        padding: 10px;
     }
 
     #navigationButtons {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
     }
 
-    button {
-        width: 100%;
+    #navigationButtons button {
+        width: 48%;
+        margin-bottom: 0;
+    }
+
+    #backButton {
+        display: block;
+    }
+}
+
+/* Larger Screen Media Queries */
+@media (min-width: 601px) {
+    header .logo {
+        max-width: 200px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    form {
+        max-width: 600px;
+    }
+
+    #navigationButtons {
+        flex-direction: row;
+    }
+
+    #navigationButtons button {
+        width: 48%;
+    }
+
+    #backButton {
+        display: inline-block;
     }
 }
