@@ -145,7 +145,48 @@ button {
 input.error {
     border-color: #dc3545;
 }
+/* Navigation Buttons Container */
+#navigationButtons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center; /* Ensures buttons align properly */
+}
 
+/* Standard Button Base Styles */
+button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    min-width: 100px;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+/* Back Button Specific Styles */
+button[onclick*="goBack"], #backButton {
+    background-color: #0366d6; /* GitHub blue color */
+    color: white;
+    min-width: 100px; /* Consistent width */
+    max-width: 150px; /* Prevent excessive width */
+}
+
+button[onclick*="goBack"]:hover, #backButton:hover {
+    background-color: #0256bd; /* Darker blue on hover */
+}
+
+/* Submit Button Styles */
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    min-width: 100px;
+    max-width: 150px;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
 /* Responsive Design */
 @media (max-width: 600px) {
     body {
