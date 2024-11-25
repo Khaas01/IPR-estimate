@@ -83,7 +83,7 @@ function nextProjectTypeSection() {
     switch(selectedProjectType.value) {
         case 'Cash':
         case 'Finance':
-            showSection('roofingTypeSection');
+            showSection('measureRoofSection');
             break;
         case 'Insurance':
             showSection('insuranceInfoSection');
