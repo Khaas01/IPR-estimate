@@ -546,6 +546,88 @@ async function main() {
 }
 
 
+
+
+
+
+
+async function submitForm() {
+    try {
+        const formData = {
+            salesRepName: document.getElementById('salesRepName').value,
+            salesRepEmail: document.getElementById('salesRepEmail').value,
+            salesRepPhone: document.getElementById('salesRepPhone').value,
+            companyName: document.getElementById('companyName').value,
+            ownerName: document.getElementById('ownerName').value,
+            ownerAddress: document.getElementById('ownerAddress').value,
+            ownerCity: document.getElementById('ownerCity').value,
+            ownerState: document.getElementById('ownerState').value,
+            ownerZip: document.getElementById('ownerZip').value,
+            ownerPhone: document.getElementById('ownerPhone').value,
+            ownerEmail: document.getElementById('ownerEmail').value,
+            projectType: document.querySelector('input[name="projectType"]:checked')?.value,
+            insuranceCompany: document.getElementById('insuranceCompany')?.value,
+            insurancePhone: document.getElementById('insurancePhone')?.value,
+            claimNumber: document.getElementById('claimNumber')?.value,
+            policyNumber: document.getElementById('policyNumber')?.value,
+            dateOfLoss: document.getElementById('dateOfLoss')?.value,
+            roofingType: document.querySelector('input[name="roofingType"]:checked')?.value,
+            shingleType: document.querySelector('input[name="shingleType"]:checked')?.value,
+            shinglesRepaired: document.getElementById('shingles-repaired')?.value,
+            repairAnythingElse: document.getElementById('repair-anything-else')?.value,
+            additionalCharges: document.getElementById('additional-charges')?.value,
+            shingleReplacement: document.getElementById('shingle-replacement')?.value,
+            tileRoofingType: document.querySelector('input[name="tile-roofing-type"]:checked')?.value,
+            tileRepairSq: document.getElementById('tile-repair-sq')?.value,
+            tileUnderlaymentSq: document.getElementById('tile-underlayment-sq')?.value,
+            tileType: document.querySelector('input[name="tile-type"]:checked')?.value,
+            tileRoofRr: document.getElementById('tile-roof-rr')?.value,
+            modifiedBitumenSq: document.getElementById('modified-bitumen-sq')?.value,
+            coatingSquares: document.getElementById('coating-squares')?.value,
+            secondaryRoof: document.querySelector('input[name="secondary-roof"]:checked')?.value,
+            secondaryRoofingType: document.querySelector('input[name="secondary-roofing-type"]:checked')?.value,
+            secondaryShinglesSquares: document.getElementById('shingles-squares')?.value,
+            secondaryTileUnderlaymentSquares: document.getElementById('tile-underlayment-squares')?.value,
+            secondaryModifiedBitumenSquares: document.getElementById('modified-bitumen-squares')?.value,
+            secondaryCoatingSquares: document.getElementById('coating-squares')?.value,
+            thirdRoof: document.querySelector('input[name="third-roof"]:checked')?.value,
+            thirdRoofStyle: document.querySelector('input[name="third-roof-style"]:checked')?.value,
+            thirdShinglesSquares: document.getElementById('shingles-squares')?.value,
+            thirdTilesSquares: document.getElementById('tiles-squares')?.value,
+            thirdModifiedSquares: document.getElementById('modified-squares')?.value,
+            thirdCoatingsSquares: document.getElementById('coatings-squares')?.value,
+            additionalCharges: document.querySelector('input[name="additional-charges"]:checked')?.value,
+            additionalChargesDescription: document.getElementById('additional-charges-description')?.value,
+            additionalChargesPrice: document.getElementById('additional-charges-price')?.value,
+            solar: document.querySelector('input[name="solar"]:checked')?.value,
+            solarDetachReset: document.getElementById('solar-detach-reset')?.value
+        };
+
+        // Replace with your deployed Google Apps Script URL
+        const response = await fetch('https://script.google.com/u/0/home/projects/1WRS_9Klv6vck-GmhoAKZ_AX6oJx6CcCRwKeBWVp06ii1wmlmoEvJWhtD/edit', {
+            method: 'POST',
+            body: JSON.stringify(formData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+        if (result.status === 'success') {
+            alert('Form submitted successfully!');
+            document.getElementById('estimateForm').reset();
+            showSection('salesRepSection');
+        } else {
+            throw new Error('Form submission failed');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error submitting form. Please try again.');
+    }
+}
+
+
 main().catch(console.error);
 // Initialize the form
 document.addEventListener('DOMContentLoaded', function() {
