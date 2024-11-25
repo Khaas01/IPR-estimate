@@ -10,7 +10,7 @@
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
-    Version 78
+    Version 79
 
 </header>
 
@@ -66,11 +66,26 @@
     <!-- Navigation Buttons -->
     <div id="navigationButtons">
       <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('measureRoofSection')">Next</button>
+    </div>
+    </div>
+
+   <!-- Measure the Roof Section -->
+    <div id="measureRoofSection" style="display:none;">
+        <h2>Measure the Roof</h2>
+        <p>
+            Use the tool below to measure the roof area. Follow the instructions on the website to accurately outline and calculate the roof dimensions.<br>
+            Click "get started" below.
+        </p>
+        <iframe 
+            src="https://www.oneclickestimate.com" 
+            style="width:100%; height:500px; border:0;" 
+            title="Roof Measurement Tool" id="measurementToolIframe"></iframe>
+      <div id="navigationButtons">
+      <button type="button" id="backButton" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('projectTypeSection')">Next</button>
     </div>
     </div>
-
-
  <!-- Project Type Section -->
 <div id="projectTypeSection" style="display:none;">
     <h2>Project Type</h2>
@@ -140,20 +155,6 @@
         <button type="button" onclick="navigateFromRoofingType()">Next</button>
     </div>
 </div>
-
-     <!-- Measure the Roof Section -->
-    <div id="measureRoofSection" style="display:none;">
-        <h2>Measure the Roof</h2>
-        <p>
-            Use the tool below to measure the roof area. Follow the instructions on the website to accurately outline and calculate the roof dimensions.<br>
-            Click "get started" below.
-        </p>
-        <iframe 
-            src="https://www.oneclickestimate.com" 
-            style="width:100%; height:500px; border:0;" 
-            title="Roof Measurement Tool" id="measurementToolIframe"></iframe>
-      
-    </div>
 
 
 
