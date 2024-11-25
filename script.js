@@ -482,7 +482,71 @@ window.handleFormSubmit = handleFormSubmit;
 window.submitForm = submitForm;
 window.displayReview = displayReview;
 
+const { google } = require('googleapis');
+const sheets = google.sheets('v4');
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
+const driveFileUrl = 'https://drive.google.com/uc?export=download&id=1GWYWz_m9tioH0y__3urwUbQQT87USAiR'; // replace YOUR_FILE_ID with the actual file ID
+async function downloadServiceAccountFile(url, outputPath) {
+  const response = await axios({
+    url,
+    method: 'GET',
+    responseType: 'stream',
+  });
+
+  return new Promise((resolve, reject) => {
+    const writer = fs.createWriteStream(outputPath);
+    response.data.pipe(writer);
+    writer.on('finish', resolve);
+    writer.on('error', reject);
+  });
+}
+
+async function main() {
+  const serviceAccountPath = path.join(__dirname, 'service-account-file.json');
+
+  // Download the service account file
+  await downloadServiceAccountFile(driveFileUrl, serviceAccountPath);
+
+  // Authenticate with Google Sheets API
+  const auth = await google.auth.getClient({
+    keyFile: serviceAccountPath,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+
+  const sheetsApi = google.sheets({ version: 'v4', auth });
+
+  // Define the ID of the Google Sheet and the data to be inserted
+  const spreadsheetId = '1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw';
+  const range = 'Sheet1!A1';
+  const valueInputOption = 'RAW';
+  const data = [
+    ["salesRepSection", "salesRepName", "salesRepEmail", "salesRepPhone", "companySection", "companyName", "propertyOwnerSection", "ownerName", "ownerAddress", "ownerCity", "ownerState", "ownerZip", "ownerPhone", "ownerEmail", "projectTypeSection", "projectType", "insuranceInfoSection", "insuranceCompany", "insurancePhone", "claimNumber", "policyNumber", "dateOfLoss", "roofingTypeSection", "roofingType", "asphalt-shingle-section", "shingleType", "shingle-repair-section", "shingles-repaired", "repair-anything-else", "additional-charges", "shingle-replacement-section", "shingle-replacement", "tile-roofing-section", "tile-roofing-type", "tile-repair-section", "tile-repair-sq", "tile-underlayment-section", "tile-underlayment-sq", "tile-remove-replace-section", "tile-type", "tile-roof-rr", "tile-roof-rr-section", "tile-roof-rr", "modified-bitumen-section", "modified-bitumen-sq", "coating-section", "coating-squares", "secondary-roof-section", "secondary-roof", "secondary-roofing-type-section", "secondary-roofing-type", "secondary-roof-type-shingles-section", "shingles-squares", "secondary-roof-type-tile-section", "tile-underlayment-squares", "secondary-roof-type-modified-bitumen-section", "modified-bitumen-squares", "secondary-roof-type-coating-section", "coating-squares", "third-roof-type-section", "third-roof (third-roof-yes, third-roof-no)", "third-roof-type-style-section", "third-roof-style (third-roof-style-shingles, third-roof-style-tile, third-roof-style-modified, third-roof-style-coating)", "third-roof-type-shingles-section", "shingles-squares", "third-roof-type-tiles-section", "tiles-squares", "third-roof-type-modified-section", "modified-squares", "third-roof-type-coatings-section", "coatings-squares", "additional-charges-section", "additional-charges (additional-charges-yes, additional-charges-no)", "additional-charges-description-section", "additional-charges-description", "additional-charges-price-section", "additional-charges-price", "solar-section", "solar (solar-yes, solar-no)", "solar-detach-reset-section", "solar-detach-reset"]
+  ];
+
+  // Prepare the request body
+  const resource = {
+    values: data
+  };
+
+  // Use the Google Sheets API to update the sheet with the prepared data
+  try {
+    const response = await sheetsApi.spreadsheets.values.append({
+      spreadsheetId,
+      range,
+      valueInputOption,
+      resource
+    });
+    console.log(`${response.data.updates.updatedCells} cells updated.`);
+  } catch (err) {
+    console.error('The API returned an error:', err);
+  }
+}
+
+
+main().catch(console.error);
 // Initialize the form
 document.addEventListener('DOMContentLoaded', function() {
     hideAllSections();
