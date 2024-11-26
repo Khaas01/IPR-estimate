@@ -1,7 +1,7 @@
 // Part 1: Core Navigation and Section Management
 
 // Constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwiQgMmO-aCw_8l7IEMrgVscNfu9xEH5aOm4iWzb1AWKuN3VMsvJwtMrnL0V2GO1-Qt/exec'; // Add your deployment URL here
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqPc8XX3zblx1ykvKK3lQQ9yLgbRnlMTUkYp9YN8gVQe5bqMoOQv9ZxGEnLtPZO3Oq/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
@@ -517,6 +517,36 @@ async function submitForm(event) {
         if (!validateForm(formData.data)) {
             return;
         }
+// Create a hidden form
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'https://script.google.com/macros/s/AKfycbxqPc8XX3zblx1ykvKK3lQQ9yLgbRnlMTUkYp9YN8gVQe5bqMoOQv9ZxGEnLtPZO3Oq/exec';
+        form.target = '_blank'; // This will open response in new tab
+        
+        // Add form data as hidden input
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = 'data';
+        hiddenField.value = JSON.stringify(formData);
+        form.appendChild(hiddenField);
+
+        // Add form to body and submit
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+
+        // Show success message
+        alert('Form submitted successfully! Check the new tab for confirmation.');
+        
+        // Reset form and return to first section
+        document.getElementById('estimateForm').reset();
+        showSection('salesRepSection');
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error submitting form. Please try again.');
+    }
+}
 
         // Confirm submission
         const confirmSubmit = confirm('Are you sure you want to submit this estimate?');
@@ -525,7 +555,7 @@ async function submitForm(event) {
         }
 
         // Submit to Google Apps Script
-        const response = await fetch('https://script.google.com/macros/s/AKfycbwiQgMmO-aCw_8l7IEMrgVscNfu9xEH5aOm4iWzb1AWKuN3VMsvJwtMrnL0V2GO1-Qt/exec', {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbxqPc8XX3zblx1ykvKK3lQQ9yLgbRnlMTUkYp9YN8gVQe5bqMoOQv9ZxGEnLtPZO3Oq/exec', {
             method: 'POST',
             mode: 'cors',
             headers: {
