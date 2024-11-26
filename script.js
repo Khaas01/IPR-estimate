@@ -94,8 +94,6 @@ document.addEventListener('DOMContentLoaded', function() {
     showSection(sectionHistory[0]);
 });
 
-
-
 // Add the missing navigation functions
 function nextProjectTypeSection() {
     const selectedProjectType = document.querySelector('input[name="projectType"]:checked');
@@ -127,27 +125,6 @@ const formMetadata = {
         return new Date().toISOString();
     }
 };
-
-// Project Type Navigation
-function nextProjectTypeSection() {
-    const selectedProjectType = document.querySelector('input[name="projectType"]:checked');
-    if (!selectedProjectType) {
-        alert("Please select a project type.");
-        return;
-    }
-    
-    switch(selectedProjectType.value) {
-        case 'Cash':
-        case 'Finance':
-            showSection('measureRoofSection');
-            break;
-        case 'Insurance':
-            showSection('insuranceInfoSection');
-            break;
-        default:
-            console.error("Unknown project type selected");
-    }
-}
 
 // Roofing Type Navigation
 function navigateFromRoofingType() {
@@ -359,6 +336,7 @@ function navigateFromSolar() {
             console.error("Unknown selection for solar panels");
     }
 }
+
 // Add this function before your submitForm function
 function validateForm(formData) {
     // Required fields validation
@@ -433,7 +411,6 @@ function validateForm(formData) {
     // If all validations pass
     return true;
 }
-
 
 function submitForm(event) {
     if (event) {
@@ -532,29 +509,17 @@ function submitForm(event) {
             }
         };
 
+    // Create a hidden input for the JSON data
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = 'data';
+    hiddenInput.value = JSON.stringify(formData);
+    submitForm.appendChild(hiddenInput);
 
-        // Submit to Google Apps Script
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxeO9xNEUtPJfiZFBzJDoy66_8HH937K_N0yK6Vyayao9IfrhTBb_bV4mjKyPsbKbKq/exec', {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const result = await response.json();
-        if (result.status === 'success') {
-            alert('Form submitted successfully!');
-            document.getElementById('estimateForm').reset();
-            showSection('salesRepSection');
-        } else {
-            throw new Error(result.message || 'Form submission failed');
-        }
+    // Create hidden iframe
+    let iframe = document.getElementById('hidden_iframe'); 
+    
+    
     } catch (error) {
         console.error('Error:', error);
         alert('Error submitting form. Please try again.');
