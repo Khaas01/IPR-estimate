@@ -1,7 +1,7 @@
 // Part 1: Core Navigation and Section Management
 
 // Constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/u/0/home/projects/1WRS_9Klv6vck-GmhoAKZ_AX6oJx6CcCRwKeBWVp06ii1wmlmoEvJWhtD/edit'; // Add your deployment URL here
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxTZk9_6Y0TL7rN1zIv435uMtVi8XgKGEg123JvZ5-Nudo3jW_XBxogjcCFR5gS9LOV/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
