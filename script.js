@@ -435,19 +435,27 @@ function validateForm(formData) {
 }
 
 
-async function submitForm(event) {
+function submitForm(event) {
     if (event) {
         event.preventDefault();
     }
 
-    try {
-        // Collect form data with metadata
-        const formData = {
-            metadata: {
-                submittedAt: '2024-11-25 23:51:06',
-                submittedBy: 'Khaas01'
-            },
-            data: {
+    // First confirm submission
+    if (!confirm('Are you sure you want to submit this estimate?')) {
+        return;
+    }
+
+    // Create the form element
+    const submitForm = document.createElement('form');
+    submitForm.setAttribute('method', 'POST');
+    submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbwiQgMmO-aCw_8l7IEMrgVscNfu9xEH5aOm4iWzb1AWKuN3VMsvJwtMrnL0V2GO1-Qt/exec');
+    submitForm.setAttribute('target', 'hidden_iframe');
+
+    // Create all your form data
+    const formData = {
+        timestamp: '2024-11-26 23:28:15',
+        userLogin: 'Khaas01',
+        data: {
                 // Sales Representative Information
                 salesRepName: document.getElementById('salesRepName').value,
                 salesRepEmail: document.getElementById('salesRepEmail').value,
@@ -524,47 +532,27 @@ async function submitForm(event) {
             }
         };
 
-  // Validate form data
-        if (!validateForm(formData.data)) {
-            return;
-        }
-// Create a hidden form
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'https://script.google.com/macros/s/AKfycbxeO9xNEUtPJfiZFBzJDoy66_8HH937K_N0yK6Vyayao9IfrhTBb_bV4mjKyPsbKbKq/exec';
-        form.target = '_blank'; // This will open response in new tab
-        
-        // Add form data as hidden input
-        const hiddenField = document.createElement('input');
-        hiddenField.type = 'hidden';
-        hiddenField.name = 'data';
-        hiddenField.value = JSON.stringify(formData);
-        form.appendChild(hiddenField);
-
-        // Add form to body and submit
-        document.body.appendChild(form);
-        form.submit();
-        document.body.removeChild(form);
-
-        // Show success message
-        alert('Form submitted successfully! Check the new tab for confirmation.');
-        
-        // Reset form and return to first section
-        document.getElementById('estimateForm').reset();
-        showSection('salesRepSection');
-
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error submitting form. Please try again.');
+ function submitForm(event) {
+    if (event) {
+        event.preventDefault();
     }
-}
 
-        // Confirm submission
-        const confirmSubmit = confirm('Are you sure you want to submit this estimate?');
-        if (!confirmSubmit) {
-            return;
-        }
+    // First confirm submission
+    if (!confirm('Are you sure you want to submit this estimate?')) {
+        return;
+    }
 
+    // Create the form element
+    const submitForm = document.createElement('form');
+    submitForm.setAttribute('method', 'POST');
+    submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbwiQgMmO-aCw_8l7IEMrgVscNfu9xEH5aOm4iWzb1AWKuN3VMsvJwtMrnL0V2GO1-Qt/exec');
+    submitForm.setAttribute('target', 'hidden_iframe');
+
+    // Create all your form data
+    const formData = {
+        timestamp: '2024-11-26 23:28:15',
+        userLogin: 'Khaas01',
+        data: {
         // Submit to Google Apps Script
         const response = await fetch('https://script.google.com/macros/s/AKfycbxeO9xNEUtPJfiZFBzJDoy66_8HH937K_N0yK6Vyayao9IfrhTBb_bV4mjKyPsbKbKq/exec', {
             method: 'POST',
