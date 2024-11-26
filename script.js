@@ -1,7 +1,7 @@
 // Part 1: Core Navigation and Section Management
 
 // Constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxTZk9_6Y0TL7rN1zIv435uMtVi8XgKGEg123JvZ5-Nudo3jW_XBxogjcCFR5gS9LOV/exec'; // Add your deployment URL here
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwiQgMmO-aCw_8l7IEMrgVscNfu9xEH5aOm4iWzb1AWKuN3VMsvJwtMrnL0V2GO1-Qt/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
@@ -525,8 +525,9 @@ async function submitForm(event) {
         }
 
         // Submit to Google Apps Script
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxTZk9_6Y0TL7rN1zIv435uMtVi8XgKGEg123JvZ5-Nudo3jW_XBxogjcCFR5gS9LOV/exec', {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbwiQgMmO-aCw_8l7IEMrgVscNfu9xEH5aOm4iWzb1AWKuN3VMsvJwtMrnL0V2GO1-Qt/exec', {
             method: 'POST',
+            mode: 'cors'
             headers: {
                 'Content-Type': 'application/json',
             },
