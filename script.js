@@ -1,9 +1,20 @@
 // Part 1: Core Navigation and Section Management
 
 // Constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqPc8XX3zblx1ykvKK3lQQ9yLgbRnlMTUkYp9YN8gVQe5bqMoOQv9ZxGEnLtPZO3Oq/exec'; // Add your deployment URL here
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxeO9xNEUtPJfiZFBzJDoy66_8HH937K_N0yK6Vyayao9IfrhTBb_bV4mjKyPsbKbKq/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
+
+// Add this near the top of your script.js file
+window.addEventListener('message', function(event) {
+    if (event.data === 'success') {
+        alert('Form submitted successfully!');
+        document.getElementById('estimateForm').reset();
+        showSection('salesRepSection');
+    } else if (event.data.startsWith('error:')) {
+        alert('Error submitting form: ' + event.data.substring(6));
+    }
+});
 
 // List of all sections in order
 const sections = [
@@ -520,7 +531,7 @@ async function submitForm(event) {
 // Create a hidden form
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = 'https://script.google.com/macros/s/AKfycbxqPc8XX3zblx1ykvKK3lQQ9yLgbRnlMTUkYp9YN8gVQe5bqMoOQv9ZxGEnLtPZO3Oq/exec';
+        form.action = 'https://script.google.com/macros/s/AKfycbxeO9xNEUtPJfiZFBzJDoy66_8HH937K_N0yK6Vyayao9IfrhTBb_bV4mjKyPsbKbKq/exec';
         form.target = '_blank'; // This will open response in new tab
         
         // Add form data as hidden input
@@ -555,7 +566,7 @@ async function submitForm(event) {
         }
 
         // Submit to Google Apps Script
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxqPc8XX3zblx1ykvKK3lQQ9yLgbRnlMTUkYp9YN8gVQe5bqMoOQv9ZxGEnLtPZO3Oq/exec', {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbxeO9xNEUtPJfiZFBzJDoy66_8HH937K_N0yK6Vyayao9IfrhTBb_bV4mjKyPsbKbKq/exec', {
             method: 'POST',
             mode: 'cors',
             headers: {
