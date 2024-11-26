@@ -1,0 +1,19 @@
+# Environment variables
+.env
+
+# Google Service Account
+service-account-file.json
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
