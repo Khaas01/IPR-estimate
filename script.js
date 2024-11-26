@@ -532,27 +532,7 @@ function submitForm(event) {
             }
         };
 
- function submitForm(event) {
-    if (event) {
-        event.preventDefault();
-    }
 
-    // First confirm submission
-    if (!confirm('Are you sure you want to submit this estimate?')) {
-        return;
-    }
-
-    // Create the form element
-    const submitForm = document.createElement('form');
-    submitForm.setAttribute('method', 'POST');
-    submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbwiQgMmO-aCw_8l7IEMrgVscNfu9xEH5aOm4iWzb1AWKuN3VMsvJwtMrnL0V2GO1-Qt/exec');
-    submitForm.setAttribute('target', 'hidden_iframe');
-
-    // Create all your form data
-    const formData = {
-        timestamp: '2024-11-26 23:28:15',
-        userLogin: 'Khaas01',
-        data: {
         // Submit to Google Apps Script
         const response = await fetch('https://script.google.com/macros/s/AKfycbxeO9xNEUtPJfiZFBzJDoy66_8HH937K_N0yK6Vyayao9IfrhTBb_bV4mjKyPsbKbKq/exec', {
             method: 'POST',
