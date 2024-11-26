@@ -475,114 +475,14 @@ async function submitForm(event) {
     }
 }
 
-async function submitForm(event) {
-    if (event) {
-        event.preventDefault();
-    }
 
-    try {
-        // Collect form data with metadata
-        const formData = {
-            metadata: {
-                submittedAt: '2024-11-25 23:51:06',
-                submittedBy: 'Khaas01'
-            },
-            data: {
-                // Sales Representative Information
-                salesRepName: document.getElementById('salesRepName').value,
-                salesRepEmail: document.getElementById('salesRepEmail').value,
-                salesRepPhone: document.getElementById('salesRepPhone').value,
-                
-                // Company Information
-                companyName: document.getElementById('companyName').value,
-                
-                // Property Owner Information
-                ownerName: document.getElementById('ownerName').value,
-                ownerAddress: document.getElementById('ownerAddress').value,
-                ownerCity: document.getElementById('ownerCity').value,
-                ownerState: document.getElementById('ownerState').value,
-                ownerZip: document.getElementById('ownerZip').value,
-                ownerPhone: document.getElementById('ownerPhone').value,
-                ownerEmail: document.getElementById('ownerEmail').value,
-                
-                // Project Type Information
-                projectType: document.querySelector('input[name="projectType"]:checked')?.value,
-                
-                // Insurance Information
-                insuranceCompany: document.getElementById('insuranceCompany')?.value,
-                insurancePhone: document.getElementById('insurancePhone')?.value,
-                claimNumber: document.getElementById('claimNumber')?.value,
-                policyNumber: document.getElementById('policyNumber')?.value,
-                dateOfLoss: document.getElementById('dateOfLoss')?.value,
-                
-                // Roofing Type Information
-                roofingType: document.querySelector('input[name="roofingType"]:checked')?.value,
-                
-                // Shingle Information
-                shingleType: document.querySelector('input[name="shingleType"]:checked')?.value,
-                shinglesRepaired: document.getElementById('shingles-repaired')?.value,
-                repairAnythingElse: document.getElementById('repair-anything-else')?.value,
-                shingleReplacement: document.getElementById('shingle-replacement')?.value,
-                
-                // Tile Roofing Information
-                tileRoofingType: document.querySelector('input[name="tile-roofing-type"]:checked')?.value,
-                tileRepairSq: document.getElementById('tile-repair-sq')?.value,
-                tileUnderlaymentSq: document.getElementById('tile-underlayment-sq')?.value,
-                tileType: document.querySelector('input[name="tile-type"]:checked')?.value,
-                tileRoofRr: document.getElementById('tile-roof-rr')?.value,
-                
-                // Modified Bitumen Information
-                modifiedBitumenSq: document.getElementById('modified-bitumen-sq')?.value,
-                
-                // Coating Information
-                coatingSquares: document.getElementById('coating-squares')?.value,
-                
-                // Secondary Roof Information
-                secondaryRoof: document.querySelector('input[name="secondary-roof"]:checked')?.value,
-                secondaryRoofingType: document.querySelector('input[name="secondary-roofing-type"]:checked')?.value,
-                secondaryShinglesSquares: document.getElementById('shingles-squares')?.value,
-                secondaryTileUnderlaymentSquares: document.getElementById('tile-underlayment-squares')?.value,
-                secondaryModifiedBitumenSquares: document.getElementById('modified-bitumen-squares')?.value,
-                secondaryCoatingSquares: document.getElementById('coating-squares')?.value,
-                
-                // Third Roof Information
-                thirdRoof: document.querySelector('input[name="third-roof"]:checked')?.value,
-                thirdRoofStyle: document.querySelector('input[name="third-roof-style"]:checked')?.value,
-                thirdShinglesSquares: document.getElementById('shingles-squares')?.value,
-                thirdTilesSquares: document.getElementById('tiles-squares')?.value,
-                thirdModifiedSquares: document.getElementById('modified-squares')?.value,
-                thirdCoatingsSquares: document.getElementById('coatings-squares')?.value,
-                
-                // Additional Charges Information
-                additionalCharges: document.querySelector('input[name="additional-charges"]:checked')?.value,
-                additionalChargesDescription: document.getElementById('additional-charges-description')?.value,
-                additionalChargesPrice: document.getElementById('additional-charges-price')?.value,
-                
-                // Solar Panel Information
-                solar: document.querySelector('input[name="solar"]:checked')?.value,
-                solarDetachReset: document.getElementById('solar-detach-reset')?.value
-            }
-        };
-
-        // Validate form data
-        if (!validateForm(formData.data)) {
-            return;
-        }
-
-        // Confirm submission
-        const confirmSubmit = confirm('Are you sure you want to submit this estimate?');
-        if (!confirmSubmit) {
-            return;
-        }
-
-        // Submit to Google Apps Script
-        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxGUtLwtu4mlMWhtFlcMLR_b2Sr3jSjeuAM5YteJwaYI2JzLNlyPZWLycIKwQS0yCl0/exec', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData)
+});
 
         if (!response.ok) {
             throw new Error('Network response was not ok');
