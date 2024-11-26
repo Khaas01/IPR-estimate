@@ -437,7 +437,7 @@ async function submitForm(event) {
             }
         };
 
-        // Validate form data
+  // Validate form data
         if (!validateForm(formData.data)) {
             return;
         }
@@ -449,7 +449,7 @@ async function submitForm(event) {
         }
 
         // Submit to Google Apps Script
-        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbxGUtLwtu4mlMWhtFlcMLR_b2Sr3jSjeuAM5YteJwaYI2JzLNlyPZWLycIKwQS0yCl0/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
