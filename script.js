@@ -476,31 +476,6 @@ async function submitForm(event) {
 }
 
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbxGUtLwtu4mlMWhtFlcMLR_b2Sr3jSjeuAM5YteJwaYI2JzLNlyPZWLycIKwQS0yCl0/exec', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(formData)
-});
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const result = await response.json();
-        if (result.status === 'success') {
-            alert('Form submitted successfully!');
-            document.getElementById('estimateForm').reset();
-            showSection('salesRepSection');
-        } else {
-            throw new Error(result.message || 'Form submission failed');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error submitting form. Please try again.');
-    }
-}
 function displayReview() {
     const timestamp = '2024-11-25 23:57:07';
     const userLogin = 'Khaas01';
