@@ -527,7 +527,7 @@ async function submitForm(event) {
         // Submit to Google Apps Script
         const response = await fetch('https://script.google.com/macros/s/AKfycbwiQgMmO-aCw_8l7IEMrgVscNfu9xEH5aOm4iWzb1AWKuN3VMsvJwtMrnL0V2GO1-Qt/exec', {
             method: 'POST',
-            mode: 'cors'
+            mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
             },
