@@ -525,7 +525,7 @@ async function submitForm(event) {
         }
 
         // Submit to Google Apps Script
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxGUtLwtu4mlMWhtFlcMLR_b2Sr3jSjeuAM5YteJwaYI2JzLNlyPZWLycIKwQS0yCl0/exec', {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbxTZk9_6Y0TL7rN1zIv435uMtVi8XgKGEg123JvZ5-Nudo3jW_XBxogjcCFR5gS9LOV/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
