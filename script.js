@@ -696,7 +696,6 @@ function displayReview() {
     reviewSection.innerHTML = '';
     reviewSection.appendChild(reviewContent);
 }
-main().catch(console.error);
 // Initialize the form
 document.addEventListener('DOMContentLoaded', function() {
     hideAllSections();
