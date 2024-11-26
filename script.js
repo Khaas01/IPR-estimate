@@ -1,6 +1,11 @@
+// Part 1: Core Navigation and Section Management
+
+// Constants
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/u/0/home/projects/1WRS_9Klv6vck-GmhoAKZ_AX6oJx6CcCRwKeBWVp06ii1wmlmoEvJWhtD/edit'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
+// List of all sections in order
 const sections = [
     'salesRepSection',
     'companySection',
@@ -36,10 +41,10 @@ const sections = [
     'additional-charges-price-section',
     'solar-section',
     'solar-detach-reset-section',
-    'review-section' 
+    'review-section'
 ];
 
-// Helper function to hide all sections
+// Core navigation functions
 function hideAllSections() {
     document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
         section.style.display = 'none';
@@ -72,6 +77,14 @@ function goBack() {
     }
 }
 
+// Initialize form on page load
+document.addEventListener('DOMContentLoaded', function() {
+    hideAllSections();
+    showSection(sectionHistory[0]);
+});
+
+
+
 // Add the missing navigation functions
 function nextProjectTypeSection() {
     const selectedProjectType = document.querySelector('input[name="projectType"]:checked');
@@ -93,6 +106,39 @@ function nextProjectTypeSection() {
     }
 }
 
+// Part 2: Section-specific Navigation Functions and Metadata Handling
+
+// Metadata handling
+const formMetadata = {
+    timestamp: '2024-11-25 23:47:09',
+    userLogin: 'Khaas01',
+    getTimestamp: function() {
+        return new Date().toISOString();
+    }
+};
+
+// Project Type Navigation
+function nextProjectTypeSection() {
+    const selectedProjectType = document.querySelector('input[name="projectType"]:checked');
+    if (!selectedProjectType) {
+        alert("Please select a project type.");
+        return;
+    }
+    
+    switch(selectedProjectType.value) {
+        case 'Cash':
+        case 'Finance':
+            showSection('measureRoofSection');
+            break;
+        case 'Insurance':
+            showSection('insuranceInfoSection');
+            break;
+        default:
+            console.error("Unknown project type selected");
+    }
+}
+
+// Roofing Type Navigation
 function navigateFromRoofingType() {
     const selectedRoofingType = document.querySelector('input[name="roofingType"]:checked');
     
@@ -119,6 +165,7 @@ function navigateFromRoofingType() {
     }
 }
 
+// Shingle Type Navigation
 function navigateFromShingleType() {
     const selectedShingleType = document.querySelector('input[name="shingleType"]:checked');
     
@@ -139,6 +186,31 @@ function navigateFromShingleType() {
     }
 }
 
+// Tile Roofing Navigation
+function navigateFromTileRoofingType() {
+    const selectedTileType = document.querySelector('input[name="tile-roofing-type"]:checked');
+    
+    if (!selectedTileType) {
+        alert("Please select a tile roofing type.");
+        return;
+    }
+
+    switch(selectedTileType.value) {
+        case 'Repair/Partial Roof':
+            showSection('tile-repair-section');
+            break;
+        case 'Underlayment Replacement':
+            showSection('tile-underlayment-section');
+            break;
+        case 'Remove and Replace':
+            showSection('tile-remove-replace-section');
+            break;
+        default:
+            console.error("Unknown tile roofing type selected");
+    }
+}
+
+// Secondary Roof Navigation
 function navigateFromSecondaryRoof() {
     const selectedOption = document.querySelector('input[name="secondary-roof"]:checked');
     
@@ -159,25 +231,7 @@ function navigateFromSecondaryRoof() {
     }
 }
 
-function navigateFromAdditionalCharges() {
-    const selectedOption = document.querySelector('input[name="additional-charges"]:checked');
-    
-    if (!selectedOption) {
-        alert("Please select Yes or No.");
-        return;
-    }
-
-    switch(selectedOption.value) {
-        case 'Yes':
-            showSection('additional-charges-description-section');
-            break;
-        case 'No':
-            showSection('solar-section');
-            break;
-        default:
-            console.error("Unknown selection for additional charges");
-    }
-}
+// Secondary Roofing Type Navigation
 function navigateFromSecondaryRoofingType() {
     const selectedRoofingType = document.querySelector('input[name="secondary-roofing-type"]:checked');
     
@@ -204,29 +258,7 @@ function navigateFromSecondaryRoofingType() {
     }
 }
 
-function navigateFromTileRoofingType() {
-    const selectedTileType = document.querySelector('input[name="tile-roofing-type"]:checked');
-    
-    if (!selectedTileType) {
-        alert("Please select a tile roofing type.");
-        return;
-    }
-
-    switch(selectedTileType.value) {
-        case 'Repair/Partial Roof':
-            showSection('tile-repair-section');
-            break;
-        case 'Underlayment Replacement':
-            showSection('tile-underlayment-section');
-            break;
-        case 'Remove and Replace':
-            showSection('tile-remove-replace-section');
-            break;
-        default:
-            console.error("Unknown tile roofing type selected");
-    }
-}
-
+// Third Roof Navigation
 function navigateFromThirdRoof() {
     const selectedOption = document.querySelector('input[name="third-roof"]:checked');
     
@@ -247,6 +279,7 @@ function navigateFromThirdRoof() {
     }
 }
 
+// Third Roof Style Navigation
 function navigateFromThirdRoofStyle() {
     const selectedRoofingType = document.querySelector('input[name="third-roof-style"]:checked');
     
@@ -272,8 +305,10 @@ function navigateFromThirdRoofStyle() {
             console.error("Unknown third roof style selected");
     }
 }
-function navigateFromSolar() {
-    const selectedOption = document.querySelector('input[name="solar"]:checked');
+
+// Additional Charges Navigation
+function navigateFromAdditionalCharges() {
+    const selectedOption = document.querySelector('input[name="additional-charges"]:checked');
     
     if (!selectedOption) {
         alert("Please select Yes or No.");
@@ -281,166 +316,18 @@ function navigateFromSolar() {
     }
 
     switch(selectedOption.value) {
-        case 'yes':
-            showSection('solar-detach-reset-section');
+        case 'Yes':
+            showSection('additional-charges-description-section');
             break;
-        case 'no':
-            // This should be the final section or next logical section
-            showSection('review-section');  // Assuming there's a review section
+        case 'No':
+            showSection('solar-section');
             break;
         default:
-            console.error("Unknown selection for solar panels");
-    }
-}
-function handleFormSubmit(event) {
-    event.preventDefault(); // Prevent default form submission
-    
-    // Get all form data
-    const formData = new FormData(document.getElementById('estimateForm'));
-    const formObject = {};
-    
-    // Convert FormData to a regular object
-    formData.forEach((value, key) => {
-        formObject[key] = value;
-    });
-    
-    // Add timestamp
-    formObject.submittedAt = new Date().toISOString();
-    
-    // You can add validation here if needed
-    if (validateForm(formObject)) {
-        submitForm(formObject);
+            console.error("Unknown selection for additional charges");
     }
 }
 
-function validateForm(formData) {
-    // Add your validation logic here
-    // Example validation:
-    if (!formData.salesRepName || !formData.ownerName) {
-        alert('Please fill in all required fields');
-        return false;
-    }
-    return true;
-}
-
-function submitForm(formData) {
-    // Here you would typically send the data to your server
-    // For now, let's just log it and show a success message
-    console.log('Form submitted:', formData);
-    
-    // Show success message
-    alert('Estimate form submitted successfully!');
-    
-    // Optional: Reset form
-    document.getElementById('estimateForm').reset();
-    
-    // Return to first section
-    showSection('salesRepSection');
-}
-function displayReview() {
-    console.log("displayReview function called"); // Debug log
-    const reviewContent = document.getElementById('review-content');
-    if (!reviewContent) {
-        console.error("review-content element not found");
-        return;
-    }
-    
-    let reviewHTML = '<div class="review-summary">';
-    
-    // Format the current date/time
-    const currentDate = new Date().toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZoneName: 'short'
-    });
-    
-    reviewHTML += `
-        <div class="review-header">
-            <p><strong>Date Created:</strong> ${currentDate}</p>
-            <p><strong>Created By:</strong> ${document.getElementById('salesRepName')?.value || 'Not specified'}</p>
-        </div>
-    `;
-
-    // Collect and display all form data
-    const formData = collectFormData();
-    Object.entries(formData).forEach(([section, data]) => {
-        if (Object.keys(data).length > 0) {
-            reviewHTML += `
-                <div class="review-section">
-                    <h3>${section}</h3>
-                    ${Object.entries(data).map(([key, value]) => 
-                        `<p><strong>${key}:</strong> ${value || 'Not specified'}</p>`
-                    ).join('')}
-                </div>
-            `;
-        }
-    });
-
-    reviewHTML += '</div>';
-    console.log("Review HTML:", reviewHTML); // Debug log
-    reviewContent.innerHTML = reviewHTML;
-}
-
-function collectFormData() {
-    return {
-        "Sales Representative Information": {
-            "Name": document.getElementById('salesRepName')?.value,
-            "Email": document.getElementById('salesRepEmail')?.value,
-            "Phone": document.getElementById('salesRepPhone')?.value
-        },
-        "Company Information": {
-            "Company": document.getElementById('companyName')?.value
-        },
-        "Property Owner Information": {
-            "Name": document.getElementById('ownerName')?.value,
-            "Address": document.getElementById('ownerAddress')?.value,
-            "City": document.getElementById('ownerCity')?.value,
-            "State": document.getElementById('ownerState')?.value,
-            "Zip": document.getElementById('ownerZip')?.value,
-            "Phone": document.getElementById('ownerPhone')?.value,
-            "Email": document.getElementById('ownerEmail')?.value
-        },
-        "Project Details": {
-            "Project Type": document.querySelector('input[name="projectType"]:checked')?.value,
-            "Primary Roofing Type": document.querySelector('input[name="roofingType"]:checked')?.value
-        },
-        "Insurance Information": document.querySelector('input[name="projectType"]:checked')?.value === 'Insurance' ? {
-            "Insurance Company": document.getElementById('insuranceCompany')?.value,
-            "Insurance Phone": document.getElementById('insurancePhone')?.value,
-            "Claim Number": document.getElementById('claimNumber')?.value,
-            "Policy Number": document.getElementById('policyNumber')?.value,
-            "Date of Loss": document.getElementById('dateOfLoss')?.value
-        } : {},
-        "Secondary Roof Information": document.querySelector('input[name="secondary-roof"]:checked')?.value === 'Yes' ? {
-            "Type": document.querySelector('input[name="secondary-roofing-type"]:checked')?.value
-        } : {},
-        "Third Roof Information": document.querySelector('input[name="third-roof"]:checked')?.value === 'Yes' ? {
-            "Type": document.querySelector('input[name="third-roof-style"]:checked')?.value
-        } : {},
-        "Solar Panel Information": {
-            "Solar Panels Present": document.querySelector('input[name="solar"]:checked')?.value,
-            "Number of Panels": document.querySelector('input[name="solar"]:checked')?.value === 'yes' ? 
-                document.getElementById('solar-detach-reset')?.value : 'N/A'
-        }
-    };
-}
-function submitForm() {
-    // You can add form validation here
-    const confirmSubmit = confirm('Are you sure you want to submit this estimate?');
-    if (confirmSubmit) {
-        // Here you would typically send the data to your server
-        alert('Estimate submitted successfully!');
-        // Optionally reset the form
-        document.getElementById('estimateForm').reset();
-        // Return to the first section
-        showSection('salesRepSection');
-    }
-}
-
-// In your navigateFromSolar function
+// Solar Panel Navigation
 function navigateFromSolar() {
     const selectedOption = document.querySelector('input[name="solar"]:checked');
     
@@ -455,157 +342,118 @@ function navigateFromSolar() {
             break;
         case 'no':
             showSection('review-section');
-            displayReview(); // Make sure this is called
+            displayReview();
             break;
         default:
             console.error("Unknown selection for solar panels");
     }
 }
+async function submitForm(event) {
+    if (event) {
+        event.preventDefault();
+    }
 
-// Also update the solar-detach-reset-section navigation
-// Make sure the button onclick calls both functions:
-// <button type="button" onclick="showSection('review-section'); displayReview();">Next</button>
-// Make ALL functions globally available
-window.showSection = showSection;
-window.goBack = goBack;
-window.nextProjectTypeSection = nextProjectTypeSection;
-window.navigateFromRoofingType = navigateFromRoofingType;
-window.navigateFromShingleType = navigateFromShingleType;
-window.navigateFromSecondaryRoof = navigateFromSecondaryRoof;
-window.navigateFromAdditionalCharges = navigateFromAdditionalCharges;
-window.navigateFromSecondaryRoofingType = navigateFromSecondaryRoofingType;
-window.navigateFromTileRoofingType = navigateFromTileRoofingType;
-window.navigateFromThirdRoof = navigateFromThirdRoof;
-window.navigateFromThirdRoofStyle = navigateFromThirdRoofStyle;
-window.navigateFromSolar = navigateFromSolar;
-window.handleFormSubmit = handleFormSubmit;
-window.submitForm = submitForm;
-window.displayReview = displayReview;
-
-const { google } = require('googleapis');
-const sheets = google.sheets('v4');
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-
-const driveFileUrl = 'https://drive.google.com/uc?export=download&id=1GWYWz_m9tioH0y__3urwUbQQT87USAiR'; // replace YOUR_FILE_ID with the actual file ID
-async function downloadServiceAccountFile(url, outputPath) {
-  const response = await axios({
-    url,
-    method: 'GET',
-    responseType: 'stream',
-  });
-
-  return new Promise((resolve, reject) => {
-    const writer = fs.createWriteStream(outputPath);
-    response.data.pipe(writer);
-    writer.on('finish', resolve);
-    writer.on('error', reject);
-  });
-}
-
-async function main() {
-  const serviceAccountPath = path.join(__dirname, 'service-account-file.json');
-
-  // Download the service account file
-  await downloadServiceAccountFile(driveFileUrl, serviceAccountPath);
-
-  // Authenticate with Google Sheets API
-  const auth = await google.auth.getClient({
-    keyFile: serviceAccountPath,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
-
-  const sheetsApi = google.sheets({ version: 'v4', auth });
-
-  // Define the ID of the Google Sheet and the data to be inserted
-  const spreadsheetId = '1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw';
-  const range = 'Sheet1!A1';
-  const valueInputOption = 'RAW';
-  const data = [
-    ["salesRepSection", "salesRepName", "salesRepEmail", "salesRepPhone", "companySection", "companyName", "propertyOwnerSection", "ownerName", "ownerAddress", "ownerCity", "ownerState", "ownerZip", "ownerPhone", "ownerEmail", "projectTypeSection", "projectType", "insuranceInfoSection", "insuranceCompany", "insurancePhone", "claimNumber", "policyNumber", "dateOfLoss", "roofingTypeSection", "roofingType", "asphalt-shingle-section", "shingleType", "shingle-repair-section", "shingles-repaired", "repair-anything-else", "additional-charges", "shingle-replacement-section", "shingle-replacement", "tile-roofing-section", "tile-roofing-type", "tile-repair-section", "tile-repair-sq", "tile-underlayment-section", "tile-underlayment-sq", "tile-remove-replace-section", "tile-type", "tile-roof-rr", "tile-roof-rr-section", "tile-roof-rr", "modified-bitumen-section", "modified-bitumen-sq", "coating-section", "coating-squares", "secondary-roof-section", "secondary-roof", "secondary-roofing-type-section", "secondary-roofing-type", "secondary-roof-type-shingles-section", "shingles-squares", "secondary-roof-type-tile-section", "tile-underlayment-squares", "secondary-roof-type-modified-bitumen-section", "modified-bitumen-squares", "secondary-roof-type-coating-section", "coating-squares", "third-roof-type-section", "third-roof (third-roof-yes, third-roof-no)", "third-roof-type-style-section", "third-roof-style (third-roof-style-shingles, third-roof-style-tile, third-roof-style-modified, third-roof-style-coating)", "third-roof-type-shingles-section", "shingles-squares", "third-roof-type-tiles-section", "tiles-squares", "third-roof-type-modified-section", "modified-squares", "third-roof-type-coatings-section", "coatings-squares", "additional-charges-section", "additional-charges (additional-charges-yes, additional-charges-no)", "additional-charges-description-section", "additional-charges-description", "additional-charges-price-section", "additional-charges-price", "solar-section", "solar (solar-yes, solar-no)", "solar-detach-reset-section", "solar-detach-reset"]
-  ];
-
-  // Prepare the request body
-  const resource = {
-    values: data
-  };
-
-  // Use the Google Sheets API to update the sheet with the prepared data
-  try {
-    const response = await sheetsApi.spreadsheets.values.append({
-      spreadsheetId,
-      range,
-      valueInputOption,
-      resource
-    });
-    console.log(`${response.data.updates.updatedCells} cells updated.`);
-  } catch (err) {
-    console.error('The API returned an error:', err);
-  }
-}
-
-
-
-
-
-
-
-async function submitForm() {
     try {
+        // Collect form data with metadata
         const formData = {
-            salesRepName: document.getElementById('salesRepName').value,
-            salesRepEmail: document.getElementById('salesRepEmail').value,
-            salesRepPhone: document.getElementById('salesRepPhone').value,
-            companyName: document.getElementById('companyName').value,
-            ownerName: document.getElementById('ownerName').value,
-            ownerAddress: document.getElementById('ownerAddress').value,
-            ownerCity: document.getElementById('ownerCity').value,
-            ownerState: document.getElementById('ownerState').value,
-            ownerZip: document.getElementById('ownerZip').value,
-            ownerPhone: document.getElementById('ownerPhone').value,
-            ownerEmail: document.getElementById('ownerEmail').value,
-            projectType: document.querySelector('input[name="projectType"]:checked')?.value,
-            insuranceCompany: document.getElementById('insuranceCompany')?.value,
-            insurancePhone: document.getElementById('insurancePhone')?.value,
-            claimNumber: document.getElementById('claimNumber')?.value,
-            policyNumber: document.getElementById('policyNumber')?.value,
-            dateOfLoss: document.getElementById('dateOfLoss')?.value,
-            roofingType: document.querySelector('input[name="roofingType"]:checked')?.value,
-            shingleType: document.querySelector('input[name="shingleType"]:checked')?.value,
-            shinglesRepaired: document.getElementById('shingles-repaired')?.value,
-            repairAnythingElse: document.getElementById('repair-anything-else')?.value,
-            additionalCharges: document.getElementById('additional-charges')?.value,
-            shingleReplacement: document.getElementById('shingle-replacement')?.value,
-            tileRoofingType: document.querySelector('input[name="tile-roofing-type"]:checked')?.value,
-            tileRepairSq: document.getElementById('tile-repair-sq')?.value,
-            tileUnderlaymentSq: document.getElementById('tile-underlayment-sq')?.value,
-            tileType: document.querySelector('input[name="tile-type"]:checked')?.value,
-            tileRoofRr: document.getElementById('tile-roof-rr')?.value,
-            modifiedBitumenSq: document.getElementById('modified-bitumen-sq')?.value,
-            coatingSquares: document.getElementById('coating-squares')?.value,
-            secondaryRoof: document.querySelector('input[name="secondary-roof"]:checked')?.value,
-            secondaryRoofingType: document.querySelector('input[name="secondary-roofing-type"]:checked')?.value,
-            secondaryShinglesSquares: document.getElementById('shingles-squares')?.value,
-            secondaryTileUnderlaymentSquares: document.getElementById('tile-underlayment-squares')?.value,
-            secondaryModifiedBitumenSquares: document.getElementById('modified-bitumen-squares')?.value,
-            secondaryCoatingSquares: document.getElementById('coating-squares')?.value,
-            thirdRoof: document.querySelector('input[name="third-roof"]:checked')?.value,
-            thirdRoofStyle: document.querySelector('input[name="third-roof-style"]:checked')?.value,
-            thirdShinglesSquares: document.getElementById('shingles-squares')?.value,
-            thirdTilesSquares: document.getElementById('tiles-squares')?.value,
-            thirdModifiedSquares: document.getElementById('modified-squares')?.value,
-            thirdCoatingsSquares: document.getElementById('coatings-squares')?.value,
-            additionalCharges: document.querySelector('input[name="additional-charges"]:checked')?.value,
-            additionalChargesDescription: document.getElementById('additional-charges-description')?.value,
-            additionalChargesPrice: document.getElementById('additional-charges-price')?.value,
-            solar: document.querySelector('input[name="solar"]:checked')?.value,
-            solarDetachReset: document.getElementById('solar-detach-reset')?.value
+            metadata: {
+                submittedAt: '2024-11-25 23:51:06',
+                submittedBy: 'Khaas01'
+            },
+            data: {
+                // Sales Representative Information
+                salesRepName: document.getElementById('salesRepName').value,
+                salesRepEmail: document.getElementById('salesRepEmail').value,
+                salesRepPhone: document.getElementById('salesRepPhone').value,
+                
+                // Company Information
+                companyName: document.getElementById('companyName').value,
+                
+                // Property Owner Information
+                ownerName: document.getElementById('ownerName').value,
+                ownerAddress: document.getElementById('ownerAddress').value,
+                ownerCity: document.getElementById('ownerCity').value,
+                ownerState: document.getElementById('ownerState').value,
+                ownerZip: document.getElementById('ownerZip').value,
+                ownerPhone: document.getElementById('ownerPhone').value,
+                ownerEmail: document.getElementById('ownerEmail').value,
+                
+                // Project Type Information
+                projectType: document.querySelector('input[name="projectType"]:checked')?.value,
+                
+                // Insurance Information
+                insuranceCompany: document.getElementById('insuranceCompany')?.value,
+                insurancePhone: document.getElementById('insurancePhone')?.value,
+                claimNumber: document.getElementById('claimNumber')?.value,
+                policyNumber: document.getElementById('policyNumber')?.value,
+                dateOfLoss: document.getElementById('dateOfLoss')?.value,
+                
+                // Roofing Type Information
+                roofingType: document.querySelector('input[name="roofingType"]:checked')?.value,
+                
+                // Shingle Information
+                shingleType: document.querySelector('input[name="shingleType"]:checked')?.value,
+                shinglesRepaired: document.getElementById('shingles-repaired')?.value,
+                repairAnythingElse: document.getElementById('repair-anything-else')?.value,
+                shingleReplacement: document.getElementById('shingle-replacement')?.value,
+                
+                // Tile Roofing Information
+                tileRoofingType: document.querySelector('input[name="tile-roofing-type"]:checked')?.value,
+                tileRepairSq: document.getElementById('tile-repair-sq')?.value,
+                tileUnderlaymentSq: document.getElementById('tile-underlayment-sq')?.value,
+                tileType: document.querySelector('input[name="tile-type"]:checked')?.value,
+                tileRoofRr: document.getElementById('tile-roof-rr')?.value,
+                
+                // Modified Bitumen Information
+                modifiedBitumenSq: document.getElementById('modified-bitumen-sq')?.value,
+                
+                // Coating Information
+                coatingSquares: document.getElementById('coating-squares')?.value,
+                
+                // Secondary Roof Information
+                secondaryRoof: document.querySelector('input[name="secondary-roof"]:checked')?.value,
+                secondaryRoofingType: document.querySelector('input[name="secondary-roofing-type"]:checked')?.value,
+                secondaryShinglesSquares: document.getElementById('shingles-squares')?.value,
+                secondaryTileUnderlaymentSquares: document.getElementById('tile-underlayment-squares')?.value,
+                secondaryModifiedBitumenSquares: document.getElementById('modified-bitumen-squares')?.value,
+                secondaryCoatingSquares: document.getElementById('coating-squares')?.value,
+                
+                // Third Roof Information
+                thirdRoof: document.querySelector('input[name="third-roof"]:checked')?.value,
+                thirdRoofStyle: document.querySelector('input[name="third-roof-style"]:checked')?.value,
+                thirdShinglesSquares: document.getElementById('shingles-squares')?.value,
+                thirdTilesSquares: document.getElementById('tiles-squares')?.value,
+                thirdModifiedSquares: document.getElementById('modified-squares')?.value,
+                thirdCoatingsSquares: document.getElementById('coatings-squares')?.value,
+                
+                // Additional Charges Information
+                additionalCharges: document.querySelector('input[name="additional-charges"]:checked')?.value,
+                additionalChargesDescription: document.getElementById('additional-charges-description')?.value,
+                additionalChargesPrice: document.getElementById('additional-charges-price')?.value,
+                
+                // Solar Panel Information
+                solar: document.querySelector('input[name="solar"]:checked')?.value,
+                solarDetachReset: document.getElementById('solar-detach-reset')?.value
+            }
         };
 
-        // Replace with your deployed Google Apps Script URL
-        const response = await fetch('https://script.google.com/u/0/home/projects/1WRS_9Klv6vck-GmhoAKZ_AX6oJx6CcCRwKeBWVp06ii1wmlmoEvJWhtD/edit', {
+        // Validate form data
+        if (!validateForm(formData.data)) {
+            return;
+        }
+
+        // Confirm submission
+        const confirmSubmit = confirm('Are you sure you want to submit this estimate?');
+        if (!confirmSubmit) {
+            return;
+        }
+
+        // Submit to Google Apps Script
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(formData)
         });
 
@@ -619,7 +467,7 @@ async function submitForm() {
             document.getElementById('estimateForm').reset();
             showSection('salesRepSection');
         } else {
-            throw new Error('Form submission failed');
+            throw new Error(result.message || 'Form submission failed');
         }
     } catch (error) {
         console.error('Error:', error);
@@ -627,7 +475,352 @@ async function submitForm() {
     }
 }
 
+async function submitForm(event) {
+    if (event) {
+        event.preventDefault();
+    }
 
+    try {
+        // Collect form data with metadata
+        const formData = {
+            metadata: {
+                submittedAt: '2024-11-25 23:51:06',
+                submittedBy: 'Khaas01'
+            },
+            data: {
+                // Sales Representative Information
+                salesRepName: document.getElementById('salesRepName').value,
+                salesRepEmail: document.getElementById('salesRepEmail').value,
+                salesRepPhone: document.getElementById('salesRepPhone').value,
+                
+                // Company Information
+                companyName: document.getElementById('companyName').value,
+                
+                // Property Owner Information
+                ownerName: document.getElementById('ownerName').value,
+                ownerAddress: document.getElementById('ownerAddress').value,
+                ownerCity: document.getElementById('ownerCity').value,
+                ownerState: document.getElementById('ownerState').value,
+                ownerZip: document.getElementById('ownerZip').value,
+                ownerPhone: document.getElementById('ownerPhone').value,
+                ownerEmail: document.getElementById('ownerEmail').value,
+                
+                // Project Type Information
+                projectType: document.querySelector('input[name="projectType"]:checked')?.value,
+                
+                // Insurance Information
+                insuranceCompany: document.getElementById('insuranceCompany')?.value,
+                insurancePhone: document.getElementById('insurancePhone')?.value,
+                claimNumber: document.getElementById('claimNumber')?.value,
+                policyNumber: document.getElementById('policyNumber')?.value,
+                dateOfLoss: document.getElementById('dateOfLoss')?.value,
+                
+                // Roofing Type Information
+                roofingType: document.querySelector('input[name="roofingType"]:checked')?.value,
+                
+                // Shingle Information
+                shingleType: document.querySelector('input[name="shingleType"]:checked')?.value,
+                shinglesRepaired: document.getElementById('shingles-repaired')?.value,
+                repairAnythingElse: document.getElementById('repair-anything-else')?.value,
+                shingleReplacement: document.getElementById('shingle-replacement')?.value,
+                
+                // Tile Roofing Information
+                tileRoofingType: document.querySelector('input[name="tile-roofing-type"]:checked')?.value,
+                tileRepairSq: document.getElementById('tile-repair-sq')?.value,
+                tileUnderlaymentSq: document.getElementById('tile-underlayment-sq')?.value,
+                tileType: document.querySelector('input[name="tile-type"]:checked')?.value,
+                tileRoofRr: document.getElementById('tile-roof-rr')?.value,
+                
+                // Modified Bitumen Information
+                modifiedBitumenSq: document.getElementById('modified-bitumen-sq')?.value,
+                
+                // Coating Information
+                coatingSquares: document.getElementById('coating-squares')?.value,
+                
+                // Secondary Roof Information
+                secondaryRoof: document.querySelector('input[name="secondary-roof"]:checked')?.value,
+                secondaryRoofingType: document.querySelector('input[name="secondary-roofing-type"]:checked')?.value,
+                secondaryShinglesSquares: document.getElementById('shingles-squares')?.value,
+                secondaryTileUnderlaymentSquares: document.getElementById('tile-underlayment-squares')?.value,
+                secondaryModifiedBitumenSquares: document.getElementById('modified-bitumen-squares')?.value,
+                secondaryCoatingSquares: document.getElementById('coating-squares')?.value,
+                
+                // Third Roof Information
+                thirdRoof: document.querySelector('input[name="third-roof"]:checked')?.value,
+                thirdRoofStyle: document.querySelector('input[name="third-roof-style"]:checked')?.value,
+                thirdShinglesSquares: document.getElementById('shingles-squares')?.value,
+                thirdTilesSquares: document.getElementById('tiles-squares')?.value,
+                thirdModifiedSquares: document.getElementById('modified-squares')?.value,
+                thirdCoatingsSquares: document.getElementById('coatings-squares')?.value,
+                
+                // Additional Charges Information
+                additionalCharges: document.querySelector('input[name="additional-charges"]:checked')?.value,
+                additionalChargesDescription: document.getElementById('additional-charges-description')?.value,
+                additionalChargesPrice: document.getElementById('additional-charges-price')?.value,
+                
+                // Solar Panel Information
+                solar: document.querySelector('input[name="solar"]:checked')?.value,
+                solarDetachReset: document.getElementById('solar-detach-reset')?.value
+            }
+        };
+
+        // Validate form data
+        if (!validateForm(formData.data)) {
+            return;
+        }
+
+        // Confirm submission
+        const confirmSubmit = confirm('Are you sure you want to submit this estimate?');
+        if (!confirmSubmit) {
+            return;
+        }
+
+        // Submit to Google Apps Script
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+        if (result.status === 'success') {
+            alert('Form submitted successfully!');
+            document.getElementById('estimateForm').reset();
+            showSection('salesRepSection');
+        } else {
+            throw new Error(result.message || 'Form submission failed');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error submitting form. Please try again.');
+    }
+}
+function displayReview() {
+    const timestamp = '2024-11-25 23:57:07';
+    const userLogin = 'Khaas01';
+
+    // Get the review section container
+    const reviewSection = document.getElementById('review-section');
+    const reviewContent = document.createElement('div');
+    reviewContent.className = 'review-content';
+
+    // Create review HTML structure
+    let reviewHTML = `
+        <h3>Estimate Review</h3>
+        <div class="review-metadata">
+            <p>Generated on: ${timestamp}</p>
+            <p>Generated by: ${userLogin}</p>
+        </div>
+
+        <div class="review-section">
+            <h4>Sales Representative Information</h4>
+            <p>Name: ${document.getElementById('salesRepName')?.value || 'N/A'}</p>
+            <p>Email: ${document.getElementById('salesRepEmail')?.value || 'N/A'}</p>
+            <p>Phone: ${document.getElementById('salesRepPhone')?.value || 'N/A'}</p>
+        </div>
+
+        <div class="review-section">
+            <h4>Company Information</h4>
+            <p>Company Name: ${document.getElementById('companyName')?.value || 'N/A'}</p>
+        </div>
+
+        <div class="review-section">
+            <h4>Property Owner Information</h4>
+            <p>Name: ${document.getElementById('ownerName')?.value || 'N/A'}</p>
+            <p>Address: ${document.getElementById('ownerAddress')?.value || 'N/A'}</p>
+            <p>City: ${document.getElementById('ownerCity')?.value || 'N/A'}</p>
+            <p>State: ${document.getElementById('ownerState')?.value || 'N/A'}</p>
+            <p>ZIP: ${document.getElementById('ownerZip')?.value || 'N/A'}</p>
+            <p>Phone: ${document.getElementById('ownerPhone')?.value || 'N/A'}</p>
+            <p>Email: ${document.getElementById('ownerEmail')?.value || 'N/A'}</p>
+        </div>
+
+        <div class="review-section">
+            <h4>Project Information</h4>
+            <p>Project Type: ${document.querySelector('input[name="projectType"]:checked')?.value || 'N/A'}</p>
+        </div>
+    `;
+
+    // Add Insurance Information if applicable
+    if (document.querySelector('input[name="projectType"]:checked')?.value === 'Insurance') {
+        reviewHTML += `
+            <div class="review-section">
+                <h4>Insurance Information</h4>
+                <p>Insurance Company: ${document.getElementById('insuranceCompany')?.value || 'N/A'}</p>
+                <p>Insurance Phone: ${document.getElementById('insurancePhone')?.value || 'N/A'}</p>
+                <p>Claim Number: ${document.getElementById('claimNumber')?.value || 'N/A'}</p>
+                <p>Policy Number: ${document.getElementById('policyNumber')?.value || 'N/A'}</p>
+                <p>Date of Loss: ${document.getElementById('dateOfLoss')?.value || 'N/A'}</p>
+            </div>
+        `;
+    }
+
+    // Add Roofing Type Information
+    const roofingType = document.querySelector('input[name="roofingType"]:checked')?.value;
+    if (roofingType) {
+        reviewHTML += `
+            <div class="review-section">
+                <h4>Primary Roof Information</h4>
+                <p>Roofing Type: ${roofingType}</p>
+        `;
+
+        // Add specific roofing type details
+        switch (roofingType) {
+            case 'Asphalt Shingles':
+                const shingleType = document.querySelector('input[name="shingleType"]:checked')?.value;
+                if (shingleType === 'Shingle Roof Repair') {
+                    reviewHTML += `
+                        <p>Repair Type: Shingle Roof Repair</p>
+                        <p>Shingles Repaired: ${document.getElementById('shingles-repaired')?.value || 'N/A'}</p>
+                        <p>Additional Repairs: ${document.getElementById('repair-anything-else')?.value || 'N/A'}</p>
+                    `;
+                } else if (shingleType === 'Shingle Roof Replacement') {
+                    reviewHTML += `
+                        <p>Replacement Squares: ${document.getElementById('shingle-replacement')?.value || 'N/A'}</p>
+                    `;
+                }
+                break;
+
+            case 'Tile':
+                const tileType = document.querySelector('input[name="tile-roofing-type"]:checked')?.value;
+                reviewHTML += `
+                    <p>Tile Roofing Type: ${tileType || 'N/A'}</p>
+                    <p>Repair Squares: ${document.getElementById('tile-repair-sq')?.value || 'N/A'}</p>
+                    <p>Underlayment Squares: ${document.getElementById('tile-underlayment-sq')?.value || 'N/A'}</p>
+                    <p>Tile Type: ${document.querySelector('input[name="tile-type"]:checked')?.value || 'N/A'}</p>
+                    <p>Remove and Replace Squares: ${document.getElementById('tile-roof-rr')?.value || 'N/A'}</p>
+                `;
+                break;
+
+            case 'Modified Bitumen (Flat roof rolled roofing)':
+                reviewHTML += `
+                    <p>Modified Bitumen Squares: ${document.getElementById('modified-bitumen-sq')?.value || 'N/A'}</p>
+                `;
+                break;
+
+            case 'Flat Roof Coating':
+                reviewHTML += `
+                    <p>Coating Squares: ${document.getElementById('coating-squares')?.value || 'N/A'}</p>
+                `;
+                break;
+        }
+        reviewHTML += '</div>';
+    }
+
+    // Add Secondary Roof Information
+    const hasSecondaryRoof = document.querySelector('input[name="secondary-roof"]:checked')?.value;
+    if (hasSecondaryRoof === 'Yes') {
+        const secondaryRoofType = document.querySelector('input[name="secondary-roofing-type"]:checked')?.value;
+        reviewHTML += `
+            <div class="review-section">
+                <h4>Secondary Roof Information</h4>
+                <p>Roofing Type: ${secondaryRoofType || 'N/A'}</p>
+        `;
+
+        switch (secondaryRoofType) {
+            case 'Shingles':
+                reviewHTML += `
+                    <p>Shingles Squares: ${document.getElementById('shingles-squares')?.value || 'N/A'}</p>
+                `;
+                break;
+            case 'Tiles':
+                reviewHTML += `
+                    <p>Tile Underlayment Squares: ${document.getElementById('tile-underlayment-squares')?.value || 'N/A'}</p>
+                `;
+                break;
+            case 'Modified Bitumen':
+                reviewHTML += `
+                    <p>Modified Bitumen Squares: ${document.getElementById('modified-bitumen-squares')?.value || 'N/A'}</p>
+                `;
+                break;
+            case 'Coating':
+                reviewHTML += `
+                    <p>Coating Squares: ${document.getElementById('coating-squares')?.value || 'N/A'}</p>
+                `;
+                break;
+        }
+        reviewHTML += '</div>';
+    }
+
+    // Add Third Roof Information
+    const hasThirdRoof = document.querySelector('input[name="third-roof"]:checked')?.value;
+    if (hasThirdRoof === 'Yes') {
+        const thirdRoofStyle = document.querySelector('input[name="third-roof-style"]:checked')?.value;
+        reviewHTML += `
+            <div class="review-section">
+                <h4>Third Roof Information</h4>
+                <p>Roofing Type: ${thirdRoofStyle || 'N/A'}</p>
+        `;
+
+        switch (thirdRoofStyle) {
+            case 'Shingles':
+                reviewHTML += `
+                    <p>Shingles Squares: ${document.getElementById('shingles-squares')?.value || 'N/A'}</p>
+                `;
+                break;
+            case 'Tile':
+                reviewHTML += `
+                    <p>Tiles Squares: ${document.getElementById('tiles-squares')?.value || 'N/A'}</p>
+                `;
+                break;
+            case 'Modified':
+                reviewHTML += `
+                    <p>Modified Squares: ${document.getElementById('modified-squares')?.value || 'N/A'}</p>
+                `;
+                break;
+            case 'Coating':
+                reviewHTML += `
+                    <p>Coating Squares: ${document.getElementById('coatings-squares')?.value || 'N/A'}</p>
+                `;
+                break;
+        }
+        reviewHTML += '</div>';
+    }
+
+    // Add Additional Charges Information
+    const hasAdditionalCharges = document.querySelector('input[name="additional-charges"]:checked')?.value;
+    if (hasAdditionalCharges === 'Yes') {
+        reviewHTML += `
+            <div class="review-section">
+                <h4>Additional Charges</h4>
+                <p>Description: ${document.getElementById('additional-charges-description')?.value || 'N/A'}</p>
+                <p>Price: $${document.getElementById('additional-charges-price')?.value || 'N/A'}</p>
+            </div>
+        `;
+    }
+
+    // Add Solar Panel Information
+    const hasSolar = document.querySelector('input[name="solar"]:checked')?.value;
+    if (hasSolar === 'yes') {
+        reviewHTML += `
+            <div class="review-section">
+                <h4>Solar Panel Information</h4>
+                <p>Solar Detach/Reset Cost: $${document.getElementById('solar-detach-reset')?.value || 'N/A'}</p>
+            </div>
+        `;
+    }
+
+    // Add submission buttons
+    reviewHTML += `
+        <div class="review-actions">
+            <button type="button" onclick="submitForm()">Submit Estimate</button>
+            <button type="button" onclick="goBack()">Go Back</button>
+        </div>
+    `;
+
+    // Update the review section content
+    reviewContent.innerHTML = reviewHTML;
+    
+    // Clear existing content and append new review
+    reviewSection.innerHTML = '';
+    reviewSection.appendChild(reviewContent);
+}
 main().catch(console.error);
 // Initialize the form
 document.addEventListener('DOMContentLoaded', function() {
