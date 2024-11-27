@@ -421,7 +421,7 @@ function submitForm(event) {
     if (!confirm('Are you sure you want to submit this estimate?')) {
         return;
     }
-
+try {
     // Create the form element
     const submitForm = document.createElement('form');
     submitForm.setAttribute('method', 'POST');
