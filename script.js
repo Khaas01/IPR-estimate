@@ -421,18 +421,19 @@ function submitForm(event) {
     if (!confirm('Are you sure you want to submit this estimate?')) {
         return;
     }
-try {
-    // Create the form element
-    const submitForm = document.createElement('form');
-    submitForm.setAttribute('method', 'POST');
-    submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbxJMDMn-xUIi3YG0tJobqfRBI2P00RN6hmvTJsIaZ1A91b8B2G6qtRuP6gETlE4qTOY/exec');
-    submitForm.setAttribute('target', 'hidden_iframe');
 
-    // Create all your form data
-    const formData = {
-        timestamp: '2024-11-26 23:28:15',
-        userLogin: 'Khaas01',
-        data: {
+    try {
+        // Create the form element
+        const submitForm = document.createElement('form');
+        submitForm.setAttribute('method', 'POST');
+        submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbxJMDMn-xUIi3YG0tJobqfRBI2P00RN6hmvTJsIaZ1A91b8B2G6qtRuP6gETlE4qTOY/exec');
+        submitForm.setAttribute('target', 'hidden_iframe');
+
+        // Create all your form data (keep your existing formData object)
+        const formData = {
+            timestamp: new Date().toISOString(),
+            userLogin: 'Khaas01',
+            data: {
                 // Sales Representative Information
                 salesRepName: document.getElementById('salesRepName').value,
                 salesRepEmail: document.getElementById('salesRepEmail').value,
@@ -509,17 +510,22 @@ try {
             }
         };
 
-    // Create a hidden input for the JSON data
-    const hiddenInput = document.createElement('input');
-    hiddenInput.type = 'hidden';
-    hiddenInput.name = 'data';
-    hiddenInput.value = JSON.stringify(formData);
-    submitForm.appendChild(hiddenInput);
+  // Create a hidden input for the JSON data
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'data';
+        hiddenInput.value = JSON.stringify(formData);
+        submitForm.appendChild(hiddenInput);
 
-    // Create hidden iframe
-    let iframe = document.getElementById('hidden_iframe'); 
-    
-    
+        // Append the form to the body
+        document.body.appendChild(submitForm);
+
+        // Submit the form
+        submitForm.submit();
+
+        // Remove the form after submission
+        document.body.removeChild(submitForm);
+
     } catch (error) {
         console.error('Error:', error);
         alert('Error submitting form. Please try again.');
