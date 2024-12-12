@@ -421,25 +421,9 @@ function submitForm(event) {
     if (!confirm('Are you sure you want to submit this estimate?')) {
         return;
     }
-try {
-    // Create form data first
-    const formData = {
-        // ... your existing formData object
-    };
-    
-    // Validate form before submission
-    if (!validateForm(formData.data)) {
-        return;
-    }
-    
-    try {
-        // Create the form element
-        const submitForm = document.createElement('form');
-        submitForm.setAttribute('method', 'POST');
-        submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbzYRp9iZmQLIUOWHRTaHHT6La4Km8gQhYblDtyiEXwzohgcIY5GUkf8ZVjUgtbjkura/exec');
-        submitForm.setAttribute('target', 'hidden_iframe');
 
-        // Create all your form data (keep your existing formData object)
+    try {
+        // Create all your form data
         const formData = {
             timestamp: new Date().toISOString(),
             userLogin: 'Khaas01',
@@ -520,7 +504,18 @@ try {
             }
         };
 
-  // Create a hidden input for the JSON data
+    // Validate form before submission
+        if (!validateForm(formData.data)) {
+            return;
+        }
+
+        // Create the form element
+        const submitForm = document.createElement('form');
+        submitForm.setAttribute('method', 'POST');
+        submitForm.setAttribute('action', GOOGLE_APPS_SCRIPT_URL);
+        submitForm.setAttribute('target', 'hidden_iframe');
+
+        // Create a hidden input for the JSON data
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'data';
@@ -538,9 +533,10 @@ try {
 
     } catch (error) {
         console.error('Error:', error);
-        alert('Error submitting form. Please try again.');
+        alert('Error submitting form: ' + error.message);
     }
 }
+
 
 
 function displayReview() {
