@@ -744,14 +744,13 @@ function displayReview() {
         `;
     }
 
-    // Add submission buttons
-    reviewHTML += `
-        <div class="review-actions">
-            <button type="button" onclick="submitForm()">Submit Estimate</button>
-            <button type="button" onclick="goBack()">Go Back</button>
-        </div>
-    `;
-
+ // Add submission buttons
+reviewHTML += `
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="submitForm()">Submit</button>
+    </div>
+`;
     // Update the review section content
     reviewContent.innerHTML = reviewHTML;
     
