@@ -426,7 +426,7 @@ function submitForm(event) {
         // Create the form element
         const submitForm = document.createElement('form');
         submitForm.setAttribute('method', 'POST');
-        submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbxJMDMn-xUIi3YG0tJobqfRBI2P00RN6hmvTJsIaZ1A91b8B2G6qtRuP6gETlE4qTOY/exec');
+        submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbz3TXuwJjkwLXMUm26n-WUWbct1H3D5nZyNqUb642BB4vbnOCDoRD-kM6zZT4t_mckl/exec');
         submitForm.setAttribute('target', 'hidden_iframe');
 
         // Create all your form data (keep your existing formData object)
