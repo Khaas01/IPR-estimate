@@ -421,7 +421,17 @@ function submitForm(event) {
     if (!confirm('Are you sure you want to submit this estimate?')) {
         return;
     }
-
+try {
+    // Create form data first
+    const formData = {
+        // ... your existing formData object
+    };
+    
+    // Validate form before submission
+    if (!validateForm(formData.data)) {
+        return;
+    }
+    
     try {
         // Create the form element
         const submitForm = document.createElement('form');
