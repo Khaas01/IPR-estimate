@@ -1,70 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iron Peak Roofing - Estimate Form</title>
-  <link rel="stylesheet" href="styles.css"> <!-- Link to the external CSS file -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iron Peak Roofing - Estimate Form</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to the external CSS file -->
 </head>
 <body>
-  <header>
+<header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
-    Version 93
-  </header>
+</header>
 
-  <form id="estimateForm">
+<form id="estimateForm">
     <!-- Sales Rep Section -->
     <div id="salesRepSection" style="display:block;">
-      <h2>Sales Rep Information</h2>
-      <label for="salesRepName">Sales Rep's Name:</label>
-      <input type="text" class="uniform-input" id="salesRepName" name="salesRepName" required>
-      <label for="salesRepEmail">Sales Rep's Email:</label>
-      <input type="email" class="uniform-input" id="salesRepEmail" name="salesRepEmail" required>
-      <label for="salesRepPhone">Sales Rep's Phone:</label>
-      <input type="tel" class="uniform-input" id="salesRepPhone" name="salesRepPhone" required>
-      <!-- Navigation Buttons -->
-      <button type="button" onclick="showSection('companySection')">Next</button>
+        <h2>Sales Rep Information</h2>
+        <label for="salesRepName">Sales Rep's Name:</label>
+        <input type="text" class="uniform-input" id="salesRepName" name="salesRepName" required>
+        <label for="salesRepEmail">Sales Rep's Email:</label>
+        <input type="email" class="uniform-input" id="salesRepEmail" name="salesRepEmail" required>
+        <label for="salesRepPhone">Sales Rep's Phone:</label>
+        <input type="tel" class="uniform-input" id="salesRepPhone" name="salesRepPhone" required>
+        <!-- Navigation Buttons -->
+        <button type="button" onclick="showSection('companySection')">Next</button>
     </div>
 
     <!-- Company Section -->
     <div id="companySection" style="display:none;">
-      <h2>Company Information</h2>
-      <label for="companyName">What Company are we providing this estimate for?</label><br>
-      <select id="companyName" name="companyName" class="uniform-input" required>
-        <option value="Iron Peak Roofing">Iron Peak Roofing</option>
-        <option value="Capitol Energy">Capital Energy</option>
-      </select>
-      <!-- Navigation Buttons -->
-      <div id="navigationButtons">
-        <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
-      </div>
+        <h2>Company Information</h2>
+        <label for="companyName">What Company are we providing this estimate for?</label><br>
+        <select id="companyName" name="companyName" class="uniform-input" required>
+            <option value="Iron Peak Roofing">Iron Peak Roofing</option>
+            <option value="Capitol Energy">Capitol Energy</option>
+        </select>
+        <!-- Navigation Buttons -->
+        <div id="navigationButtons">
+            <button type="button" id="backButton" onclick="goBack()">Back</button>
+            <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+        </div>
     </div>
 
     <!-- Property Owner Section -->
     <div id="propertyOwnerSection" style="display:none;">
-      <h2>Property Owner Information</h2>
-      <label for="ownerName">Owner's Name:</label>
-      <input type="text" class="uniform-input" id="ownerName" name="ownerName" required>
-      <label for="ownerAddress">Address:(Hint - Copy the address to paste into the measurement tool)</label>
-      <input type="text" class="uniform-input" id="ownerAddress" name="ownerAddress" required>
-      <label for="ownerCity">City:</label>
-      <input type="text" class="uniform-input" id="ownerCity" name="ownerCity" required>
-      <label for="ownerState">State:</label>
-      <input type="text" class="uniform-input" id="ownerState" name="ownerState" required>
-      <label for="ownerZip">Zip Code:</label>
-      <input type="text" class="uniform-input" id="ownerZip" name="ownerZip" required>
-      <label for="ownerPhone">Phone:</label>
-      <input type="tel" class="uniform-input" id="ownerPhone" name="ownerPhone" required>
-      <label for="ownerEmail">Email:</label>
-      <input type="email" class="uniform-input" id="ownerEmail" name="ownerEmail" required>
-      <!-- Navigation Buttons -->
-      <div id="navigationButtons">
-        <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('projectTypeSection')">Next</button>
-      </div>
+        <h2>Property Owner Information</h2>
+        <label for="ownerName">Owner's Name:</label>
+        <input type="text" class="uniform-input" id="ownerName" name="ownerName" required>
+        <label for="ownerAddress">Address (Hint - Copy the address to paste into the measurement tool):</label>
+        <input type="text" class="uniform-input" id="ownerAddress" name="ownerAddress" required>
+        <label for="ownerCity">City:</label>
+        <input type="text" class="uniform-input" id="ownerCity" name="ownerCity" required>
+        <label for="ownerState">State:</label>
+        <input type="text" class="uniform-input" id="ownerState" name="ownerState" required>
+        <label for="ownerZip">Zip Code:</label>
+        <input type="text" class="uniform-input" id="ownerZip" name="ownerZip" required>
+        <label for="ownerPhone">Phone:</label>
+        <input type="tel" class="uniform-input" id="ownerPhone" name="ownerPhone" required>
+        <label for="ownerEmail">Email:</label>
+        <input type="email" class="uniform-input" id="ownerEmail" name="ownerEmail" required>
+        <!-- Navigation Buttons -->
+        <div id="navigationButtons">
+            <button type="button" id="backButton" onclick="goBack()">Back</button>
+            <button type="button" onclick="showSection('projectTypeSection')">Next</button>
+        </div>
     </div>
+  
    <!-- Measure the Roof Section -->
     <div id="measureRoofSection" style="display:none;">
         <h2>Measure the Roof</h2>
@@ -608,8 +608,8 @@
 </div>
 </form>
    <script src="script.js"></script> <!-- Link to the external JavaScript file -->
-  <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-</body>   
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+</body>
 </html>
 
 
