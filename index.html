@@ -1,242 +1,10 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base target="_top">
     <title>Iron Peak Roofing - Estimate Form</title>
-    <style>
-        * {
-            box-sizing: border-box; /* Prevent overflow */
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fffff;
-            color: #333;
-            line-height: 1.6;
-     
-		}
-
-        header {
-            text-align: center;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
-
-        header .logo {
-            max-width: 150px;
-            height: auto;
-            margin-bottom: 10px;
-        }
-
-        h1 {
-            color: #0056b3;
-            font-size: 1.5em;
-            margin: 0;
-            font-weight: normal;
-        }
-
-        h2 {
-            color: #333;
-            border-bottom: 2px solid #0056b3;
-            padding-bottom: 10px;
-            font-weight: normal;
-        }
-
-        form {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: normal;
-        }
-
-        .uniform-input {
-            width: 100%; /* Ensures the input fields are contained */
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            transition: border-color 0.3s ease;
-            background-color: #fff; /* Ensures a white background */
-            font-size: 16px; /* Matches font size of other inputs */
-        }
-
-        .uniform-input:focus {
-            border-color: #0056b3;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
-        }
-
-        select.uniform-input {
-            -webkit-appearance: none; /* Removes default dropdown arrow on WebKit browsers */
-            -moz-appearance: none; /* Removes default dropdown arrow on Firefox */
-            appearance: none; /* Standardizes appearance */
-            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"%3E%3Cpath fill="none" stroke="%23333" stroke-width="2" d="M3 6l4 4 4-4"%3E%3C/path%3E%3C/svg%3E'); /* Adds custom dropdown arrow */
-            background-repeat: no-repeat;
-            background-position: right 10px center; /* Positions the arrow on the right */
-            background-size: 12px 8px;
-        }
-
-        /* Ensures the date input has consistent styling with other inputs */
-        input[type="date"].uniform-input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            transition: border-color 0.3s ease;
-            background-color: #fff;
-            font-size: 16px;
-        }
-
-        /* Focus effect for date input */
-        input[type="date"].uniform-input:focus {
-            border-color: #0056b3;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
-        }
-
-        button {
-            display: inline-block;
-            background-color: #0056b3;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            width: 100%; /* Ensures the button fills the form width */
-        }
-
-        button:hover {
-            background-color: #004494;
-            transform: translateY(-1px);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        #navigationButtons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            gap: 10px; /* Added gap between buttons */
-        }
-
-        #backButton {
-            display: none; /* Initially hide the back button */
-            width: 48%;
-        }
-
-        /* Mobile-first adjustments */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-            }
-
-            form {
-                padding: 15px;
-            }
-
-            button {
-                padding: 10px;
-            }
-
-            #navigationButtons button {
-                width: 100%; /* Full width for buttons on mobile */
-            }
-        }
-
-        /* Larger screen styles */
-        @media (min-width: 601px) {
-            header .logo {
-                max-width: 200px;
-            }
-
-            h1 {
-                font-size: 1.8em;
-            }
-
-            form {
-                max-width: 600px;
-            }
-
-            #navigationButtons button {
-                width: 48%; /* Split buttons on desktop */
-            }
-
-            #backButton {
-                display: inline-block; /* Show the back button in desktop */
-            }
-        }
-
-        /* Styling for radio buttons */
-        input[type="radio"] {
-            margin-right: 10px;
-            vertical-align: middle;
-            cursor: pointer;
-        }
-
-        label {
-            display: inline-block;
-            margin: 5px 0;
-        }
-
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .radio-group label {
-            margin-bottom: 10px;
-        }
-
-        /* Universal Section Style */
-        .form-section {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-
-        .form-section .section-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .form-section .form-label {
-            font-size: 1.1em;
-            font-weight: normal;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .form-section .form-options {
-            margin-top: 10px;
-        }
-
-        .form-section .form-radio {
-            margin-right: 10px;
-        }
-
-        .form-section .form-option-label {
-            font-size: 1em;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to the external CSS file -->
 </head>
 <body>
 <header>
@@ -246,16 +14,16 @@
 
 <form id="estimateForm">
     <!-- Sales Rep Section -->
-    <div id="salesRepSection">
+    <div id="salesRepSection" style="display:block;">
         <h2>Sales Rep Information</h2>
         <label for="salesRepName">Sales Rep's Name:</label>
         <input type="text" class="uniform-input" id="salesRepName" name="salesRepName" required>
-
         <label for="salesRepEmail">Sales Rep's Email:</label>
         <input type="email" class="uniform-input" id="salesRepEmail" name="salesRepEmail" required>
-
         <label for="salesRepPhone">Sales Rep's Phone:</label>
         <input type="tel" class="uniform-input" id="salesRepPhone" name="salesRepPhone" required>
+        <!-- Navigation Buttons -->
+        <button type="button" onclick="showSection('companySection')">Next</button>
     </div>
 
     <!-- Company Section -->
@@ -266,24 +34,11 @@
             <option value="Iron Peak Roofing">Iron Peak Roofing</option>
             <option value="Capitol Energy">Capitol Energy</option>
         </select>
-    </div>
-
-    <!-- Project Type Section -->
-    <div id="projectTypeSection" style="display:none;">
-        <h2>Project Type</h2>
-        <label>Project Type:</label><br>
-        <label>
-            <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required>
-            Cash
-        </label><br>
-        <label>
-            <input type="radio" id="projectTypeFinance" name="projectType" value="Finance" required>
-            Finance
-        </label><br>
-        <label>
-            <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required>
-            Insurance
-        </label>
+        <!-- Navigation Buttons -->
+        <div id="navigationButtons">
+            <button type="button" id="backButton" onclick="goBack()">Back</button>
+            <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+        </div>
     </div>
 
     <!-- Property Owner Section -->
@@ -291,26 +46,63 @@
         <h2>Property Owner Information</h2>
         <label for="ownerName">Owner's Name:</label>
         <input type="text" class="uniform-input" id="ownerName" name="ownerName" required>
-
-        <label for="ownerAddress">Address:</label>
+        <label for="ownerAddress">Address (Hint - Copy the address to paste into the measurement tool):</label>
         <input type="text" class="uniform-input" id="ownerAddress" name="ownerAddress" required>
-
         <label for="ownerCity">City:</label>
         <input type="text" class="uniform-input" id="ownerCity" name="ownerCity" required>
-
         <label for="ownerState">State:</label>
         <input type="text" class="uniform-input" id="ownerState" name="ownerState" required>
-
         <label for="ownerZip">Zip Code:</label>
         <input type="text" class="uniform-input" id="ownerZip" name="ownerZip" required>
-
         <label for="ownerPhone">Phone:</label>
         <input type="tel" class="uniform-input" id="ownerPhone" name="ownerPhone" required>
-
         <label for="ownerEmail">Email:</label>
         <input type="email" class="uniform-input" id="ownerEmail" name="ownerEmail" required>
+        <!-- Navigation Buttons -->
+        <div id="navigationButtons">
+            <button type="button" id="backButton" onclick="goBack()">Back</button>
+            <button type="button" onclick="showSection('projectTypeSection')">Next</button>
+        </div>
     </div>
-
+  
+   <!-- Measure the Roof Section -->
+    <div id="measureRoofSection" style="display:none;">
+        <h2>Measure the Roof</h2>
+        <p>
+            Use the tool below to measure the roof area. Follow the instructions on the website to accurately outline and calculate the roof dimensions.<br>
+            Click "get started" below.
+        </p>
+        <iframe 
+            src="https://www.oneclickestimate.com" 
+            style="width:100%; height:500px; border:0;" 
+            title="Roof Measurement Tool" id="measurementToolIframe"></iframe>
+      <div id="navigationButtons">
+      <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('roofingTypeSection')">Next</button>
+    </div>
+    </div>
+ <!-- Project Type Section -->
+<div id="projectTypeSection" style="display:none;">
+    <h2>Project Type</h2>
+    <label>Project Type:</label><br>
+    <label>
+        <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required>
+        Cash
+    </label><br>
+    <label>
+        <input type="radio" id="projectTypeFinance" name="projectType" value="Finance" required>
+        Finance
+    </label><br>
+    <label>
+        <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required>
+        Insurance
+    </label>
+    <div id="navigationButtons">
+       <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="nextProjectTypeSection()">Next</button>
+    </div>
+</div>
+    
     <!-- Insurance Information Section -->
     <div id="insuranceInfoSection" style="display:none;">
         <h2>Insurance Information</h2>
@@ -328,48 +120,54 @@
 
         <label for="dateOfLoss">Date of Loss:</label>
         <input type="text" class="uniform-input" id="dateOfLoss" name="dateOfLoss" required>
+            <div id="navigationButtons">
+      <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('roofingTypeSection')">Next</button>
+    </div>
     </div>
 
-    <!-- Predominant Roofing Type Section -->
-    <div id="roofingTypeSection" style="display:none;">
-        <h2>Predominant Roofing Type</h2>
-        <label for="roofingType">What is the predominant roofing type?</label>
-        <select id="roofingType" name="roofingType" class="uniform-input" required>
-            <option value="" disabled selected>Select Roofing Type</option>
-            <option value="Asphalt Shingles">Asphalt Shingles</option>
-            <option value="Tile">Tile</option>
-            <option value="Modified Bitumen (Flat roof rolled roofing)">Modified Bitumen (Flat roof rolled roofing)</option>
-            <option value="Flat Roof Coating">Flat Roof Coating</option>
-        </select>
+<div id="roofingTypeSection" style="display:none;">
+    <h2>Predominant Roofing Type</h2>
+    <label>What is the predominant roofing type?</label><br>
+    <label>
+        <input type="radio" id="roofingTypeAsphalt" name="roofingType" value="Asphalt Shingles" required>
+        Asphalt Shingles
+    </label><br>
+    <label>
+        <input type="radio" id="roofingTypeTile" name="roofingType" value="Tile" required>
+        Tile
+    </label><br>
+    <label>
+        <input type="radio" id="roofingTypeModified" name="roofingType" value="Modified Bitumen (Flat roof rolled roofing)" required>
+        Modified Bitumen (Flat roof rolled roofing)
+    </label><br>
+    <label>
+        <input type="radio" id="roofingTypeCoating" name="roofingType" value="Flat Roof Coating" required>
+        Flat Roof Coating
+    </label>
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromRoofingType()">Next</button>
     </div>
+</div>
 
-    <!-- Measure the Roof Section -->
-    <div id="measureRoofSection" style="display:none;">
-        <h2>Measure the Roof</h2>
-        <p>
-            Use the tool below to measure the roof area. Follow the instructions on the website to accurately outline and calculate the roof dimensions.<br>
-            Click "get started" below.
-        </p>
-        <iframe 
-            src="https://www.oneclickestimate.com" 
-            style="width:100%; height:800px; border:0;" 
-            title="Roof Measurement Tool"></iframe>
-    </div>
+
 
   <!-- Asphalt Shingle Section -->
 <div id="asphalt-shingle-section" style="display:none;">
-    <h2>Asphalt Shingle Roof Options</h2>
-    <!-- Question: What type of asphalt shingle service is needed? -->
-    <label for="shingle-service">What type of asphalt shingle service is needed?</label>
-    <div>
-        <label>
-            <input type="radio" id="shingle-repair" name="shingle-service" value="Shingle Roof Repair">
-            Shingle Roof Repair
-        </label><br>
-        <label>
-            <input type="radio" id="shingle-replacement" name="shingle-service" value="Shingle Roof Replacement">
-            Shingle Roof Replacement
-        </label>
+    <h2>Asphalt Shingle Roof</h2>
+    <label>Select the type of work needed:</label><br>
+    <label>
+        <input type="radio" name="shingleType" value="Shingle Roof Repair" required>
+        Shingle Roof Repair
+    </label><br>
+    <label>
+        <input type="radio" name="shingleType" value="Shingle Roof Replacement" required>
+        Shingle Roof Replacement
+    </label>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromShingleType()">Next</button>
     </div>
 </div>
 
@@ -385,6 +183,10 @@
     <!-- Question: Additional shingle repair charges? -->
     <label for="additional-charges">Additional shingle repair charges?</label>
     <input type="text" id="additional-charges" name="additional-charges" class="uniform-input" placeholder="Enter any additional charges">
+  <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+    </div>
 </div>
     
         
@@ -394,35 +196,43 @@
     <!-- Question: How many squares of shingles are we replacing? -->
     <label for="shingle-replacement">How many squares of shingles are we replacing?</label>
     <input type="text" id="shingle-replacement" name="shingle-replacement" class="uniform-input" placeholder="Enter number of squares of shingles">
-</div>
-        
-<!-- Tile Roofing Section -->
-<div id="tile-roofing-section" style="display:none;">
-    <h2>Tile Roof Options</h2>
-    <!-- Question: What type of work are we conducting? -->
-    <label for="tile-work-type">What type of work are we conducting?</label>
-    <div>
-        <label>
-            <input type="radio" id="tile-repair" name="tile-work-type" value="Repair">
-            Repair/Partial Roof
-        </label><br>
-        <label>
-            <input type="radio" id="tile-underlayment-replacement" name="tile-work-type" value="Underlayment Replacement">
-            Underlayment Replacement
-        </label><br>
-        <label>
-            <input type="radio" id="tile-remove-replace" name="tile-work-type" value="Remove and Replace">
-            Remove and Replace
-        </label>
+  <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
     </div>
 </div>
-
+        
+<div id="tile-roofing-section" style="display:none;">
+    <h2>Tile Roof Options</h2>
+    <label>
+        <input type="radio" id="tile-repair" name="tile-roofing-type" value="Repair/Partial Roof">
+        Repair/Partial Roof
+    </label><br>
+    <label>
+        <input type="radio" id="tile-underlayment-replacement" name="tile-roofing-type" value="Underlayment Replacement">
+        Underlayment Replacement
+    </label><br>
+    <label>
+        <input type="radio" id="tile-remove-replace" name="tile-roofing-type" value="Remove and Replace">
+        Remove and Replace
+    </label>
+    <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromTileRoofingType()">Next</button>
+    </div>
+</div>
 <!-- Tile Repair Section -->
 <div id="tile-repair-section" style="display:none;">
     <h2>Tile Repair</h2>
     <!-- Question: How many Sq of tile are we repairing? -->
     <label for="tile-repair-sq">How many Sq of tile are we repairing?</label>
     <input type="text" id="tile-repair-sq" name="tile-repair-sq" class="uniform-input" placeholder="Enter the number of squares">
+    <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+    </div>
 </div>
 
 <!-- Tile Underlayment Section -->
@@ -431,6 +241,11 @@
     <!-- Question: How many Sq of tile underlayment are we replacing? -->
     <label for="tile-underlayment-sq">How many Sq of tile underlayment are we replacing?</label>
     <input type="text" id="tile-underlayment-sq" name="tile-underlayment-sq" class="uniform-input" placeholder="Enter the number of squares">
+    <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+    </div>
 </div>
 
 <!-- Tile Remove and Replace Section -->
@@ -451,6 +266,11 @@
             <input type="radio" id="tile-sandcast" name="tile-type" value="SandCast">
             SandCast
         </label>
+          <!-- Navigation Buttons -->
+ <div id="navigationButtons">
+    <button type="button" id="backButton" onclick="goBack()">Back</button>
+    <button type="button" onclick="showSection('tile-roof-rr-section')">Next</button>
+</div>
     </div>
 </div>
 
@@ -460,6 +280,11 @@
     <!-- Question: How many squares of tile roofing are we removing and replacing? -->
     <label for="tile-roof-rr">How many squares of tile roofing are we removing and replacing?</label>
     <input type="text" id="tile-roof-rr" name="tile-roof-rr" class="uniform-input" placeholder="Enter number of squares of tile roofing">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+    </div>
 </div>
 
 
@@ -469,6 +294,11 @@
     <!-- Question: How many square of modified bitumen are we replacing? -->
     <label for="modified-bitumen-sq">How many square of modified bitumen are we replacing?</label>
     <input type="text" id="modified-bitumen-sq" name="modified-bitumen-sq" class="uniform-input" placeholder="Enter the number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+    </div>
 </div>
 
 <!-- Coating Section -->
@@ -477,13 +307,17 @@
     <!-- Question: How many square of roof surface are we re-coating? -->
     <label for="coating-squares">How many square of roof surface are we re-coating?</label>
     <input type="text" id="coating-squares" name="coating-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+    </div>
 </div>
 
 
 <!-- Secondary Roof Type Section -->
 <div id="secondary-roof-section" style="display:none;">
     <h2>Secondary Roof Type</h2>
-    <!-- Question: Is there a secondary type of roofing material we are replacing? -->
     <label>Is there a secondary type of roofing material we are replacing?</label>
     <div>
         <label>
@@ -495,30 +329,37 @@
             No
         </label>
     </div>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromSecondaryRoof()">Next</button>
+    </div>
 </div>
 
 <!-- Secondary Roofing Type Section -->
-<div id="secondary-roofing-type-section" style="display:none;">
+<div id="secondary-roofing-type-section">
     <h2>Secondary Roofing Type</h2>
-    <!-- Question: Secondary Roofing Type -->
     <label>Secondary Roofing Type</label>
     <div>
         <label>
-            <input type="radio" id="secondary-roof-shingles" name="secondary-roof-type" value="Shingles">
+            <input type="radio" id="secondary-roof-shingles" name="secondary-roofing-type" value="Shingles">
             Shingles
         </label><br>
         <label>
-            <input type="radio" id="secondary-roof-tiles" name="secondary-roof-type" value="Tiles">
+            <input type="radio" id="secondary-roof-tiles" name="secondary-roofing-type" value="Tiles">
             Tiles
         </label><br>
         <label>
-            <input type="radio" id="secondary-roof-modified-bitumen" name="secondary-roof-type" value="Modified Bitumen">
+            <input type="radio" id="secondary-roof-modified-bitumen" name="secondary-roofing-type" value="Modified Bitumen">
             Modified Bitumen
         </label><br>
         <label>
-            <input type="radio" id="secondary-roof-coating" name="secondary-roof-type" value="Coating">
+            <input type="radio" id="secondary-roof-coating" name="secondary-roofing-type" value="Coating">
             Coating
         </label>
+    </div>
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromSecondaryRoofingType()">Next</button>
     </div>
 </div>
 
@@ -528,6 +369,11 @@
     <!-- Question: How many squares of shingles are we replacing? -->
     <label for="shingles-squares">How many squares of shingles are we replacing?</label>
     <input type="text" id="shingles-squares" name="shingles-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
+    </div>
 </div>
 
 <!-- Secondary Roof Type - Tile Section -->
@@ -536,6 +382,11 @@
     <!-- Question: How many squares of tile underlayment are we replacing? -->
     <label for="tile-underlayment-squares">How many squares of tile underlayment are we replacing?</label>
     <input type="text" id="tile-underlayment-squares" name="tile-underlayment-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
+    </div>
 </div>
 
 <!-- Secondary Roof Type - Modified Bitumen Section -->
@@ -544,6 +395,11 @@
     <!-- Question: How many squares of modified bitumen are we replacing? -->
     <label for="modified-bitumen-squares">How many squares of modified bitumen are we replacing?</label>
     <input type="text" id="modified-bitumen-squares" name="modified-bitumen-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
+    </div>
 </div>
 
 <!-- Secondary Roof Type - Coating Section -->
@@ -552,29 +408,37 @@
     <!-- Question: How many squares of roof coating are we applying? -->
     <label for="coating-squares">How many squares of roof coating are we applying?</label>
     <input type="text" id="coating-squares" name="coating-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
+    </div>
 </div>
+
 
 <!-- Third Roof Type Section -->
 <div id="third-roof-type-section" style="display:none;">
     <h2>Third Roof Type</h2>
-    <!-- Question: Is there a third roofing type? -->
-    <label>Is there a third roofing type?</label>
+    <label>Is there a third type of roofing material we are replacing?</label>
     <div>
         <label>
-            <input type="radio" id="third-roof-type-yes" name="third-roof-type" value="yes">
+            <input type="radio" id="third-roof-yes" name="third-roof" value="Yes">
             Yes
         </label><br>
         <label>
-            <input type="radio" id="third-roof-type-no" name="third-roof-type" value="no">
+            <input type="radio" id="third-roof-no" name="third-roof" value="No">
             No
         </label>
+    </div>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromThirdRoof()">Next</button>
     </div>
 </div>
 
 <!-- Third Roof Type Style Section -->
 <div id="third-roof-type-style-section" style="display:none;">
     <h2>Third Roof Type Style</h2>
-    <!-- Question: Third Roof Type Style -->
     <label>Third Roof Type Style</label>
     <div>
         <label>
@@ -594,6 +458,10 @@
             Coating
         </label>
     </div>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromThirdRoofStyle()">Next</button>
+    </div>
 </div>
 
 <!-- Third Roof Type - Shingles Section -->
@@ -602,6 +470,11 @@
     <!-- Question: How many squares of shingles are we replacing? -->
     <label for="shingles-squares">How many squares of shingles are we replacing?</label>
     <input type="text" id="shingles-squares" name="shingles-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
+    </div>
 </div>
 
 <!-- Third Roof Type - Tiles Section -->
@@ -610,6 +483,11 @@
     <!-- Question: How many squares of tile underlayment are we replacing? -->
     <label for="tiles-squares">How many squares of tile underlayment are we replacing?</label>
     <input type="text" id="tiles-squares" name="tiles-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
+    </div>
 </div>
 
 <!-- Third Roof Type - Modified Section -->
@@ -618,6 +496,11 @@
     <!-- Question: How many squares of modified bitumen are we replacing? -->
     <label for="modified-squares">How many squares of modified bitumen are we replacing?</label>
     <input type="text" id="modified-squares" name="modified-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
+    </div>
 </div>
 
 
@@ -627,20 +510,30 @@
     <!-- Question: How many squares of roof surface are we re-coating? -->
     <label for="coatings-squares">How many squares of roof surface are we re-coating?</label>
     <input type="text" id="coatings-squares" name="coatings-squares" class="uniform-input" placeholder="Enter number of squares">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
+    </div>
 </div>
 
 <!-- Additional Charges Section -->
 <div id="additional-charges-section" style="display:none;">
     <h2>Additional Charges</h2>
-    <!-- Question: Are there any additional roofing charges that need to be added to this estimate? -->
     <label>Are there any additional roofing charges that need to be added to this estimate?</label>
     <div>
-        <input type="radio" id="additional-charges-yes" name="additional-charges" value="yes">
-        <label for="additional-charges-yes">Yes</label>
+        <label>
+            <input type="radio" id="additional-charges-yes" name="additional-charges" value="Yes">
+            Yes
+        </label><br>
+        <label>
+            <input type="radio" id="additional-charges-no" name="additional-charges" value="No">
+            No
+        </label>
     </div>
-    <div>
-        <input type="radio" id="additional-charges-no" name="additional-charges" value="no">
-        <label for="additional-charges-no">No</label>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromAdditionalCharges()">Next</button>
     </div>
 </div>
 
@@ -650,6 +543,11 @@
     <!-- Question: What additional roofing related items require additional charges? -->
     <label for="additional-charges-description">What additional roofing related items require additional charges?</label>
     <textarea id="additional-charges-description" name="additional-charges-description" class="uniform-input" placeholder="Enter details"></textarea>
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('additional-charges-price-section')">Next</button>
+    </div>
 </div>
 
 <!-- Additional Charges - Price Section -->
@@ -658,158 +556,66 @@
     <!-- Question: How much are we charging to complete these additional roofing related items? -->
     <label for="additional-charges-price">How much are we charging to complete these additional roofing related items?</label>
     <input type="text" id="additional-charges-price" name="additional-charges-price" class="uniform-input" placeholder="Enter price">
+  <!-- Navigation Buttons -->
+    <div id="navigationButtons">
+        <button type="button" id="backButton" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('solar-section')">Next</button>
+    </div>
 </div>
 
 <!-- Solar Section -->
 <div id="solar-section" style="display:none;">
     <h2>Solar</h2>
-    <!-- Question: Are there any solar panels that have to be removed to complete the repair? -->
     <label>Are there any solar panels that have to be removed to complete the repair?</label>
     <div>
-        <input type="radio" id="solar-yes" name="solar" value="yes">
-        <label for="solar-yes">Yes</label>
+        <label>
+            <input type="radio" id="solar-yes" name="solar" value="yes">
+            Yes
+        </label><br>
+        <label>
+            <input type="radio" id="solar-no" name="solar" value="no">
+            No
+        </label>
     </div>
-    <div>
-        <input type="radio" id="solar-no" name="solar" value="no">
-        <label for="solar-no">No</label>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="navigateFromSolar()">Next</button>
     </div>
 </div>
-
-
 
 <!-- Solar - Detach and Reset Section -->
 <div id="solar-detach-reset-section" style="display:none;">
     <h2>Solar - Detach and Reset</h2>
-    <!-- New Question: How many solar panels are we detaching and resetting to complete the roof repair? -->
     <label for="solar-detach-reset">How many solar panels are we detaching and resetting to complete the roof repair?</label>
     <input type="text" id="solar-detach-reset" name="solar-detach-reset" class="uniform-input" placeholder="Enter number of panels">
+   <!-- In the solar-detach-reset-section -->
+<div id="navigationButtons">
+    <button type="button" onclick="goBack()">Back</button>
+    <button type="button" onclick="showSection('review-section'); displayReview();">Next</button>
 </div>
-
- 
-
-
-
-    <!-- Navigation Buttons -->
-    <div id="navigationButtons">
-        <button type="button" id="backButton">Back</button>
-        <button type="button" id="nextButton" onclick="nextSection(); scrollToTop();">Next</button>
+</div>
+    
+ <!-- Review Section -->
+<div id="review-section" style="display:none;">
+    <h2>Review Your Estimate</h2>
+    <div id="review-content">
+        <!-- Content will be populated dynamically -->
     </div>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="submitForm()" class="submit-button">Submit Estimate</button>
+    </div>
+</div>
 </form>
-
-<script>
-    let currentSection = 0;
-    const sections = [
-        'salesRepSection',
-        'companySection',
-        'projectTypeSection',
-        'propertyOwnerSection',
-        'insuranceInfoSection',
-        'roofingTypeSection',
-        'measureRoofSection',
-        'asphalt-shingle-section',
-        'shingle-repair-section',
-        'shingle-replacement-section',
-        'tile-roofing-section',
-        'tile-repair-section',
-        'tile-underlayment-section',
-        'tile-remove-replace-section',
-        'tile-roof-rr-section',
-        'modified-bitumen-section',
-        'coating-section',
-        'secondary-roof-section',
-        'secondary-roofing-type-section',
-        'secondary-roof-type-shingles-section',
-        'secondary-roof-type-tile-section',
-        'secondary-roof-type-modified-bitumen-section',
-        'secondary-roof-type-coating-section',
-        'third-roof-type-section',
-        'third-roof-type-style-section',
-        'third-roof-type-shingles-section',
-        'third-roof-type-tiles-section',
-        'third-roof-type-coatings-section',
-        'additional-charges-section',
-        'additional-charges-description-section',
-        'additional-charges-price-section',
-        'solar-section',
-        'solar-detach-reset-section'
-        
-    ];
-
-    function showSection(index) {
-        sections.forEach((sectionId, i) => {
-            document.getElementById(sectionId).style.display = (i === index) ? 'block' : 'none';
-        });
-
-        document.getElementById('backButton').style.display = (index > 0) ? 'inline-block' : 'none';
-        document.getElementById('submitButton').style.display = (index === sections.length - 1) ? 'block' : 'none';
-        if (index === sections.length - 1) {
-            document.getElementById('nextButton').textContent = 'Submit';
-        } else {
-            document.getElementById('nextButton').textContent = 'Next';
-        }
-
-        // Adjust button widths for mobile and desktop
-        if (window.innerWidth <= 600) {
-            document.getElementById('nextButton').style.width = '100%';
-            document.getElementById('backButton').style.width = '100%';
-        } else {
-            document.getElementById('nextButton').style.width = '48%';
-            document.getElementById('backButton').style.width = '48%';
-        }
-    }
-
- function scrollToTop() {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
-}
-
-document.getElementById('nextButton').addEventListener('click', function() {
-    if (currentSection < sections.length - 1) {
-        currentSection++;
-        showSection(currentSection);
-        scrollToTop(); // Ensure this is called after updating the section
-    } else {
-        document.getElementById('estimateForm').dispatchEvent(new Event('submit'));
-    }
-});
-
-document.getElementById('backButton').addEventListener('click', function() {
-    if (currentSection > 0) {
-        currentSection--;
-        showSection(currentSection);
-        scrollToTop(); // Ensure this is called after updating the section
-    }
-});
-    document.getElementById('nextButton').addEventListener('click', function() {
-        if (currentSection < sections.length - 1) {
-            currentSection++;
-            showSection(currentSection);
-        } else {
-            document.getElementById('estimateForm').dispatchEvent(new Event('submit'));
-        }
-    });
-
-    document.getElementById('backButton').addEventListener('click', function() {
-        if (currentSection > 0) {
-            currentSection--;
-            showSection(currentSection);
-        }
-    });
-
-    document.getElementById('estimateForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-        const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value;
-        });
-
-        google.script.run.withSuccessHandler(function(response) {
-            alert('Form submitted successfully!');
-        }).submitFormData(data);
-    });
-
-    showSection(currentSection);
-</script>
+   <script src="script.js"></script> <!-- Link to the external JavaScript file -->
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 </body>
 </html>
+
+
+
+
+
+    
+    
+  

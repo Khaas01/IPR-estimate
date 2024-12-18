@@ -1,0 +1,241 @@
+/* Reset and Base Styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header Styles */
+header {
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+header .logo {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+/* Typography */
+h1 {
+    color: #0056b3;
+    font-size: 1.5em;
+    margin: 0;
+    font-weight: normal;
+}
+
+h2 {
+    color: #333;
+    border-bottom: 2px solid #0056b3;
+    padding-bottom: 10px;
+    font-weight: normal;
+}
+
+/* Form Container */
+form {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Input Fields */
+.uniform-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+    background-color: #fff;
+    font-size: 16px;
+}
+
+.uniform-input:focus {
+    border-color: #0056b3;
+    outline: none;
+    box-shadow: 0 0 15px rgba(0, 86, 179, 0.5);
+}
+
+/* Select Input Styling */
+select.uniform-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"%3E%3Cpath fill="none" stroke="%23333" stroke-width="2" d="M3 6l4 4 4-4"%3E%3C/path%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px 8px;
+}
+
+/* Date Input Styling */
+input[type="date"].uniform-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 16px;
+}
+
+/* Button Styles */
+button {
+    display: inline-block;
+    background-color: #0056b3;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #004494;
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Navigation Buttons */
+#navigationButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+#backButton {
+    display: none;
+    width: 48%;
+}
+
+/* Radio Button Styles */
+input[type="radio"] {
+    margin-right: 10px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+label {
+    display: inline-block;
+    margin: 5px 0;
+    font-weight: normal;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.radio-group label {
+    margin-bottom: 10px;
+}
+
+/* Form Section Styles */
+.form-section {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.form-section .section-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.form-section .form-label {
+    font-size: 1.1em;
+    font-weight: normal;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.form-section .form-options {
+    margin-top: 10px;
+}
+
+.form-section .form-radio {
+    margin-right: 10px;
+}
+
+.form-section .form-option-label {
+    font-size: 1em;
+}
+
+/* Mobile-first Media Queries */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5em;
+    }
+
+    form {
+        padding: 15px;
+    }
+
+    button {
+        padding: 10px;
+    }
+
+    #navigationButtons {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    #navigationButtons button {
+        width: 48%;
+        margin-bottom: 0;
+    }
+
+    #backButton {
+        display: block;
+    }
+}
+
+/* Larger Screen Media Queries */
+@media (min-width: 601px) {
+    header .logo {
+        max-width: 200px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    form {
+        max-width: 600px;
+    }
+
+    #navigationButtons {
+        flex-direction: row;
+    }
+
+    #navigationButtons button {
+        width: 48%;
+    }
+
+    #backButton {
+        display: inline-block;
+    }
+}
