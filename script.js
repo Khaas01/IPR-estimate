@@ -15,7 +15,6 @@ window.addEventListener('message', function(event) {
         alert('Error submitting form: ' + event.data.substring(6));
     }
 });
-
 // List of all sections in order
 const sections = [
     'salesRepSection',
@@ -79,7 +78,7 @@ function showSection(sectionId) {
     if (sectionId === 'solar-section') {
         updateSolarButton();
     }
-} // <-- This closing brace was missing
+} // <-- Ensure this closing brace is present
 
 function goBack() {
     if (sectionHistory.length > 1) {
@@ -92,6 +91,7 @@ function goBack() {
         }
     }
 }
+
 // Add this function near the top of your script.js file
 function updateSolarButton() {
     const solarYes = document.querySelector('input[id="solar-yes"]');
@@ -136,6 +136,8 @@ function nextProjectTypeSection() {
             console.error("Unknown project type selected");
     }
 }
+
+// Part 2: Section-specific Navigation Functions and Metadata Handling
 
 // Part 2: Section-specific Navigation Functions and Metadata Handling
 
@@ -558,8 +560,7 @@ function submitForm(event) {
     }
 }
 
-
-
+// Function to display the review section with only the iframe
 function displayReview() {
     // Get the review section container
     const reviewSection = document.getElementById('review-section');
@@ -580,8 +581,7 @@ function displayReview() {
             <button type="button" onclick="submitForm()">Submit</button>
         </div>
     `;
-    
-  
+
     // Update the review section content
     reviewContent.innerHTML = reviewHTML;
     
