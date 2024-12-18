@@ -73,6 +73,10 @@ function showSection(sectionId) {
     targetSection.style.display = 'block';
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId);
+
+         // Add this new code
+    if (sectionId === 'solar-section') {
+        updateSolarButton();
     }
 }
 
@@ -86,6 +90,23 @@ function goBack() {
             targetSection.style.display = 'block';
         }
     }
+}
+// Add this function near the top of your script.js file
+function updateSolarButton() {
+    const solarYes = document.querySelector('input[id="solar-yes"]');
+    const solarNo = document.querySelector('input[id="solar-no"]');
+    const nextButton = document.getElementById('solarNextButton');
+    
+    function updateButtonText() {
+        if (solarNo && solarNo.checked) {
+            nextButton.textContent = 'Submit';
+        } else if (solarYes && solarYes.checked) {
+            nextButton.textContent = 'Next';
+        }
+    }
+
+    if (solarYes) solarYes.addEventListener('change', updateButtonText);
+    if (solarNo) solarNo.addEventListener('change', updateButtonText);
 }
 
 // Initialize form on page load
@@ -329,8 +350,7 @@ function navigateFromSolar() {
             showSection('solar-detach-reset-section');
             break;
         case 'no':
-            showSection('review-section');
-            displayReview();
+            submitForm(); // Direct submit instead of going to review
             break;
         default:
             console.error("Unknown selection for solar panels");
