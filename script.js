@@ -569,7 +569,18 @@ function displayReview() {
     reviewContent.className = 'review-content';
 
     // Create review HTML structure
-    let reviewHTML = `
+    // Add this at the beginning of your displayReview HTML template
+reviewHTML += `
+    <div class="review-section">
+        <h4>Estimate Details</h4>
+        <iframe 
+            src="https://docs.google.com/spreadsheets/d/1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8/edit?gid=1464381304#gid=1464381304" 
+            style="width:100%; height:600px; border:none;"
+            title="Estimate Details">
+        </iframe>
+    </div>
+    ${reviewHTML}
+`;let reviewHTML = `
         <h3>Estimate Review</h3>
         <div class="review-metadata">
             <p>Generated on: ${timestamp}</p>
