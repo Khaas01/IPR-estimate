@@ -73,12 +73,13 @@ function showSection(sectionId) {
     targetSection.style.display = 'block';
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId);
-
-         // Add this new code
+    }
+    
+    // Add this new code
     if (sectionId === 'solar-section') {
         updateSolarButton();
     }
-}
+} // <-- This closing brace was missing
 
 function goBack() {
     if (sectionHistory.length > 1) {
