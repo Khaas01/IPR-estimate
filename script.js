@@ -532,26 +532,19 @@ function submitForm(event) {
             return;
         }
 
-        // Create the form element
         const submitForm = document.createElement('form');
         submitForm.setAttribute('method', 'POST');
-        submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbzOuDu2jv81pMzck9AJMjoyRQEqBqFpiAjL39NEUGvcnWSVj25Lq0dn-1ShIO3BkyNYmQ/exec');
+        submitForm.setAttribute('action', GOOGLE_APPS_SCRIPT_URL);
         submitForm.setAttribute('target', 'hidden_iframe');
 
-        // Create a hidden input for the JSON data
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'data';
         hiddenInput.value = JSON.stringify(formData);
         submitForm.appendChild(hiddenInput);
 
-        // Append the form to the body
         document.body.appendChild(submitForm);
-
-        // Submit the form
         submitForm.submit();
-
-        // Remove the form after submission
         document.body.removeChild(submitForm);
 
     } catch (error) {
@@ -559,13 +552,47 @@ function submitForm(event) {
         alert('Error submitting form: ' + error.message);
     }
 }
-
+window.addEventListener('message', function(event) {
+    if (event.data === 'success') {
+        alert('Form submitted successfully!');
+        document.getElementById('estimateForm').reset();
+        showSection('salesRepSection');
+        // Display the PDF iframe
+        displayPDFIframe(event.data.pdfUrl); // Assuming the PDF URL is returned in the response
+    } else if (event.data.startsWith('error:')) {
+        alert('Error submitting form: ' + event.data.substring(6));
+    }
+});
+function displayPDFIframe(pdfUrl) {
+    const reviewSection = document.getElementById('review-section');
+    const iframe = document.createElement('iframe');
+    iframe.src = pdfUrl;
+    iframe.style.width = '100%';
+    iframe.style.height = '600px';
+    iframe.style.border = 'none';
+    reviewSection.innerHTML = '';
+    reviewSection.appendChild(iframe);
+}
 // Function to display the review section with only the iframe
 function displayReview() {
     // Get the review section container
     const reviewSection = document.getElementById('review-section');
     const reviewContent = document.createElement('div');
     reviewContent.className = 'review-content';
+
+    function doPost(e) {
+    try {
+        const data = JSON.parse(e.parameters.data);
+        // Process data and generate PDF
+        const pdfUrl = generatePDF(data); // Assume this function generates the PDF and returns the URL
+
+        return ContentService.createTextOutput(JSON.stringify({status: 'success', pdfUrl: pdfUrl}))
+                             .setMimeType(ContentService.MimeType.JSON);
+    } catch (error) {
+        return ContentService.createTextOutput(JSON.stringify({status: 'error', message: error.message}))
+                             .setMimeType(ContentService.MimeType.JSON);
+    }
+}
 
     // Create review HTML with only the iframe
     const reviewHTML = `
