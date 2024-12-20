@@ -11,6 +11,8 @@ window.addEventListener('message', function(event) {
         alert('Form submitted successfully!');
         document.getElementById('estimateForm').reset();
         showSection('salesRepSection');
+        // Display the PDF iframe
+        displayPDFIframe(event.data.pdfUrl); // Assuming the PDF URL is returned in the response
     } else if (event.data.startsWith('error:')) {
         alert('Error submitting form: ' + event.data.substring(6));
     }
@@ -552,48 +554,47 @@ function submitForm(event) {
         alert('Error submitting form: ' + error.message);
     }
 }
-window.addEventListener('message', function(event) {
-    if (event.data === 'success') {
-        alert('Form submitted successfully!');
-        document.getElementById('estimateForm').reset();
-        showSection('salesRepSection');
-        // Display the PDF iframe
-        displayPDFIframe(event.data.pdfUrl); // Assuming the PDF URL is returned in the response
-    } else if (event.data.startsWith('error:')) {
-        alert('Error submitting form: ' + event.data.substring(6));
-    }
-});
+
 function displayPDFIframe(pdfUrl) {
     const reviewSection = document.getElementById('review-section');
+    if (!reviewSection) {
+        console.error('Review section not found');
+        return;
+    }
+    
+   // Clear existing content
+    reviewSection.innerHTML = '';
+    
+    // Create and append the iframe
     const iframe = document.createElement('iframe');
     iframe.src = pdfUrl;
     iframe.style.width = '100%';
     iframe.style.height = '600px';
     iframe.style.border = 'none';
-    reviewSection.innerHTML = '';
+    iframe.setAttribute('allowfullscreen', 'true');
+    
     reviewSection.appendChild(iframe);
 }
-// Function to display the review section with only the iframe
-function displayReview() {
-    // Get the review section container
-    const reviewSection = document.getElementById('review-section');
-    const reviewContent = document.createElement('div');
-    reviewContent.className = 'review-content';
-
-    function doPost(e) {
+window.addEventListener('message', function(event) {
     try {
-        const data = JSON.parse(e.parameters.data);
-        // Process data and generate PDF
-        const pdfUrl = generatePDF(data); // Assume this function generates the PDF and returns the URL
-
-        return ContentService.createTextOutput(JSON.stringify({status: 'success', pdfUrl: pdfUrl}))
-                             .setMimeType(ContentService.MimeType.JSON);
+        const response = JSON.parse(event.data);
+        if (response.status === 'success') {
+            alert('Form submitted successfully!');
+            if (response.pdfUrl) {
+                showSection('review-section');
+                displayPDFIframe(response.pdfUrl);
+            } else {
+                console.error('No PDF URL received');
+            }
+            document.getElementById('estimateForm').reset();
+        } else if (response.status === 'error') {
+            alert('Error submitting form: ' + response.message);
+        }
     } catch (error) {
-        return ContentService.createTextOutput(JSON.stringify({status: 'error', message: error.message}))
-                             .setMimeType(ContentService.MimeType.JSON);
+        console.error('Error processing response:', error);
+        alert('Error processing form submission');
     }
-}
-
+});
     // Create review HTML with only the iframe
     const reviewHTML = `
         <div class="review-section">
