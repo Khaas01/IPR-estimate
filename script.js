@@ -5,18 +5,7 @@ const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbya4H1XT
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
-// Add this near the top of your script.js file
-window.addEventListener('message', function(event) {
-    if (event.data === 'success') {
-        alert('Form submitted successfully!');
-        document.getElementById('estimateForm').reset();
-        showSection('salesRepSection');
-        // Display the PDF iframe
-        displayPDFIframe(event.data.pdfUrl); // Assuming the PDF URL is returned in the response
-    } else if (event.data.startsWith('error:')) {
-        alert('Error submitting form: ' + event.data.substring(6));
-    }
-});
+
 // List of all sections in order
 const sections = [
     'salesRepSection',
@@ -555,14 +544,36 @@ function submitForm(event) {
     }
 }
 
-function displayPDFIframe(pdfUrl) {
+function displayReview(pdfUrl) {
+    const reviewSection = document.getElementById('review-section');
+    if (!reviewSection) {
+        console.error('Review section not found');
+        return;
+    }
+
+    const reviewHTML = `
+        <div class="review-section">
+            <iframe 
+                src="${pdfUrl}"
+                style="width:100%; height:600px; border:none;"
+                allowfullscreen="true"
+                title="Estimate Details">
+            </iframe>
+        </div>
+        <div id="navigationButtons">
+            <button type="button" id="backButton" onclick="goBack()">Back</button>
+            <button type="button" onclick="submitForm()">Submit</button>
+        </div>
+    `;
+
+    function displayPDFIframe(pdfUrl) {
     const reviewSection = document.getElementById('review-section');
     if (!reviewSection) {
         console.error('Review section not found');
         return;
     }
     
-   // Clear existing content
+    // Clear existing content
     reviewSection.innerHTML = '';
     
     // Create and append the iframe
@@ -572,27 +583,46 @@ function displayPDFIframe(pdfUrl) {
     iframe.style.height = '600px';
     iframe.style.border = 'none';
     iframe.setAttribute('allowfullscreen', 'true');
+    iframe.setAttribute('title', 'Estimate PDF');
+    
+    // Add error handling
+    iframe.onerror = function() {
+        reviewSection.innerHTML = '<p class="error">Error loading PDF. Please try again.</p>';
+    };
     
     reviewSection.appendChild(iframe);
+
+    // Add navigation buttons
+    const navigationButtons = document.createElement('div');
+    navigationButtons.id = 'navigationButtons';
+    navigationButtons.innerHTML = `
+        <button type="button" onclick="goBack()">Back</button>
+    `;
+    reviewSection.appendChild(navigationButtons);
 }
 window.addEventListener('message', function(event) {
     try {
         const response = JSON.parse(event.data);
         if (response.status === 'success') {
             alert('Form submitted successfully!');
-            if (response.pdfUrl) {
+            if (response.pdfEmbedUrl) { // Changed from pdfUrl to pdfEmbedUrl
                 showSection('review-section');
-                displayPDFIframe(response.pdfUrl);
+                displayPDFIframe(response.pdfEmbedUrl);
             } else {
                 console.error('No PDF URL received');
             }
             document.getElementById('estimateForm').reset();
+            showSection('salesRepSection');
         } else if (response.status === 'error') {
             alert('Error submitting form: ' + response.message);
         }
     } catch (error) {
         console.error('Error processing response:', error);
-        alert('Error processing form submission');
+        if (typeof event.data === 'string' && event.data.startsWith('error:')) {
+            alert('Error submitting form: ' + event.data.substring(6));
+        } else {
+            alert('Error processing form submission');
+        }
     }
 });
     // Create review HTML with only the iframe
