@@ -1,10 +1,4 @@
 // Handle GET requests
-function doGet(e) {
-  return ContentService.createTextOutput("This web app is working correctly, but requires a POST request for form submissions.")
-    .setMimeType(ContentService.MimeType.TEXT);
-}
-
-// Handle POST requests from your form
 function doPost(e) {
   try {
     const jsonData = JSON.parse(e.parameter.data);
@@ -15,15 +9,113 @@ function doPost(e) {
     
     // Process the form data
     submitForm(jsonData.data); // Pass the form data to submitForm
-    onFormSubmit(e); // Call onFormSubmit for PDF generation and email
     
-    return ContentService.createTextOutput("success")
-      .setMimeType(ContentService.MimeType.TEXT);
+    // Generate PDF and get URLs
+    const pdfUrls = generateAndSendPDF(jsonData.data);
+    
+    // Return success response with PDF URLs
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'success',
+      message: 'Form submitted successfully',
+      pdfViewUrl: pdfUrls.viewUrl,
+      pdfEmbedUrl: pdfUrls.embedUrl
+    })).setMimeType(ContentService.MimeType.JSON);
+    
   } catch(error) {
     Logger.log("Error: " + error.message);
-    return ContentService.createTextOutput("error:" + error.message)
-      .setMimeType(ContentService.MimeType.TEXT);
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: error.message
+    })).setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+// Separate PDF generation into its own function
+function doPost(e) {
+  try {
+    const jsonData = JSON.parse(e.parameter.data);
+    
+    // Log the incoming data for debugging
+    Logger.log("Received submission at: " + new Date());
+    Logger.log("From user: " + jsonData.userLogin);
+    
+    // Process the form data
+    submitForm(jsonData.data); // Pass the form data to submitForm
+    
+    // Generate PDF and get URLs
+    const pdfUrls = generateAndSendPDF(jsonData.data);
+    
+    // Return success response with PDF URLs
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'success',
+      message: 'Form submitted successfully',
+      pdfViewUrl: pdfUrls.viewUrl,
+      pdfEmbedUrl: pdfUrls.embedUrl
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch(error) {
+    Logger.log("Error: " + error.message);
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: error.message
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// Separate PDF generation into its own function
+function generateAndSendPDF(data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const folder = DriveApp.getFolderById('13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD');
+  const clientName = data.ownerName;
+  const pdfFileName = clientName + ' - Roofing Estimate';
+  const estimateSheet = ss.getSheetByName('Estimate');
+
+  // Create PDF export options
+  const url = 'https://docs.google.com/spreadsheets/d/' + ss.getId() + '/export?';
+  const exportOptions = {
+    format: 'pdf',
+    size: 'letter',
+    portrait: true,
+    fitw: true,
+    scale: 4,
+    sheetnames: false,
+    printtitle: false,
+    pagenumbers: false,
+    gridlines: false,
+    fzr: true,
+    gid: estimateSheet.getSheetId(),
+    top_margin: '0.25',
+    bottom_margin: '0.25',
+    left_margin: '0.25',
+    right_margin: '0.25',
+    horizontal_alignment: 'CENTER',
+    vertical_alignment: 'TOP',
+    scale_to_fit: true
+  };
+
+  // Generate PDF
+  const fullUrl = url + Object.keys(exportOptions).map(function(key) {
+    return key + '=' + exportOptions[key];
+  }).join('&');
+  
+  const token = ScriptApp.getOAuthToken();
+  const response = UrlFetchApp.fetch(fullUrl, {
+    headers: {
+      'Authorization': 'Bearer ' + token
+    }
+  });
+
+  // Save PDF and create URLs
+  const pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
+  const pdfId = pdfFile.getId();
+  
+  // Set file permissions
+  pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  
+  return {
+    viewUrl: "https://drive.google.com/file/d/" + pdfId + "/view?usp=drivesdk",
+    embedUrl: "https://drive.google.com/file/d/" + pdfId + "/preview"
+  };
 }
 
 // Function to submit form data to spreadsheet
@@ -45,7 +137,31 @@ function submitForm(data) {
         data.ownerPhone,
         data.ownerEmail,
         data.projectType,
-        // Add other fields as needed
+        data.insuranceCompany || '',
+        data.insurancePhone || '',
+        data.claimNumber || '',
+        data.policyNumber || '',
+        data.dateOfLoss || '',
+        data.roofingType || '',
+        data.shingleType || '',
+        data.shinglesRepaired || '',
+        data.shingleReplacement || '',
+        data.tileRoofingType || '',
+        data.tileRepairSq || '',
+        data.tileUnderlaymentSq || '',
+        data.tileType || '',
+        data.tileRoofRr || '',
+        data.modifiedBitumenSq || '',
+        data.coatingSquares || '',
+        data.secondaryRoof || '',
+        data.secondaryRoofingType || '',
+        data.thirdRoof || '',
+        data.thirdRoofStyle || '',
+        data.additionalCharges || '',
+        data.additionalChargesDescription || '',
+        data.additionalChargesPrice || '',
+        data.solar || '',
+        data.solarDetachReset || ''
     ];
 
     // Append the row to the sheet
