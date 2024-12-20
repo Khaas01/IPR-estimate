@@ -544,20 +544,24 @@ function submitForm(event) {
     }
 }
 
-function displayReview(pdfUrl) {
+function displayReview() {
     const reviewSection = document.getElementById('review-section');
     if (!reviewSection) {
         console.error('Review section not found');
         return;
     }
 
+    // Create a container for the review content
+    const reviewContent = document.createElement('div');
+    reviewContent.className = 'review-content';
+
     const reviewHTML = `
         <div class="review-section">
             <iframe 
-                src="${pdfUrl}"
+                src="https://docs.google.com/spreadsheets/d/1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8/edit?gid=1464381304#gid=1464381304" 
                 style="width:100%; height:600px; border:none;"
-                allowfullscreen="true"
-                title="Estimate Details">
+                title="Estimate Details"
+                allowfullscreen="true">
             </iframe>
         </div>
         <div id="navigationButtons">
@@ -566,7 +570,16 @@ function displayReview(pdfUrl) {
         </div>
     `;
 
-    function displayPDFIframe(pdfUrl) {
+    // Set the HTML content
+    reviewContent.innerHTML = reviewHTML;
+    
+    // Clear existing content and append new review
+    reviewSection.innerHTML = '';
+    reviewSection.appendChild(reviewContent);
+}
+
+// Add this function to handle PDF display
+function displayPDFIframe(pdfUrl) {
     const reviewSection = document.getElementById('review-section');
     if (!reviewSection) {
         console.error('Review section not found');
@@ -590,29 +603,36 @@ function displayReview(pdfUrl) {
         reviewSection.innerHTML = '<p class="error">Error loading PDF. Please try again.</p>';
     };
     
-    reviewSection.appendChild(iframe);
-
+    // Create container for iframe
+    const iframeContainer = document.createElement('div');
+    iframeContainer.className = 'review-section';
+    iframeContainer.appendChild(iframe);
+    
     // Add navigation buttons
     const navigationButtons = document.createElement('div');
     navigationButtons.id = 'navigationButtons';
     navigationButtons.innerHTML = `
         <button type="button" onclick="goBack()">Back</button>
     `;
+    
+    // Append everything to review section
+    reviewSection.appendChild(iframeContainer);
     reviewSection.appendChild(navigationButtons);
 }
+
+// Update message event listener
 window.addEventListener('message', function(event) {
     try {
         const response = JSON.parse(event.data);
         if (response.status === 'success') {
             alert('Form submitted successfully!');
-            if (response.pdfEmbedUrl) { // Changed from pdfUrl to pdfEmbedUrl
+            if (response.pdfEmbedUrl) {
                 showSection('review-section');
                 displayPDFIframe(response.pdfEmbedUrl);
             } else {
                 console.error('No PDF URL received');
             }
             document.getElementById('estimateForm').reset();
-            showSection('salesRepSection');
         } else if (response.status === 'error') {
             alert('Error submitting form: ' + response.message);
         }
@@ -624,31 +644,4 @@ window.addEventListener('message', function(event) {
             alert('Error processing form submission');
         }
     }
-});
-    // Create review HTML with only the iframe
-    const reviewHTML = `
-        <div class="review-section">
-            <iframe 
-                src="https://docs.google.com/spreadsheets/d/1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8/edit?gid=1464381304#gid=1464381304" 
-                style="width:100%; height:600px; border:none;"
-                title="Estimate Details">
-            </iframe>
-        </div>
-        <div id="navigationButtons">
-            <button type="button" id="backButton" onclick="goBack()">Back</button>
-            <button type="button" onclick="submitForm()">Submit</button>
-        </div>
-    `;
-
-    // Update the review section content
-    reviewContent.innerHTML = reviewHTML;
-    
-    // Clear existing content and append new review
-    reviewSection.innerHTML = '';
-    reviewSection.appendChild(reviewContent);
-}
-// Initialize the form
-document.addEventListener('DOMContentLoaded', function() {
-    hideAllSections();
-    showSection(sectionHistory[0]);
 });
