@@ -1,10 +1,66 @@
-// Handle GET requests
-function doGet(e) {
-  return ContentService.createTextOutput("This web app is working correctly, but requires a POST request for form submissions.")
-    .setMimeType(ContentService.MimeType.TEXT);
+// Add at the top of your file
+const CONFIG = {
+  FOLDER_ID: '13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD',
+  SHEET_ID: '16GxQxqyPtp72HL22eTL39lYDiabphjNpmuodhF7pKUs',
+  CC_EMAIL: 'khaas@ironpeakroofing.com',
+  MAX_RETRIES: 3
+};
+
+// Add retry logic
+function retryOperation(operation, maxAttempts = CONFIG.MAX_RETRIES) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return operation();
+    } catch (error) {
+      if (attempt === maxAttempts) throw error;
+      Utilities.sleep(1000 * attempt); // Exponential backoff
+    }
+  }
 }
 
-// Handle POST requests
+// Add input validation
+function validateData(data) {
+  const requiredFields = [
+    'salesRepEmail',
+    'ownerName',
+    'ownerAddress',
+    'ownerCity',
+    'ownerState',
+    'ownerZip'
+  ];
+
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      throw new Error(`Missing required field: ${field}`);
+    }
+  }
+}
+
+// Add success logging
+function logSuccess(data, pdfUrls) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const logSheet = ss.getSheetByName('Logs') || ss.insertSheet('Logs');
+  
+  if (logSheet.getLastRow() === 0) {
+    logSheet.appendRow([
+      'Timestamp',
+      'Sales Rep',
+      'Client',
+      'PDF URL',
+      'Status'
+    ]);
+  }
+
+  logSheet.appendRow([
+    new Date(),
+    data.salesRepEmail,
+    data.ownerName,
+    pdfUrls.viewUrl,
+    'Success'
+  ]);
+}
+
+// Update doPost with improved error handling
 function doPost(e) {
   try {
     const jsonData = JSON.parse(e.parameter.data);
@@ -12,14 +68,16 @@ function doPost(e) {
     Logger.log("Received submission at: " + new Date());
     Logger.log("From user: " + jsonData.userLogin);
     
-    // Process the form data
-    submitForm(jsonData.data);
+    // Validate input data
+    validateData(jsonData.data);
     
-    // Generate PDF and get URLs
-    const pdfUrls = generateAndSendPDF(jsonData.data);
+    // Use retry logic for critical operations
+    const pdfUrls = retryOperation(() => generateAndSendPDF(jsonData.data));
+    retryOperation(() => submitForm(jsonData.data));
+    retryOperation(() => sendEmailWithPDF(jsonData.data, pdfUrls));
     
-    // Send email with PDF
-    sendEmailWithPDF(jsonData.data, pdfUrls);
+    // Log successful submission
+    logSuccess(jsonData.data, pdfUrls);
     
     return ContentService.createTextOutput(JSON.stringify({
       status: 'success',
@@ -30,6 +88,7 @@ function doPost(e) {
     
   } catch(error) {
     Logger.log("Error: " + error.message);
+    Logger.log("Stack: " + error.stack);
     sendErrorEmail(error);
     return ContentService.createTextOutput(JSON.stringify({
       status: 'error',
@@ -38,90 +97,55 @@ function doPost(e) {
   }
 }
 
-// PDF generation function
+// Update generateAndSendPDF with better error handling
 function generateAndSendPDF(data) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const folder = DriveApp.getFolderById('13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD');
-  const clientName = data.ownerName;
-  const pdfFileName = clientName + ' - Roofing Estimate';
-  const estimateSheet = ss.getSheetByName('Estimate');
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const folder = DriveApp.getFolderById(CONFIG.FOLDER_ID);
+    const clientName = data.ownerName;
+    const pdfFileName = `${clientName} - Roofing Estimate - ${new Date().toISOString().split('T')[0]}`;
+    const estimateSheet = ss.getSheetByName('Estimate');
 
-  const url = 'https://docs.google.com/spreadsheets/d/' + ss.getId() + '/export?';
-  const exportOptions = {
-    format: 'pdf',
-    size: 'letter',
-    portrait: true,
-    fitw: true,
-    scale: 4,
-    sheetnames: false,
-    printtitle: false,
-    pagenumbers: false,
-    gridlines: false,
-    fzr: true,
-    gid: estimateSheet.getSheetId(),
-    top_margin: '0.25',
-    bottom_margin: '0.25',
-    left_margin: '0.25',
-    right_margin: '0.25',
-    horizontal_alignment: 'CENTER',
-    vertical_alignment: 'TOP',
-    scale_to_fit: true
-  };
-
-  const fullUrl = url + Object.keys(exportOptions).map(key => 
-    `${key}=${exportOptions[key]}`).join('&');
-  
-  const token = ScriptApp.getOAuthToken();
-  const response = UrlFetchApp.fetch(fullUrl, {
-    headers: {
-      'Authorization': 'Bearer ' + token
+    if (!estimateSheet) {
+      throw new Error('Estimate sheet not found');
     }
-  });
 
-  const pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
-  const pdfId = pdfFile.getId();
-  
-  pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  
-  const urls = {
-    viewUrl: "https://drive.google.com/file/d/" + pdfId + "/view?usp=drivesdk",
-    embedUrl: "https://drive.google.com/file/d/" + pdfId + "/preview"
-  };
+    // Rest of your existing generateAndSendPDF code...
+    
+    // Add error handling for file creation
+    if (!pdfFile) {
+      throw new Error('Failed to create PDF file');
+    }
 
-  // Update review sheet if it exists
-  const reviewSheet = ss.getSheetByName('Review');
-  if (reviewSheet) {
-    reviewSheet.getRange('A1').setValue(urls.embedUrl);
+    const urls = {
+      viewUrl: "https://drive.google.com/file/d/" + pdfId + "/view?usp=drivesdk",
+      embedUrl: "https://drive.google.com/file/d/" + pdfId + "/preview"
+    };
+
+    // Update review sheet if it exists
+    const reviewSheet = ss.getSheetByName('Review');
+    if (reviewSheet) {
+      reviewSheet.getRange('A1').setValue(urls.embedUrl);
+    }
+
+    return urls;
+  } catch (error) {
+    Logger.log('PDF Generation Error: ' + error.message);
+    throw error; // Re-throw to be handled by retry logic
   }
-
-  return urls;
 }
 
-// Form submission function
-function submitForm(data) {
-  const sheetId = '16GxQxqyPtp72HL22eTL39lYDiabphjNpmuodhF7pKUs';
-  const sheet = SpreadsheetApp.openById(sheetId).getActiveSheet();
-  const row = [
-    new Date(),
-    data.salesRepEmail,
-    data.companyName,
-    data.salesRepName,
-    data.ownerName,
-    data.ownerAddress,
-    data.ownerCity,
-    data.ownerState,
-    data.ownerZip,
-    data.ownerPhone,
-    data.ownerEmail,
-    data.projectType,
-    // ... (rest of your data fields)
-  ];
-  sheet.appendRow(row);
-}
-
-// Email sending function
+// Update sendEmailWithPDF with better error handling
 function sendEmailWithPDF(data, pdfUrls) {
-  const emailBody = `Dear ${data.ownerName},
+  try {
+    const pdfId = pdfUrls.viewUrl.split('/')[5];
+    const pdfFile = DriveApp.getFileById(pdfId);
+    
+    if (!pdfFile) {
+      throw new Error('PDF file not found');
+    }
+
+    const emailBody = `Dear ${data.ownerName},
 
 Thank you for allowing us the opportunity to assist you with your roofing needs.
 
@@ -139,36 +163,19 @@ Iron Peak Roofing
 (602) 698-3840
 www.ironpeakroofing.com
 khaas@ironpeakroofing.com
-ROC # 355152`;
+ROC # 355152
 
-  const pdfFile = DriveApp.getFileById(pdfUrls.viewUrl.split('/')[5]);
-  
-  MailApp.sendEmail({
-    to: data.salesRepEmail,
-    cc: 'khaas@ironpeakroofing.com',
-    subject: `${data.ownerName} - Roofing Estimate`,
-    body: emailBody,
-    attachments: [pdfFile.getAs(MimeType.PDF)]
-  });
-}
+View your estimate online: ${pdfUrls.viewUrl}`;
 
-// Error email function
-function sendErrorEmail(error) {
-  const arizonaTime = Utilities.formatDate(new Date(), "America/Phoenix", "yyyy-MM-dd HH:mm:ss");
-  MailApp.sendEmail({
-    to: 'khaas@ironpeakroofing.com',
-    subject: 'Error in Form Submission',
-    body: `An error occurred: ${error.message}
-    
-Timestamp (AZ): ${arizonaTime}
-User: Khaas01`
-  });
-}
-
-// Create trigger if needed
-function createTrigger() {
-  ScriptApp.newTrigger('onFormSubmit')
-    .forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet())
-    .onFormSubmit()
-    .create();
+    MailApp.sendEmail({
+      to: data.salesRepEmail,
+      cc: CONFIG.CC_EMAIL,
+      subject: `${data.ownerName} - Roofing Estimate`,
+      body: emailBody,
+      attachments: [pdfFile.getAs(MimeType.PDF)]
+    });
+  } catch (error) {
+    Logger.log('Email Sending Error: ' + error.message);
+    throw error; // Re-throw to be handled by retry logic
+  }
 }
