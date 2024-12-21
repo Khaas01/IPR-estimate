@@ -1,7 +1,7 @@
 // Part 1: Core Navigation and Section Management
 
 // Constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKu-PHayLlQxT8WQGIoV-gSgrIy7dhRBzY0OPrxZnXMlHOH_l_BEzGr2NIofa17AejMg/exec'; // Add your deployment URL here
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7vK10ee5ljvLWMXg-mcvrzEeZVNoH7pULU6MaPgufefRdnXP0Y5tXUM5hxqisylmx8w/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
@@ -431,17 +431,71 @@ function submitForm(event) {
         event.preventDefault();
     }
 
-    // First confirm submission
     if (!confirm('Are you sure you want to submit this estimate?')) {
         return;
     }
 
     try {
-        // Create all your form data
+        showLoadingIndicator();
+
         const formData = {
             timestamp: new Date().toISOString(),
             userLogin: 'Khaas01',
-            data: {
+            data: collectFormData()
+        };
+
+        console.log('Form data being submitted:', formData);
+
+        fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Important for cross-origin requests
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `data=${encodeURIComponent(JSON.stringify(formData))}`
+        })
+        .then(response => {
+            console.log('Response received:', response);
+            if (!response.ok && response.status !== 0) { // status 0 is expected with no-cors
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text().then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.log('Raw response:', text);
+                    return { status: 'success' }; // Assume success with no-cors
+                }
+            });
+        })
+        .then(data => {
+            hideLoadingIndicator();
+            console.log('Processed response data:', data);
+            
+            if (data.status === 'error') {
+                throw new Error(data.message || 'Unknown server error');
+            }
+            
+            alert('Form submitted successfully!');
+            document.getElementById('estimateForm').reset();
+            showSection('salesRepSection');
+        })
+        .catch(error => {
+            hideLoadingIndicator();
+            console.error('Submission error:', error);
+            alert(`Error submitting form: ${error.message}\n\nPlease check the console for more details.`);
+        });
+
+    } catch (error) {
+        hideLoadingIndicator();
+        console.error('Form preparation error:', error);
+        alert(`Error preparing form submission: ${error.message}`);
+    }
+}
+
+function collectFormData() {
+    try {
+        const data = {
                 // Sales Representative Information
                 salesRepName: document.getElementById('salesRepName').value,
                 salesRepEmail: document.getElementById('salesRepEmail').value,
@@ -517,6 +571,47 @@ function submitForm(event) {
                 solarDetachReset: document.getElementById('solar-detach-reset')?.value
             }
         };
+ console.log('Collected form data:', data);
+        return data;
+    } catch (error) {
+        console.error('Error collecting form data:', error);
+        throw new Error(`Failed to collect form data: ${error.message}`);
+    }
+}
+
+function getInputValue(id) {
+    const element = document.getElementById(id);
+    if (!element) {
+        console.warn(`Element not found: ${id}`);
+        return '';
+    }
+    return element.value || '';
+}
+
+function getRadioValue(name) {
+    const selected = document.querySelector(`input[name="${name}"]:checked`);
+    return selected ? selected.value : '';
+}
+
+function showLoadingIndicator() {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'loadingIndicator';
+    loadingDiv.className = 'loading';
+    loadingDiv.innerHTML = `
+        <div class="loading-content">
+            <p>Submitting form...</p>
+            <div class="spinner"></div>
+        </div>
+    `;
+    document.body.appendChild(loadingDiv);
+}
+
+function hideLoadingIndicator() {
+    const loadingDiv = document.getElementById('loadingIndicator');
+    if (loadingDiv) {
+        loadingDiv.remove();
+    }
+}
 
     // Validate form before submission
         if (!validateForm(formData.data)) {
