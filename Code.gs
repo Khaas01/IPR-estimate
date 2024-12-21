@@ -1,7 +1,7 @@
 // Add at the top of your file
 const CONFIG = {
-  FOLDER_ID: '13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD',
-  SHEET_ID: '16GxQxqyPtp72HL22eTL39lYDiabphjNpmuodhF7pKUs',
+  FOLDER_ID: '13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD',    // Folder for PDF storage
+  SHEET_ID: '1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw',    // Form Responses sheet
   CC_EMAIL: 'khaas@ironpeakroofing.com',
   MAX_RETRIES: 3
 };
