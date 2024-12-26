@@ -6,6 +6,11 @@ const CONFIG = {
   MAX_RETRIES: 3
 };
 
+function doGet(e) {
+  return ContentService.createTextOutput("The web app is working correctly.")
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
 // Add retry logic
 function retryOperation(operation, maxAttempts = CONFIG.MAX_RETRIES) {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -36,6 +41,23 @@ function validateData(data) {
   }
 }
 
+// Add utility function for logging
+function logToSheet(message, type = 'INFO') {
+  try {
+    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+    let logSheet = ss.getSheetByName('System Logs');
+    
+    if (!logSheet) {
+      logSheet = ss.insertSheet('System Logs');
+      logSheet.appendRow(['Timestamp', 'Type', 'Message']);
+    }
+    
+    logSheet.appendRow([new Date(), type, message]);
+  } catch (error) {
+    Logger.log('Failed to log to sheet: ' + error.message);
+  }
+}
+
 // Add success logging
 function logSuccess(data, pdfUrls) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -59,6 +81,26 @@ function logSuccess(data, pdfUrls) {
     'Success'
   ]);
 }
+
+// Add error email function
+function sendErrorEmail(error) {
+  try {
+    MailApp.sendEmail({
+      to: CONFIG.CC_EMAIL,
+      subject: 'Error in Roofing Estimate Form',
+      body: `An error occurred in the form submission:
+      
+Error Message: ${error.message}
+Stack Trace: ${error.stack}
+Timestamp: ${new Date().toISOString()}
+      
+Please check the Apps Script logs for more details.`
+    });
+  } catch (emailError) {
+    Logger.log('Failed to send error email: ' + emailError.message);
+  }
+}
+
 function submitForm(data) {
   try {
     const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID); // Form Responses sheet
@@ -170,32 +212,35 @@ function submitForm(data) {
 // Update doPost with improved error handling
 function doPost(e) {
   try {
-    Logger.log("Starting doPost execution");
-    Logger.log("Request parameters: " + JSON.stringify(e.parameter));
-
-    if (!e.parameter.data) {
-      throw new Error("No data received in request");
+    logToSheet("Starting doPost execution", "INFO");
+    
+    // Log the raw request data
+    logToSheet("Raw request data: " + JSON.stringify(e), "DEBUG");
+    
+    if (!e || !e.parameter || !e.parameter.data) {
+      throw new Error("No data received in request. Parameters: " + JSON.stringify(e && e.parameter));
     }
 
-    const jsonData = JSON.parse(e.parameter.data);
-    Logger.log("Parsed JSON data: " + JSON.stringify(jsonData));
-
-    // Validate the data structure
-    if (!jsonData.data) {
-      throw new Error("Invalid data structure received");
+    let jsonData;
+    try {
+      jsonData = JSON.parse(e.parameter.data);
+      logToSheet("Parsed data: " + JSON.stringify(jsonData), "DEBUG");
+    } catch (parseError) {
+      throw new Error("Failed to parse JSON data: " + parseError.message);
     }
 
-    Logger.log("Attempting to submit form data");
-    const submissionResult = submitForm(jsonData.data);
-    Logger.log("Form submission result: " + submissionResult);
+    // Validate data before proceeding
+    validateData(jsonData.data);
 
-    Logger.log("Generating PDF");
-    const pdfUrls = generateAndSendPDF(jsonData.data);
-    Logger.log("PDF URLs generated: " + JSON.stringify(pdfUrls));
+    // Try each operation separately with retry logic
+    const submissionResult = retryOperation(() => submitForm(jsonData.data));
+    logToSheet("Form submitted successfully", "INFO");
 
-    Logger.log("Sending email");
-    sendEmailWithPDF(jsonData.data, pdfUrls);
-    Logger.log("Email sent successfully");
+    const pdfUrls = retryOperation(() => generateAndSendPDF(jsonData.data));
+    logToSheet("PDF generated successfully", "INFO");
+
+    retryOperation(() => sendEmailWithPDF(jsonData.data, pdfUrls));
+    logToSheet("Email sent successfully", "INFO");
 
     return ContentService.createTextOutput(JSON.stringify({
       status: 'success',
@@ -205,95 +250,14 @@ function doPost(e) {
     })).setMimeType(ContentService.MimeType.JSON);
 
   } catch(error) {
-    Logger.log("Error in doPost: " + error.message);
-    Logger.log("Error stack: " + error.stack);
+    const errorMessage = `Error in doPost: ${error.message}\nStack: ${error.stack}`;
+    logToSheet(errorMessage, "ERROR");
     sendErrorEmail(error);
+    
     return ContentService.createTextOutput(JSON.stringify({
       status: 'error',
       message: error.message,
       details: error.stack
     })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-// Update generateAndSendPDF with better error handling
-function generateAndSendPDF(data) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const folder = DriveApp.getFolderById(CONFIG.FOLDER_ID);
-    const clientName = data.ownerName;
-    const pdfFileName = `${clientName} - Roofing Estimate - ${new Date().toISOString().split('T')[0]}`;
-    const estimateSheet = ss.getSheetByName('Estimate');
-
-    if (!estimateSheet) {
-      throw new Error('Estimate sheet not found');
-    }
-
-    // Rest of your existing generateAndSendPDF code...
-    
-    // Add error handling for file creation
-    if (!pdfFile) {
-      throw new Error('Failed to create PDF file');
-    }
-
-    const urls = {
-      viewUrl: "https://drive.google.com/file/d/" + pdfId + "/view?usp=drivesdk",
-      embedUrl: "https://drive.google.com/file/d/" + pdfId + "/preview"
-    };
-
-    // Update review sheet if it exists
-    const reviewSheet = ss.getSheetByName('Review');
-    if (reviewSheet) {
-      reviewSheet.getRange('A1').setValue(urls.embedUrl);
-    }
-
-    return urls;
-  } catch (error) {
-    Logger.log('PDF Generation Error: ' + error.message);
-    throw error; // Re-throw to be handled by retry logic
-  }
-}
-
-// Update sendEmailWithPDF with better error handling
-function sendEmailWithPDF(data, pdfUrls) {
-  try {
-    const pdfId = pdfUrls.viewUrl.split('/')[5];
-    const pdfFile = DriveApp.getFileById(pdfId);
-    
-    if (!pdfFile) {
-      throw new Error('PDF file not found');
-    }
-
-    const emailBody = `Dear ${data.ownerName},
-
-Thank you for allowing us the opportunity to assist you with your roofing needs.
-
-Attached is our detailed estimate that addresses the roof repairs as specified. It includes a breakdown of the repairs and the costs to restore the roof's integrity.
-
-If you have any questions or need clarification, please do not hesitate to reach out. My contact information is below. I am here to assist you in any way we can.
-
-We look forward to working with you on this project and ensuring your roofing needs are met with the highest level of quality and service.
-
-Best regards,
-
-Kris Haas
-General Manager
-Iron Peak Roofing
-(602) 698-3840
-www.ironpeakroofing.com
-khaas@ironpeakroofing.com
-ROC # 355152
-
-View your estimate online: ${pdfUrls.viewUrl}`;
-
-    MailApp.sendEmail({
-      to: data.salesRepEmail,
-      cc: CONFIG.CC_EMAIL,
-      subject: `${data.ownerName} - Roofing Estimate`,
-      body: emailBody,
-      attachments: [pdfFile.getAs(MimeType.PDF)]
-    });
-  } catch (error) {
-    Logger.log('Email Sending Error: ' + error.message);
-    throw error; // Re-throw to be handled by retry logic
   }
 }
