@@ -406,12 +406,12 @@ function validateForm(formData) {
     ];
 
     for (const field of requiredFields) {
-        if (!formData[field] || formData[field].trim() === '') {
+        const value = document.getElementById(field).value;
+        if (!value || value.trim() === '') {
             alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
             return false;
         }
     }
-
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.salesRepEmail)) {
