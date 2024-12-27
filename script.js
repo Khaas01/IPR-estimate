@@ -587,7 +587,7 @@ reviewHTML += `
     // Clear existing content and append new review
     reviewSection.innerHTML = '';
     reviewSection.appendChild(reviewContent);
-}
+
 // Initialize the form
 document.addEventListener('DOMContentLoaded', function() {
     hideAllSections();
