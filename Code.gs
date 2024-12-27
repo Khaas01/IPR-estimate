@@ -24,69 +24,73 @@ function getHeaderRow() {
 }
 
 function findLastRowWithData(sheet) {
-  // Get all data
-  var data = sheet.getDataRange().getValues();
-  var lastRow = data.length;
+  // 1. First, get the correct sheet
+  var workbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8'); // Your IPR- WebApp Sheets workbook
+  var databaseSheet = workbook.getSheetByName('Database');
   
-  // Look for the last row that contains any data
-  for (var i = data.length - 1; i >= 0; i--) {
-    if (data[i].some(cell => cell !== '' && cell !== null)) {
-      lastRow = i + 1;
-      break;
-    }
-  }
+  Logger.log('Checking Database sheet last row...');
   
-  Logger.log('Found last row using data scan: ' + lastRow);
+  // 2. Get the actual last row from Database sheet
+  var lastRow = databaseSheet.getLastRow();
+  Logger.log('Raw last row from Database sheet: ' + lastRow);
   
-  // Verify using a known required column (Owner Name)
-  var headers = data[0];
+  // 3. Verify data exists at this row
+  var headers = databaseSheet.getRange(2225, 1, 1, databaseSheet.getLastColumn()).getValues()[0];
   var ownerNameCol = headers.indexOf("Owner Name") + 1;
-  if (ownerNameCol > 0) {
-    var ownerNameLastRow = sheet.getRange(1, ownerNameCol, sheet.getLastRow())
-                               .getValues()
-                               .filter(String)
-                               .length;
-    Logger.log('Found last row using Owner Name column: ' + ownerNameLastRow);
-    
-    // Use the larger of the two values to be safe
-    lastRow = Math.max(lastRow, ownerNameLastRow);
-  }
+  var ownerName = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
+  
+  Logger.log('Owner Name at last row: ' + ownerName);
   
   return lastRow;
 }
-
+function testRowNumbers() {
+  var formWorkbook = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
+  var formResponseSheet = formWorkbook.getSheetByName('Form Responses');
+  
+  Logger.log('Testing row numbers...');
+  Logger.log('Sheet name: ' + formResponseSheet.getName());
+  Logger.log('Total rows in sheet: ' + formResponseSheet.getMaxRows());
+  Logger.log('Last row from getLastRow(): ' + formResponseSheet.getLastRow());
+  
+  var lastRow = findLastRowWithData(formResponseSheet);
+  Logger.log('Final adjusted last row: ' + lastRow);
+  
+  // Verify the content
+  var headers = formResponseSheet.getRange(1, 1, 1, formResponseSheet.getLastColumn()).getValues()[0];
+  var ownerNameCol = headers.indexOf("Owner Name") + 1;
+  var ownerName = formResponseSheet.getRange(lastRow, ownerNameCol).getValue();
+  Logger.log('Owner Name at last row: ' + ownerName);
+  
+  return {
+    lastRow: lastRow,
+    ownerName: ownerName
+  };
+}
 function onFormSubmit(e) {
   try {
-    // 1. Initialize both spreadsheets and get specific sheets
-    var formWorkbook = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
+    // 1. Initialize workbooks and get specific sheets
     var estimateWorkbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
-    
-    // Get specific sheets from each workbook
-    var formResponseSheet = formWorkbook.getSheetByName('Form Responses');
+    var databaseSheet = estimateWorkbook.getSheetByName('Database');
     var estimateSheet = estimateWorkbook.getSheetByName('Estimate');
     
-    Logger.log("Form Workbook name: " + formWorkbook.getName());
     Logger.log("Estimate Workbook name: " + estimateWorkbook.getName());
 
-    if (!formResponseSheet) {
-      throw new Error('Form Responses sheet not found in form workbook');
+    if (!databaseSheet) {
+      throw new Error('Database sheet not found in workbook');
     }
     if (!estimateSheet) {
-      throw new Error('Estimate sheet not found in estimate workbook');
+      throw new Error('Estimate sheet not found in workbook');
     }
 
-    // 2. Get the last row and headers
-    var lastRow = findLastRowWithData(formResponseSheet);
-    Logger.log('Final determined last row: ' + lastRow);
+    // 2. Get the last row from Database sheet
+    var lastRow = findLastRowWithData(databaseSheet);
+    Logger.log('Final determined last row from Database: ' + lastRow);
     
-    var headers = formResponseSheet.getRange(1, 1, 1, formResponseSheet.getLastColumn()).getValues()[0];
-    
-    Logger.log('Last Row: ' + lastRow);
-    Logger.log('Headers: ' + headers.join(', '));
+    // 3. Get headers from Database sheet (starting at row 2225)
+    var headers = databaseSheet.getRange(2225, 1, 1, databaseSheet.getLastColumn()).getValues()[0];
+    Logger.log('Headers from Database: ' + headers.join(', '));
 
-    // Rest of your code remains the same...
-
-    // 3. Helper function for finding columns
+    // Helper function for finding columns
     function getColumnByHeader(headerName) {
       var index = headers.indexOf(headerName);
       if (index === -1) {
@@ -95,14 +99,14 @@ function onFormSubmit(e) {
       return index + 1;
     }
 
-    // 4. Update Estimate sheet
+    // 4. Update Estimate sheet with the correct row number
     estimateSheet.getRange('K4').setValue(lastRow);
 
-    // 5. Get client information
-    var clientName = formResponseSheet.getRange(lastRow, getColumnByHeader("Owner Name")).getValue();
-    var clientEmail = formResponseSheet.getRange(lastRow, getColumnByHeader("Owner Email")).getValue();
-    var salesRepName = formResponseSheet.getRange(lastRow, getColumnByHeader("Sales Rep Name")).getValue();
-    var companyType = formResponseSheet.getRange(lastRow, getColumnByHeader("Company Name")).getValue();
+    // 5. Get client information from Database sheet
+    var clientName = databaseSheet.getRange(lastRow, getColumnByHeader("Owner Name")).getValue();
+    var clientEmail = databaseSheet.getRange(lastRow, getColumnByHeader("Owner Email")).getValue();
+    var salesRepName = databaseSheet.getRange(lastRow, getColumnByHeader("Sales Rep Name")).getValue();
+    var companyType = databaseSheet.getRange(lastRow, getColumnByHeader("Company Name")).getValue();
     var senderEmail = 'khaas@ironpeakroofing.com';
 
     // Log retrieved values
@@ -129,30 +133,31 @@ function onFormSubmit(e) {
                    'khaas@ironpeakroofing.com\n' +
                    'ROC # 355152';
 
-    // 7. PDF Generation
-    var folder = DriveApp.getFolderById('1FjTPRhC-1hUMioHZNTN6isYfzy_54c3M');
-    var pdfFileName = clientName + ' - Roofing Estimate';
-    
-    var url = 'https://docs.google.com/spreadsheets/d/' + estimateWorkbook.getId() + '/export?';
-    var exportOptions = {
-      format: 'pdf',
-      size: 'letter',
-      portrait: true,
-      fitw: false,     // Changed from true to false
-      fith: true,      // Added fit to height
-      scale: 1,        // Adjusted scale from 2 to 1 for better fitting
-      sheetnames: false,
-      printtitle: false,
-      pagenumbers: false,
-      gridlines: false,
-      fzr: false,
-      gid: estimateSheet.getSheetId(),
-      top_margin: '0.25',
-      bottom_margin: '0.25',
-      left_margin: '0.25',
-      right_margin: '0.25'
-    };
+  // 7. PDF Generation with adjusted settings
+var folder = DriveApp.getFolderById('1FjTPRhC-1hUMioHZNTN6isYfzy_54c3M');
+var pdfFileName = clientName + ' - Roofing Estimate';
 
+var url = 'https://docs.google.com/spreadsheets/d/' + estimateWorkbook.getId() + '/export?';
+var exportOptions = {
+  format: 'pdf',
+  size: 'letter',
+  portrait: true,
+  fitw: true,        // Fit to width
+  fith: true,        // Fit to height
+  scale: 4,          // Adjusted scale to fit content
+  sheetnames: false,
+  printtitle: false,
+  pagenumbers: false,
+  gridlines: false,
+  fzr: true,         // Freeze rows
+  top_margin: 0.20,  // Reduced margins
+  bottom_margin: 0.20,
+  left_margin: 0.20,
+  right_margin: 0.20,
+  horizontal_alignment: 'CENTER',
+  vertical_alignment: 'TOP',
+  gid: estimateSheet.getSheetId()
+};
     var fullUrl = url + Object.keys(exportOptions).map(function(key) {
       return key + '=' + exportOptions[key];
     }).join('&');
