@@ -447,7 +447,7 @@ function validateForm(formData) {
     return true;
 }
 
-ffunction submitForm(event) {
+function submitForm(event) {
     if (event) {
         event.preventDefault();
     }
