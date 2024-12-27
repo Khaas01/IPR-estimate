@@ -322,19 +322,56 @@ function navigateFromSolar() {
         return;
     }
 
-    switch(selectedOption.value) {
-        case 'yes':
-            showSection('solar-detach-reset-section');
-            break;
-        case 'no':
-            showSection('review-section');
-            displayReview();
-            break;
-        default:
-            console.error("Unknown selection for solar panels");
+    if (selectedOption.value === 'yes') {
+        // If Yes is selected, show next section
+        showSection('solar-detach-reset-section');
+        
+        // Update button to show "Next"
+        const navigationButtons = document.querySelector('#navigationButtons');
+        if (navigationButtons) {
+            navigationButtons.innerHTML = `
+                <button type="button" onclick="goBack()">Back</button>
+                <button type="button" onclick="nextFromSolar()" class="next-button">Next</button>
+            `;
+        }
+    } else {
+        // If No is selected, submit form then show review
+        submitForm()
+            .then(() => {
+                showSection('review-section');
+                displayReview();
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+                alert('There was an error submitting the form. Please try again.');
+            });
     }
 }
 
+// Add this new function to handle navigation from solar detach reset section
+function nextFromSolar() {
+    submitForm()
+        .then(() => {
+            showSection('review-section');
+            displayReview();
+        })
+        .catch(error => {
+            console.error('Error submitting form:', error);
+            alert('There was an error submitting the form. Please try again.');
+        });
+}
+function shareEstimate() {
+    // Get the estimate workbook ID
+    const estimateSheetId = '1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8';
+    
+    // Create the sharing URL
+    const sharingUrl = `https://docs.google.com/spreadsheets/d/${estimateSheetId}/export?format=pdf`;
+    
+    // Open email client with pre-filled subject
+    const emailSubject = 'Roofing Estimate';
+    const emailBody = 'Please find your roofing estimate attached.';
+    window.location.href = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+}
 // Add this function before your submitForm function
 function validateForm(formData) {
     // Required fields validation
@@ -410,21 +447,18 @@ function validateForm(formData) {
     return true;
 }
 
-function submitForm(event) {
+ffunction submitForm(event) {
     if (event) {
         event.preventDefault();
     }
 
-    // First confirm submission
-    if (!confirm('Are you sure you want to submit this estimate?')) {
-        return;
-    }
-
-    try {
-        // Create all your form data
-       const formData = {
-    timestamp: new Date().toISOString(),
-    data: {
+    // Create all your form data with current timestamp
+    const formData = {
+        timestamp: new Date().toISOString(), // Current timestamp
+        data: {
+            // ... rest of your form data
+        }
+    };
                 // Sales Representative Information
                 salesRepName: document.getElementById('salesRepName').value,
                 salesRepEmail: document.getElementById('salesRepEmail').value,
