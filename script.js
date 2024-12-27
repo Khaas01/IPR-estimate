@@ -586,11 +586,75 @@ function submitForm(event) {
         return Promise.reject(error);
     }
 }
+// Add these utility functions for the loading indicator
+function showLoading(message = 'Processing your estimate...') {
+    const loadingOverlay = document.querySelector('.loading-overlay');
+    const loadingText = loadingOverlay.querySelector('.loading-text');
+    loadingText.textContent = message;
+    loadingOverlay.style.display = 'flex';
+}
+
+function hideLoading() {
+    const loadingOverlay = document.querySelector('.loading-overlay');
+    loadingOverlay.style.display = 'none';
+}
+
+// Update the submitForm function
+function submitForm(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
+    try {
+        showLoading('Submitting form...');
+
+        // Create form data...
+        const formData = {
+            timestamp: new Date().toISOString(),
+            data: {
+                // ... your existing form data collection
+            }
+        };
+
+        // Validate form before submission
+        if (!validateForm(formData.data)) {
+            hideLoading();
+            return;
+        }
+
+        // Create and submit the form
+        const form = document.createElement('form');
+        form.setAttribute('method', 'POST');
+        form.setAttribute('action', GOOGLE_APPS_SCRIPT_URL);
+        form.setAttribute('target', 'hidden_iframe');
+
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'data';
+        hiddenInput.value = JSON.stringify(formData);
+        form.appendChild(hiddenInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+
+        // Hide loading after a short delay to ensure form submission
+        setTimeout(hideLoading, 2000);
+
+        return Promise.resolve();
+    } catch (error) {
+        console.error('Error:', error);
+        hideLoading();
+        alert('Error submitting form: ' + error.message);
+        return Promise.reject(error);
+    }
+}
+
+// Update the displayReview function
 function displayReview() {
-    // Get the estimate workbook ID
-    const estimateSheetId = '1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8';
+    showLoading('Loading preview...');
     
-    // Construct the PDF preview URL with the same export options we use for the final PDF
+    const estimateSheetId = '1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8';
     const exportOptions = {
         format: 'pdf',
         size: 'letter',
@@ -611,21 +675,46 @@ function displayReview() {
         vertical_alignment: 'TOP'
     };
 
-    // Build the URL
     const baseUrl = `https://docs.google.com/spreadsheets/d/${estimateSheetId}/export?`;
     const queryString = Object.entries(exportOptions)
         .map(([key, value]) => `${key}=${value}`)
         .join('&');
     
-    // Set the iframe source
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
+        previewFrame.onload = function() {
+            hideLoading();
+        };
+        previewFrame.onerror = function() {
+            hideLoading();
+            alert('Error loading preview. Please try again.');
+        };
         previewFrame.src = baseUrl + queryString;
     }
 }
 
-// Initialize the form (keep this part)
-document.addEventListener('DOMContentLoaded', function() {
-    hideAllSections();
-    showSection(sectionHistory[0]);
-});
+// Update the navigateFromSolar function
+function navigateFromSolar() {
+    const selectedOption = document.querySelector('input[name="solar"]:checked');
+    
+    if (!selectedOption) {
+        alert("Please select Yes or No.");
+        return;
+    }
+
+    if (selectedOption.value === 'yes') {
+        showSection('solar-detach-reset-section');
+    } else {
+        showLoading('Submitting form and preparing preview...');
+        submitForm()
+            .then(() => {
+                showSection('review-section');
+                displayReview();
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Error submitting form:', error);
+                alert('There was an error submitting the form. Please try again.');
+            });
+    }
+}
