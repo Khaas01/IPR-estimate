@@ -574,21 +574,7 @@ function displayReview() {
     }
 }
 
- // Add submission buttons
-reviewHTML += `
-    <div id="navigationButtons">
-        <button type="button" id="backButton" onclick="goBack()">Back</button>
-        <button type="button" onclick="submitForm()">Submit</button>
-    </div>
-`;
-    // Update the review section content
-    reviewContent.innerHTML = reviewHTML;
-    
-    // Clear existing content and append new review
-    reviewSection.innerHTML = '';
-    reviewSection.appendChild(reviewContent);
-
-// Initialize the form
+// Initialize the form (keep this part)
 document.addEventListener('DOMContentLoaded', function() {
     hideAllSections();
     showSection(sectionHistory[0]);
