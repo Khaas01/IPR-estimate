@@ -1,7 +1,7 @@
 // Part 1: Core Navigation and Section Management
 
 // Constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw19yB1lvB2NgxXSVHZReqh9OjEVbDTkFgiOBEVDQmZdq3ZmB2CPNtny9WzRsmSjN4wvg/exec'; // Add your deployment URL here
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMZWFLdz1aBHHfB1TP4l_xtpm9zKXEG6QlnhXyMxwhT65O8qg1jXOGwugmAJfW9-zVVw/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
@@ -512,7 +512,7 @@ function submitForm(event) {
         // Create the form element
         const submitForm = document.createElement('form');
         submitForm.setAttribute('method', 'POST');
-        submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbw19yB1lvB2NgxXSVHZReqh9OjEVbDTkFgiOBEVDQmZdq3ZmB2CPNtny9WzRsmSjN4wvg/exec');
+        submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbxMZWFLdz1aBHHfB1TP4l_xtpm9zKXEG6QlnhXyMxwhT65O8qg1jXOGwugmAJfW9-zVVw/exec');
         submitForm.setAttribute('target', 'hidden_iframe');
 
         // Create a hidden input for the JSON data
