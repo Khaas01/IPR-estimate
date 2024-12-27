@@ -316,28 +316,23 @@ function navigateFromAdditionalCharges() {
 // Solar Panel Navigation
 function navigateFromSolar() {
     const selectedOption = document.querySelector('input[name="solar"]:checked');
+    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
     
     if (!selectedOption) {
         alert("Please select Yes or No.");
         return;
     }
 
+    // Update the buttons based on selection
     if (selectedOption.value === 'yes') {
-        // If Yes is selected, show next section
+        // If Yes is selected, show next section normally
         showSection('solar-detach-reset-section');
-        
-        // Update button to show "Next"
-        const navigationButtons = document.querySelector('#navigationButtons');
-        if (navigationButtons) {
-            navigationButtons.innerHTML = `
-                <button type="button" onclick="goBack()">Back</button>
-                <button type="button" onclick="nextFromSolar()" class="next-button">Next</button>
-            `;
-        }
     } else {
-        // If No is selected, submit form then show review
+        // If No is selected:
+        // 1. First submit the form to populate the Estimate sheet
         submitForm()
             .then(() => {
+                // 2. Then show the review section with the populated preview
                 showSection('review-section');
                 displayReview();
             })
@@ -348,6 +343,29 @@ function navigateFromSolar() {
     }
 }
 
+// Update the solar section radio button event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const solarRadios = document.querySelectorAll('input[name="solar"]');
+    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
+    
+    solarRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (navigationButtons) {
+                if (this.value === 'no') {
+                    navigationButtons.innerHTML = `
+                        <button type="button" onclick="goBack()">Back</button>
+                        <button type="button" onclick="navigateFromSolar()" class="submit-button">Submit</button>
+                    `;
+                } else {
+                    navigationButtons.innerHTML = `
+                        <button type="button" onclick="goBack()">Back</button>
+                        <button type="button" onclick="navigateFromSolar()" class="next-button">Next</button>
+                    `;
+                }
+            }
+        });
+    });
+});
 // Add this new function to handle navigation from solar detach reset section
 function nextFromSolar() {
     submitForm()
