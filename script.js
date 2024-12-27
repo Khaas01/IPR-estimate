@@ -119,8 +119,6 @@ function nextProjectTypeSection() {
 
 // Metadata handling
 const formMetadata = {
-    timestamp: '2024-11-25 23:47:09',
-    userLogin: 'Khaas01',
     getTimestamp: function() {
         return new Date().toISOString();
     }
@@ -424,10 +422,9 @@ function submitForm(event) {
 
     try {
         // Create all your form data
-        const formData = {
-            timestamp: new Date().toISOString(),
-            userLogin: 'Khaas01',
-            data: {
+       const formData = {
+    timestamp: new Date().toISOString(),
+    data: {
                 // Sales Representative Information
                 salesRepName: document.getElementById('salesRepName').value,
                 salesRepEmail: document.getElementById('salesRepEmail').value,
