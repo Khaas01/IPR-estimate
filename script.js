@@ -452,13 +452,11 @@ function submitForm(event) {
         event.preventDefault();
     }
 
-    // Create all your form data with current timestamp
-    const formData = {
-        timestamp: new Date().toISOString(), // Current timestamp
-        data: {
-            // ... rest of your form data
-        }
-    };
+    try {
+        // Create all your form data with current timestamp
+        const formData = {
+            timestamp: new Date().toISOString(),
+            data: {
                 // Sales Representative Information
                 salesRepName: document.getElementById('salesRepName').value,
                 salesRepEmail: document.getElementById('salesRepEmail').value,
@@ -535,41 +533,41 @@ function submitForm(event) {
             }
         };
 
-    // Validate form before submission
+        // Validate form before submission
         if (!validateForm(formData.data)) {
             return;
         }
 
         // Create the form element
-        const submitForm = document.createElement('form');
-        submitForm.setAttribute('method', 'POST');
-        submitForm.setAttribute('action', 'https://script.google.com/macros/s/AKfycbxMZWFLdz1aBHHfB1TP4l_xtpm9zKXEG6QlnhXyMxwhT65O8qg1jXOGwugmAJfW9-zVVw/exec');
-        submitForm.setAttribute('target', 'hidden_iframe');
+        const form = document.createElement('form');
+        form.setAttribute('method', 'POST');
+        form.setAttribute('action', GOOGLE_APPS_SCRIPT_URL);
+        form.setAttribute('target', 'hidden_iframe');
 
         // Create a hidden input for the JSON data
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'data';
         hiddenInput.value = JSON.stringify(formData);
-        submitForm.appendChild(hiddenInput);
+        form.appendChild(hiddenInput);
 
         // Append the form to the body
-        document.body.appendChild(submitForm);
+        document.body.appendChild(form);
 
         // Submit the form
-        submitForm.submit();
+        form.submit();
 
         // Remove the form after submission
-        document.body.removeChild(submitForm);
+        document.body.removeChild(form);
+
+        return Promise.resolve();
 
     } catch (error) {
         console.error('Error:', error);
         alert('Error submitting form: ' + error.message);
+        return Promise.reject(error);
     }
 }
-
-
-
 function displayReview() {
     // Get the estimate workbook ID
     const estimateSheetId = '1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8';
