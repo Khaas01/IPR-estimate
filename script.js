@@ -705,16 +705,10 @@ function navigateFromSolar() {
     if (selectedOption.value === 'yes') {
         showSection('solar-detach-reset-section');
     } else {
-        showLoading('Submitting form and preparing preview...');
-        submitForm()
-            .then(() => {
-                showSection('review-section');
-                displayReview();
-            })
-            .catch(error => {
-                hideLoading();
-                console.error('Error submitting form:', error);
-                alert('There was an error submitting the form. Please try again.');
-            });
+        // First submit form (without Promise chain)
+        submitForm();
+        // Then show review section
+        showSection('review-section');
+        displayReview();
     }
 }
