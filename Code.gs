@@ -175,7 +175,7 @@ function onFormSubmit(e) {
                    'ROC # 355152';
 
   // 7. PDF Generation with adjusted settings
-var folder = DriveApp.getFolderById('1FjTPRhC-1hUMioHZNTN6isYfzy_54c3M');
+var folder = DriveApp.getFolderById('13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD');
 var pdfFileName = clientName + ' - Roofing Estimate';
 
 var url = 'https://docs.google.com/spreadsheets/d/' + estimateWorkbook.getId() + '/export?';
