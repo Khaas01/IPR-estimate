@@ -608,56 +608,6 @@ function hideLoading() {
     loadingOverlay.style.display = 'none';
 }
 
-// Update the submitForm function
-function submitForm(event) {
-    if (event) {
-        event.preventDefault();
-    }
-
-    try {
-        showLoading('Submitting form...');
-
-        // Create form data...
-        const formData = {
-            timestamp: new Date().toISOString(),
-            data: {
-                // ... your existing form data collection
-            }
-        };
-
-        // Validate form before submission
-        if (!validateForm(formData.data)) {
-            hideLoading();
-            return;
-        }
-
-        // Create and submit the form
-        const form = document.createElement('form');
-        form.setAttribute('method', 'POST');
-        form.setAttribute('action', GOOGLE_APPS_SCRIPT_URL);
-        form.setAttribute('target', 'hidden_iframe');
-
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.name = 'data';
-        hiddenInput.value = JSON.stringify(formData);
-        form.appendChild(hiddenInput);
-
-        document.body.appendChild(form);
-        form.submit();
-        document.body.removeChild(form);
-
-        // Hide loading after a short delay to ensure form submission
-        setTimeout(hideLoading, 2000);
-
-        return Promise.resolve();
-    } catch (error) {
-        console.error('Error:', error);
-        hideLoading();
-        alert('Error submitting form: ' + error.message);
-        return Promise.reject(error);
-    }
-}
 
 // Update the displayReview function
 function displayReview() {
