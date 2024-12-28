@@ -405,6 +405,12 @@ function validateForm(formData) {
         'ownerPhone'
     ];
 
+    // Get all values from the formData object
+    const salesRepEmail = document.getElementById('salesRepEmail').value;
+    const salesRepPhone = document.getElementById('salesRepPhone').value;
+    const ownerPhone = document.getElementById('ownerPhone').value;
+    const ownerZip = document.getElementById('ownerZip').value;
+
     for (const field of requiredFields) {
         const value = document.getElementById(field).value;
         if (!value || value.trim() === '') {
@@ -412,27 +418,28 @@ function validateForm(formData) {
             return false;
         }
     }
+
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.salesRepEmail)) {
+    if (!emailRegex.test(salesRepEmail)) {
         alert('Please enter a valid sales representative email address');
         return false;
     }
 
     // Phone number validation
     const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-    if (!phoneRegex.test(formData.salesRepPhone)) {
+    if (!phoneRegex.test(salesRepPhone)) {
         alert('Please enter a valid sales representative phone number');
         return false;
     }
-    if (!phoneRegex.test(formData.ownerPhone)) {
+    if (!phoneRegex.test(ownerPhone)) {
         alert('Please enter a valid property owner phone number');
         return false;
     }
 
     // ZIP code validation
     const zipRegex = /^\d{5}(-\d{4})?$/;
-    if (!zipRegex.test(formData.ownerZip)) {
+    if (!zipRegex.test(ownerZip)) {
         alert('Please enter a valid ZIP code');
         return false;
     }
@@ -444,7 +451,8 @@ function validateForm(formData) {
     }
 
     // Validate insurance information if project type is Insurance
-    if (formData.projectType === 'Insurance') {
+    const projectType = document.querySelector('input[name="projectType"]:checked')?.value;
+    if (projectType === 'Insurance') {
         const insuranceFields = [
             'insuranceCompany',
             'insurancePhone',
@@ -454,7 +462,8 @@ function validateForm(formData) {
         ];
 
         for (const field of insuranceFields) {
-            if (!formData[field] || formData[field].trim() === '') {
+            const value = document.getElementById(field)?.value;
+            if (!value || value.trim() === '') {
                 alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
                 return false;
             }
