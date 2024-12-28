@@ -22,6 +22,11 @@ function doPost(e) {
     
     // Prepare row data
     const rowData = headers.map(header => {
+      // Check if this is the timestamp column
+      if (header === "Timestamp") {
+        return new Date(); // Add current timestamp
+      }
+      
       const key = header.replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => 
         index === 0 ? letter.toLowerCase() : letter.toUpperCase()
       ).replace(/\s+/g, '');
@@ -31,6 +36,8 @@ function doPost(e) {
 
     // Append the data
     formResponseSheet.appendRow(rowData);
+
+    // Rest of your existing code...
 
     // Trigger onFormSubmit
     onFormSubmit();
