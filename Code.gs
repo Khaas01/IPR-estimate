@@ -3,6 +3,47 @@ function doGet(e) {
     .setMimeType(ContentService.MimeType.TEXT);
 }
 
+// Add this doPost function right after doGet
+function doPost(e) {
+  try {
+    // Parse the form data
+    const formData = JSON.parse(e.parameter.data);
+    
+    // Get the Form Responses sheet
+    const formWorkbook = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
+    const formResponseSheet = formWorkbook.getSheetByName('Form Responses');
+    
+    if (!formResponseSheet) {
+      throw new Error('Form Responses sheet not found');
+    }
+
+    // Get headers
+    const headers = formResponseSheet.getRange(1, 1, 1, formResponseSheet.getLastColumn()).getValues()[0];
+    
+    // Prepare row data
+    const rowData = headers.map(header => {
+      const key = header.replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => 
+        index === 0 ? letter.toLowerCase() : letter.toUpperCase()
+      ).replace(/\s+/g, '');
+      
+      return formData.data[key] || '';
+    });
+
+    // Append the data
+    formResponseSheet.appendRow(rowData);
+
+    // Trigger onFormSubmit
+    onFormSubmit();
+
+    return ContentService.createTextOutput('success')
+      .setMimeType(ContentService.MimeType.TEXT);
+
+  } catch (error) {
+    Logger.log('Error in doPost: ' + error.message);
+    return ContentService.createTextOutput('error: ' + error.message)
+      .setMimeType(ContentService.MimeType.TEXT);
+  }
+}
 function getHeaderRow() {
   try {
     var ss = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
