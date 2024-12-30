@@ -7,9 +7,19 @@ function doGet(e) {
 function doPost(e) {
   try {
     // Parse the form data
-    const formData = JSON.parse(e.parameter.data);
+    let formData;
     
-    // Get the Form Responses sheet
+    if (e.parameter && e.parameter.data) {
+      formData = JSON.parse(e.parameter.data);
+    } else if (e.postData && e.postData.contents) {
+      formData = JSON.parse(e.postData.contents);
+    } else {
+      throw new Error('No data received in request');
+    }
+    
+    // Debug log
+    Logger.log('Raw form data received: ' + JSON.stringify(formData));
+    
     const formWorkbook = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
     const formResponseSheet = formWorkbook.getSheetByName('Form Responses');
     
@@ -19,36 +29,54 @@ function doPost(e) {
 
     // Get headers
     const headers = formResponseSheet.getRange(1, 1, 1, formResponseSheet.getLastColumn()).getValues()[0];
-    
+    Logger.log('Sheet headers: ' + JSON.stringify(headers));
+
     // Prepare row data
     const rowData = headers.map(header => {
-      // Check if this is the timestamp column
+      // Handle timestamp and user login
       if (header === "Timestamp") {
-        return new Date(); // Add current timestamp
+        return new Date();
       }
-      
-      const key = header.replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => 
-        index === 0 ? letter.toLowerCase() : letter.toUpperCase()
-      ).replace(/\s+/g, '');
-      
-      return formData.data[key] || '';
+      if (header === "User Login") {
+        return Session.getActiveUser().getEmail() || '';
+      }
+
+      // Get value directly from formData.data using the exact header name
+      if (formData.data && formData.data[header] !== undefined) {
+        return formData.data[header];
+      }
+
+      // If not found, return empty string
+      return '';
     });
+
+    // Log the final row data
+    Logger.log('Final row data to be appended: ' + JSON.stringify(rowData));
 
     // Append the data
     formResponseSheet.appendRow(rowData);
 
-    // Rest of your existing code...
-
     // Trigger onFormSubmit
     onFormSubmit();
 
-    return ContentService.createTextOutput('success')
-      .setMimeType(ContentService.MimeType.TEXT);
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'success',
+      message: 'Data successfully processed'
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
     Logger.log('Error in doPost: ' + error.message);
-    return ContentService.createTextOutput('error: ' + error.message)
-      .setMimeType(ContentService.MimeType.TEXT);
+    MailApp.sendEmail({
+      to: 'khaas@ironpeakroofing.com',
+      subject: 'Form Submission Error',
+      body: 'Error in doPost: ' + error.message + '\n\nStack trace:\n' + error.stack
+    });
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: error.message
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
   }
 }
 function getHeaderRow() {
