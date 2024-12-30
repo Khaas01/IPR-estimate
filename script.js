@@ -333,6 +333,59 @@ function validateForm(formData) {
         }
     }
 
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.salesRepEmail)) {
+        alert('Please enter a valid sales representative email address');
+        return false;
+    }
+
+    // Phone number validation
+    const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    if (!phoneRegex.test(formData.salesRepPhone)) {
+        alert('Please enter a valid sales representative phone number');
+        return false;
+    }
+    if (!phoneRegex.test(formData.ownerPhone)) {
+        alert('Please enter a valid property owner phone number');
+        return false;
+    }
+
+    // ZIP code validation
+    const zipRegex = /^\d{5}(-\d{4})?$/;
+    if (!formData.ownerZip || !zipRegex.test(formData.ownerZip)) {
+        alert('Please enter a valid ZIP code');
+        return false;
+    }
+
+    // Project type validation
+    if (!formData.projectType) {
+        alert('Please select a project type');
+        return false;
+    }
+
+    // Validate insurance information if project type is Insurance
+    if (formData.projectType === 'Insurance') {
+        const insuranceFields = [
+            'insuranceCompany',
+            'insurancePhone',
+            'claimNumber',
+            'policyNumber',
+            'dateOfLoss'
+        ];
+
+        for (const field of insuranceFields) {
+            if (!formData[field] || formData[field].trim() === '') {
+                alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+
 function submitForm(event) {
     if (event) {
         event.preventDefault();
@@ -495,59 +548,6 @@ function nextFromSolar() {
             console.error('Error submitting form:', error);
             alert('There was an error submitting the form. Please try again.');
         });
-}
-
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.salesRepEmail)) {
-        alert('Please enter a valid sales representative email address');
-        return false;
-    }
-
-    // Phone number validation
-    const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-    if (!phoneRegex.test(formData.salesRepPhone)) {
-        alert('Please enter a valid sales representative phone number');
-        return false;
-    }
-    if (!phoneRegex.test(formData.ownerPhone)) {
-        alert('Please enter a valid property owner phone number');
-        return false;
-    }
-
-    // ZIP code validation
-    const zipRegex = /^\d{5}(-\d{4})?$/;
-    if (!formData.ownerZip || !zipRegex.test(formData.ownerZip)) {
-        alert('Please enter a valid ZIP code');
-        return false;
-    }
-
-    // Project type validation
-    if (!formData.projectType) {
-        alert('Please select a project type');
-        return false;
-    }
-
-    // Validate insurance information if project type is Insurance
-    if (formData.projectType === 'Insurance') {
-        const insuranceFields = [
-            'insuranceCompany',
-            'insurancePhone',
-            'claimNumber',
-            'policyNumber',
-            'dateOfLoss'
-        ];
-
-        for (const field of insuranceFields) {
-            if (!formData[field] || formData[field].trim() === '') {
-                alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
-                return false;
-            }
-        }
-    }
-
-    return true;
 }
 
 
