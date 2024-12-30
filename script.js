@@ -312,6 +312,27 @@ function navigateFromAdditionalCharges() {
             console.error("Unknown selection for additional charges");
     }
 }
+function validateForm(formData) {
+    // Required fields validation
+    const requiredFields = [
+        'salesRepName',
+        'salesRepEmail',
+        'salesRepPhone',
+        'ownerName',
+        'ownerAddress',
+        'ownerCity',
+        'ownerState',
+        'ownerZip',
+        'ownerPhone'
+    ];
+
+    for (const field of requiredFields) {
+        if (!formData[field] || formData[field].trim() === '') {
+            alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+            return false;
+        }
+    }
+
 function submitForm(event) {
     if (event) {
         event.preventDefault();
@@ -475,26 +496,7 @@ function nextFromSolar() {
             alert('There was an error submitting the form. Please try again.');
         });
 }
-function validateForm(formData) {
-    // Required fields validation
-    const requiredFields = [
-        'salesRepName',
-        'salesRepEmail',
-        'salesRepPhone',
-        'ownerName',
-        'ownerAddress',
-        'ownerCity',
-        'ownerState',
-        'ownerZip',
-        'ownerPhone'
-    ];
 
-    for (const field of requiredFields) {
-        if (!formData[field] || formData[field].trim() === '') {
-            alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
-            return false;
-        }
-    }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -605,22 +607,4 @@ function displayReview() {
     }
 }
 
-// Update the navigateFromSolar function
-function navigateFromSolar() {
-    const selectedOption = document.querySelector('input[name="solar"]:checked');
-    
-    if (!selectedOption) {
-        alert("Please select Yes or No.");
-        return;
-    }
 
-    if (selectedOption.value === 'yes') {
-        showSection('solar-detach-reset-section');
-    } else {
-        // First submit form (without Promise chain)
-        submitForm();
-        // Then show review section
-        showSection('review-section');
-        displayReview();
-    }
-}
