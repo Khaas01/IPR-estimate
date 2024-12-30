@@ -378,19 +378,6 @@ function nextFromSolar() {
             alert('There was an error submitting the form. Please try again.');
         });
 }
-function shareEstimate() {
-    // Get the estimate workbook ID
-    const estimateSheetId = '1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8';
-    
-    // Create the sharing URL
-    const sharingUrl = `https://docs.google.com/spreadsheets/d/${estimateSheetId}/export?format=pdf`;
-    
-    // Open email client with pre-filled subject
-    const emailSubject = 'Roofing Estimate';
-    const emailBody = 'Please find your roofing estimate attached.';
-    window.location.href = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-}
-// Add this function before your submitForm function
 function validateForm(formData) {
     // Required fields validation
     const requiredFields = [
@@ -405,15 +392,8 @@ function validateForm(formData) {
         'ownerPhone'
     ];
 
-    // Get all values from the formData object
-    const salesRepEmail = document.getElementById('salesRepEmail').value;
-    const salesRepPhone = document.getElementById('salesRepPhone').value;
-    const ownerPhone = document.getElementById('ownerPhone').value;
-    const ownerZip = document.getElementById('ownerZip').value;
-
     for (const field of requiredFields) {
-        const value = document.getElementById(field).value;
-        if (!value || value.trim() === '') {
+        if (!formData[field] || formData[field].trim() === '') {
             alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
             return false;
         }
@@ -421,38 +401,37 @@ function validateForm(formData) {
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(salesRepEmail)) {
+    if (!emailRegex.test(formData.salesRepEmail)) {
         alert('Please enter a valid sales representative email address');
         return false;
     }
 
     // Phone number validation
     const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-    if (!phoneRegex.test(salesRepPhone)) {
+    if (!phoneRegex.test(formData.salesRepPhone)) {
         alert('Please enter a valid sales representative phone number');
         return false;
     }
-    if (!phoneRegex.test(ownerPhone)) {
+    if (!phoneRegex.test(formData.ownerPhone)) {
         alert('Please enter a valid property owner phone number');
         return false;
     }
 
     // ZIP code validation
     const zipRegex = /^\d{5}(-\d{4})?$/;
-    if (!zipRegex.test(ownerZip)) {
+    if (!formData.ownerZip || !zipRegex.test(formData.ownerZip)) {
         alert('Please enter a valid ZIP code');
         return false;
     }
 
     // Project type validation
-    if (!document.querySelector('input[name="projectType"]:checked')) {
+    if (!formData.projectType) {
         alert('Please select a project type');
         return false;
     }
 
     // Validate insurance information if project type is Insurance
-    const projectType = document.querySelector('input[name="projectType"]:checked')?.value;
-    if (projectType === 'Insurance') {
+    if (formData.projectType === 'Insurance') {
         const insuranceFields = [
             'insuranceCompany',
             'insurancePhone',
@@ -462,15 +441,13 @@ function validateForm(formData) {
         ];
 
         for (const field of insuranceFields) {
-            const value = document.getElementById(field)?.value;
-            if (!value || value.trim() === '') {
+            if (!formData[field] || formData[field].trim() === '') {
                 alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
                 return false;
             }
         }
     }
 
-    // If all validations pass
     return true;
 }
 
