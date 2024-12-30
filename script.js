@@ -451,124 +451,106 @@ function validateForm(formData) {
     return true;
 }
 
-function submitForm(event) {
+
+timestamp: new Date().toISOString(),
+
+
+
+    function submitForm(event) {
     if (event) {
         event.preventDefault();
     }
 
     try {
-        // Create all your form data with current timestamp
         const formData = {
-            timestamp: new Date().toISOString(),
             data: {
-                // Sales Representative Information
-                salesRepName: document.getElementById('salesRepName').value,
-                salesRepEmail: document.getElementById('salesRepEmail').value,
-                salesRepPhone: document.getElementById('salesRepPhone').value,
-                
+                "Timestamp": new Date().toISOString(),
+                "User Login": "", // This will be filled by Apps Script
+                //Sales Rep Information
+                "Sales Rep Name": document.getElementById('salesRepName').value,
+                "Sales Rep Email": document.getElementById('salesRepEmail').value,
+                "Sales Rep Phone": document.getElementById('salesRepPhone').value,
                 // Company Information
-                companyName: document.getElementById('companyName').value,
-                
+                "Company Name": document.getElementById('companyName').value,
                 // Property Owner Information
-                ownerName: document.getElementById('ownerName').value,
-                ownerAddress: document.getElementById('ownerAddress').value,
-                ownerCity: document.getElementById('ownerCity').value,
-                ownerState: document.getElementById('ownerState').value,
-                ownerZip: document.getElementById('ownerZip').value,
-                ownerPhone: document.getElementById('ownerPhone').value,
-                ownerEmail: document.getElementById('ownerEmail').value,
-                
-                // Project Type Information
-                projectType: document.querySelector('input[name="projectType"]:checked')?.value,
-                
+                "Owner Name": document.getElementById('ownerName').value,
+                "Owner Address": document.getElementById('ownerAddress').value,
+                "Owner City": document.getElementById('ownerCity').value,
+                "Owner State": document.getElementById('ownerState').value,
+                "Owner ZIP": document.getElementById('ownerZip').value,
+                "Owner Phone": document.getElementById('ownerPhone').value,
+                "Owner Email": document.getElementById('ownerEmail').value,
+                 // Project Type Information
+                "Project Type": document.querySelector('input[name="projectType"]:checked')?.value,
                 // Insurance Information
-                insuranceCompany: document.getElementById('insuranceCompany')?.value,
-                insurancePhone: document.getElementById('insurancePhone')?.value,
-                claimNumber: document.getElementById('claimNumber')?.value,
-                policyNumber: document.getElementById('policyNumber')?.value,
-                dateOfLoss: document.getElementById('dateOfLoss')?.value,
-                
+                "Insurance Company": document.getElementById('insuranceCompany')?.value,
+                "Insurance Phone": document.getElementById('insurancePhone')?.value,
+                "Claim Number": document.getElementById('claimNumber')?.value,
+                "Policy Number": document.getElementById('policyNumber')?.value,
+                "Date of Loss": document.getElementById('dateOfLoss')?.value,
                 // Roofing Type Information
-                roofingType: document.querySelector('input[name="roofingType"]:checked')?.value,
-                
-                // Shingle Information
-                shingleType: document.querySelector('input[name="shingleType"]:checked')?.value,
-                shinglesRepaired: document.getElementById('shingles-repaired')?.value,
-                repairAnythingElse: document.getElementById('repair-anything-else')?.value,
-                shingleReplacement: document.getElementById('shingle-replacement')?.value,
-                
+                "Roofing Type": document.querySelector('input[name="roofingType"]:checked')?.value,
+                 // Shingle Information
+                "Shingle Type": document.querySelector('input[name="shingleType"]:checked')?.value,
+                "Shingles Repaired": document.getElementById('shingles-repaired')?.value,
+                "Additional Repairs": document.getElementById('repair-anything-else')?.value,
+                "Shingle Replacement Squares": document.getElementById('shingle-replacement')?.value,
                 // Tile Roofing Information
-                tileRoofingType: document.querySelector('input[name="tile-roofing-type"]:checked')?.value,
-                tileRepairSq: document.getElementById('tile-repair-sq')?.value,
-                tileUnderlaymentSq: document.getElementById('tile-underlayment-sq')?.value,
-                tileType: document.querySelector('input[name="tile-type"]:checked')?.value,
-                tileRoofRr: document.getElementById('tile-roof-rr')?.value,
-                
+                "Tile Roofing Type": document.querySelector('input[name="tile-roofing-type"]:checked')?.value,
+                "Tile Repair Squares": document.getElementById('tile-repair-sq')?.value,
+                "Tile Underlayment Squares": document.getElementById('tile-underlayment-sq')?.value,
+                "Tile Type": document.querySelector('input[name="tile-type"]:checked')?.value,
+                "Tile Remove/Replace Squares": document.getElementById('tile-roof-rr')?.value,
                 // Modified Bitumen Information
-                modifiedBitumenSq: document.getElementById('modified-bitumen-sq')?.value,
-                
+                "Modified Bitumen Squares": document.getElementById('modified-bitumen-sq')?.value,
                 // Coating Information
-                coatingSquares: document.getElementById('coating-squares')?.value,
-                
+                "Coating Squares": document.getElementById('coating-squares')?.value,
                 // Secondary Roof Information
-                secondaryRoof: document.querySelector('input[name="secondary-roof"]:checked')?.value,
-                secondaryRoofingType: document.querySelector('input[name="secondary-roofing-type"]:checked')?.value,
-                secondaryShinglesSquares: document.getElementById('shingles-squares')?.value,
-                secondaryTileUnderlaymentSquares: document.getElementById('tile-underlayment-squares')?.value,
-                secondaryModifiedBitumenSquares: document.getElementById('modified-bitumen-squares')?.value,
-                secondaryCoatingSquares: document.getElementById('coating-squares')?.value,
-                
+                "Has Secondary Roof": document.querySelector('input[name="secondary-roof"]:checked')?.value,
+                "Secondary Roofing Type": document.querySelector('input[name="secondary-roofing-type"]:checked')?.value,
+                "Secondary Shingles Squares": document.getElementById('shingles-squares')?.value,
+                "Secondary Tile Underlayment Squares": document.getElementById('tile-underlayment-squares')?.value,
+                "Secondary Modified Bitumen Squares": document.getElementById('modified-bitumen-squares')?.value,
+                "Secondary Coating Squares": document.getElementById('coating-squares')?.value,
                 // Third Roof Information
-                thirdRoof: document.querySelector('input[name="third-roof"]:checked')?.value,
-                thirdRoofStyle: document.querySelector('input[name="third-roof-style"]:checked')?.value,
-                thirdShinglesSquares: document.getElementById('shingles-squares')?.value,
-                thirdTilesSquares: document.getElementById('tiles-squares')?.value,
-                thirdModifiedSquares: document.getElementById('modified-squares')?.value,
-                thirdCoatingsSquares: document.getElementById('coatings-squares')?.value,
-                
+                "Has Third Roof": document.querySelector('input[name="third-roof"]:checked')?.value,
+                "Third Roof Style": document.querySelector('input[name="third-roof-style"]:checked')?.value,
+                "Third Shingles Squares": document.getElementById('shingles-squares')?.value,
+                "Third Tiles Squares": document.getElementById('tiles-squares')?.value,
+                "Third Modified Squares": document.getElementById('modified-squares')?.value,
+                "Third Coating Squares": document.getElementById('coatings-squares')?.value,
                 // Additional Charges Information
-                additionalCharges: document.querySelector('input[name="additional-charges"]:checked')?.value,
-                additionalChargesDescription: document.getElementById('additional-charges-description')?.value,
-                additionalChargesPrice: document.getElementById('additional-charges-price')?.value,
-                
+                "Has Additional Charges": document.querySelector('input[name="additional-charges"]:checked')?.value,
+                "Additional Charges Description": document.getElementById('additional-charges-description')?.value,
+                "Additional Charges Price": document.getElementById('additional-charges-price')?.value,
+                "Has Solar Panels": document.querySelector('input[name="solar"]:checked')?.value,
                 // Solar Panel Information
-                solar: document.querySelector('input[name="solar"]:checked')?.value,
-                solarDetachReset: document.getElementById('solar-detach-reset')?.value
+                "Solar Detach/Reset Cost": document.getElementById('solar-detach-reset')?.value,
+                //Accounting Information
+                "Amount Collected": "",  // If you have this field, add the value
+                "Unforseen Additions": ""  // If you have this field, add the value
             }
         };
 
-        // Validate form before submission
-        if (!validateForm(formData.data)) {
-            return;
-        }
-
-        // Create the form element
+        // Create and submit form
         const form = document.createElement('form');
-        form.setAttribute('method', 'POST');
-        form.setAttribute('action', GOOGLE_APPS_SCRIPT_URL);
-        form.setAttribute('target', 'hidden_iframe');
+        form.method = 'POST';
+        form.action = GOOGLE_APPS_SCRIPT_URL;
+        form.target = 'hidden_iframe';
 
-        // Create a hidden input for the JSON data
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'data';
         hiddenInput.value = JSON.stringify(formData);
         form.appendChild(hiddenInput);
 
-        // Append the form to the body
         document.body.appendChild(form);
-
-        // Submit the form
         form.submit();
-
-        // Remove the form after submission
         document.body.removeChild(form);
 
         return Promise.resolve();
-
     } catch (error) {
         console.error('Error:', error);
-        alert('Error submitting form: ' + error.message);
         return Promise.reject(error);
     }
 }
