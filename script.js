@@ -451,12 +451,7 @@ function validateForm(formData) {
     return true;
 }
 
-
-timestamp: new Date().toISOString(),
-
-
-
-    function submitForm(event) {
+function submitForm(event) {
     if (event) {
         event.preventDefault();
     }
@@ -532,7 +527,7 @@ timestamp: new Date().toISOString(),
             }
         };
 
-        // Create and submit form
+         // Create and submit form
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = GOOGLE_APPS_SCRIPT_URL;
