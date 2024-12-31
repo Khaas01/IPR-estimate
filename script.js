@@ -5,14 +5,23 @@ const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjaImXN
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
-// Add this near the top of your script.js file
+// Update the message event listener
 window.addEventListener('message', function(event) {
-    if (event.data === 'success') {
+    // Parse the event data if it's a string
+    const data = typeof event.data === 'string' ? 
+        (event.data.startsWith('{') ? JSON.parse(event.data) : event.data) 
+        : event.data;
+
+    if (data.success) {
         alert('Form submitted successfully!');
+        if (data.previewId) {
+            // Store the preview ID and display the review
+            displayReview(data.previewId);
+        }
         document.getElementById('estimateForm').reset();
         showSection('salesRepSection');
-    } else if (event.data.startsWith('error:')) {
-        alert('Error submitting form: ' + event.data.substring(6));
+    } else if (typeof data === 'string' && data.startsWith('error:')) {
+        alert('Error submitting form: ' + data.substring(6));
     }
 });
 
@@ -487,25 +496,20 @@ function submitForm(event) {
 // Solar Panel Navigation
 function navigateFromSolar() {
     const selectedOption = document.querySelector('input[name="solar"]:checked');
-    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
     
     if (!selectedOption) {
         alert("Please select Yes or No.");
         return;
     }
 
-    // Update the buttons based on selection
     if (selectedOption.value === 'yes') {
-        // If Yes is selected, show next section normally
         showSection('solar-detach-reset-section');
     } else {
-        // If No is selected:
-        // 1. First submit the form to populate the Estimate sheet
         submitForm()
             .then(() => {
-                // 2. Then show the review section with the populated preview
                 showSection('review-section');
-                displayReview();
+                // displayReview will be called by the message event listener
+                // when it receives the preview ID from Apps Script
             })
             .catch(error => {
                 console.error('Error submitting form:', error);
@@ -514,35 +518,12 @@ function navigateFromSolar() {
     }
 }
 
-// Update the solar section radio button event listeners
-document.addEventListener('DOMContentLoaded', function() {
-    const solarRadios = document.querySelectorAll('input[name="solar"]');
-    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
-    
-    solarRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (navigationButtons) {
-                if (this.value === 'no') {
-                    navigationButtons.innerHTML = `
-                        <button type="button" onclick="goBack()">Back</button>
-                        <button type="button" onclick="navigateFromSolar()" class="submit-button">Submit</button>
-                    `;
-                } else {
-                    navigationButtons.innerHTML = `
-                        <button type="button" onclick="goBack()">Back</button>
-                        <button type="button" onclick="navigateFromSolar()" class="next-button">Next</button>
-                    `;
-                }
-            }
-        });
-    });
-});
-// Add this new function to handle navigation from solar detach reset section
 function nextFromSolar() {
     submitForm()
         .then(() => {
             showSection('review-section');
-            displayReview();
+            // displayReview will be called by the message event listener
+            // when it receives the preview ID from Apps Script
         })
         .catch(error => {
             console.error('Error submitting form:', error);
@@ -565,11 +546,11 @@ function hideLoading() {
 }
 
 // Update the displayReview function
-function displayReview() {
+function displayReview(previewId) {
     showLoading('Loading preview...');
     
-    const estimateSheetId = '1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8';
-    const previewUrl = `https://drive.google.com/file/d/${estimateSheetId}/preview`;
+    // Use the provided preview ID from Apps Script
+    const previewUrl = `https://drive.google.com/file/d/${previewId}/preview`;
     
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
