@@ -56,26 +56,26 @@ function doPost(e) {
     estimateSheet.getRange('K4').setValue(lastDatabaseRow);
     Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
 
-    // Trigger onFormSubmit with the correct row number and all necessary data
+   // Trigger onFormSubmit with the correct row number and all necessary data
     try {
-      onFormSubmit({
+      const submitResult = onFormSubmit({
         lastRow: lastDatabaseRow,
         clientName: formData.data["Owner Name"],
         clientData: formData.data,
         estimateWorkbook: estimateWorkbook
       });
+
+      // Return success response including the preview URL from onFormSubmit
+      return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        message: 'Form submitted successfully',
+        previewUrl: submitResult.previewUrl  // Include the preview URL here
+      })).setMimeType(ContentService.MimeType.JSON);
+
     } catch (submitError) {
       Logger.log('Warning: onFormSubmit error: ' + submitError.message);
+      throw submitError; // Rethrow to be caught by outer catch block
     }
-
-    // Return success response
-    return ContentService.createTextOutput(JSON.stringify({
-      success: true,
-      message: 'Form submitted successfully'
-    })).setMimeType(ContentService.MimeType.JSON);
-    
-  } catch(error) {
-    Logger.log('Error in doPost: ' + error.message);
     
     MailApp.sendEmail({
       to: 'khaas@ironpeakroofing.com',
