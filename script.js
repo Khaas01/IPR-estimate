@@ -101,6 +101,26 @@ function goBack() {
 document.addEventListener('DOMContentLoaded', function() {
     hideAllSections();
     showSection(sectionHistory[0]);
+ const solarRadios = document.querySelectorAll('input[name="solar"]');
+    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
+    
+    solarRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (navigationButtons) {
+                if (this.value === 'no') {
+                    navigationButtons.innerHTML = `
+                        <button type="button" onclick="goBack()">Back</button>
+                        <button type="button" onclick="navigateFromSolar()" class="submit-button">Submit</button>
+                    `;
+                } else {
+                    navigationButtons.innerHTML = `
+                        <button type="button" onclick="goBack()">Back</button>
+                        <button type="button" onclick="navigateFromSolar()" class="next-button">Next</button>
+                    `;
+                }
+            }
+        });
+    });
 });
 
 // Add the missing navigation functions
