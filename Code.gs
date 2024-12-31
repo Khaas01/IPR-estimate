@@ -56,7 +56,7 @@ function doPost(e) {
     estimateSheet.getRange('K4').setValue(lastDatabaseRow);
     Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
 
-   // Trigger onFormSubmit with the correct row number and all necessary data
+    // Trigger onFormSubmit with the correct row number and all necessary data
     try {
       const submitResult = onFormSubmit({
         lastRow: lastDatabaseRow,
@@ -76,6 +76,9 @@ function doPost(e) {
       Logger.log('Warning: onFormSubmit error: ' + submitError.message);
       throw submitError; // Rethrow to be caught by outer catch block
     }
+
+  } catch (error) {  // Added this catch block for the outer try
+    Logger.log('Error in doPost: ' + error.message);
     
     MailApp.sendEmail({
       to: 'khaas@ironpeakroofing.com',
