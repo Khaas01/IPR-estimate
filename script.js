@@ -7,24 +7,36 @@ const sectionHistory = [currentSection];
 
 // Update the message event listener
 window.addEventListener('message', function(event) {
+    console.log('Received message:', event.data); // Debug log
+    
     // Parse the event data if it's a string
-    const data = typeof event.data === 'string' ? 
-        (event.data.startsWith('{') ? JSON.parse(event.data) : event.data) 
-        : event.data;
+    let data;
+    try {
+        data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        console.log('Parsed data:', data); // Debug log
+    } catch (e) {
+        console.error('Error parsing message data:', e);
+        return;
+    }
 
     if (data.success) {
-        alert('Form submitted successfully!');
-        if (data.previewUrl) {  // Changed from data.previewId to data.previewUrl
-            // Display the review using the full URL
+        if (data.previewUrl) {
+            console.log('Preview URL received:', data.previewUrl); // Debug log
+            showSection('review-section');
             const previewFrame = document.getElementById('estimatePreviewFrame');
             if (previewFrame) {
+                showLoading('Loading preview...');
+                previewFrame.onload = function() {
+                    hideLoading();
+                };
                 previewFrame.src = data.previewUrl;
+            } else {
+                console.error('Preview frame not found');
             }
         }
-        document.getElementById('estimateForm').reset();
-        showSection('salesRepSection');
-    } else if (typeof data === 'string' && data.startsWith('error:')) {
-        alert('Error submitting form: ' + data.substring(6));
+        alert('Form submitted successfully!');
+    } else {
+        alert('Error submitting form: ' + (data.message || 'Unknown error'));
     }
 });
 // List of all sections in order
