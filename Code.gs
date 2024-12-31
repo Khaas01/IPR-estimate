@@ -3,7 +3,6 @@ function doGet(e) {
     .setMimeType(ContentService.MimeType.TEXT);
 }
 
-// Add this doPost function right after doGet
 function doPost(e) {
   try {
     // Parse the form data
@@ -59,13 +58,60 @@ function doPost(e) {
     // Trigger onFormSubmit
     onFormSubmit();
 
-    return ContentService.createTextOutput(JSON.stringify({
-      status: 'success',
-      message: 'Data successfully processed'
-    }))
-    .setMimeType(ContentService.MimeType.JSON);
+    // Generate PDF and get its ID
+    var folder = DriveApp.getFolderById('13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD');
+    var clientName = formData.data["Owner Name"] || 'Unknown Client';
+    var pdfFileName = clientName + ' - Roofing Estimate';
+    
+    // Get the estimate workbook and sheet
+    var estimateWorkbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
+    var estimateSheet = estimateWorkbook.getSheetByName('Estimate');
 
-  } catch (error) {
+    // Generate PDF
+    var url = 'https://docs.google.com/spreadsheets/d/' + estimateWorkbook.getId() + '/export?';
+    var exportOptions = {
+      format: 'pdf',
+      size: 'letter',
+      portrait: true,
+      fitw: true,
+      fith: true,
+      scale: 4,
+      sheetnames: false,
+      printtitle: false,
+      pagenumbers: false,
+      gridlines: false,
+      fzr: true,
+      top_margin: 0.20,
+      bottom_margin: 0.20,
+      left_margin: 0.20,
+      right_margin: 0.20,
+      horizontal_alignment: 'CENTER',
+      vertical_alignment: 'TOP',
+      gid: estimateSheet.getSheetId()
+    };
+
+    var fullUrl = url + Object.keys(exportOptions).map(function(key) {
+      return key + '=' + exportOptions[key];
+    }).join('&');
+
+    var token = ScriptApp.getOAuthToken();
+    var response = UrlFetchApp.fetch(fullUrl, {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    });
+
+    var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
+    var pdfId = pdfFile.getId();
+    Logger.log('Generated PDF ID: ' + pdfId); // Log the PDF ID
+
+    // Return success with the preview ID
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      previewId: pdfId
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch(error) {
     Logger.log('Error in doPost: ' + error.message);
     MailApp.sendEmail({
       to: 'khaas@ironpeakroofing.com',
@@ -73,12 +119,12 @@ function doPost(e) {
       body: 'Error in doPost: ' + error.message + '\n\nStack trace:\n' + error.stack
     });
     return ContentService.createTextOutput(JSON.stringify({
-      status: 'error',
-      message: error.message
-    }))
-    .setMimeType(ContentService.MimeType.JSON);
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
+
 function getHeaderRow() {
   try {
     var ss = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
@@ -101,7 +147,7 @@ function getHeaderRow() {
 
 function findLastRowWithData(sheet) {
   // 1. First, get the correct sheet
-  var workbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8'); // Your IPR- WebApp Sheets workbook
+  var workbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
   var databaseSheet = workbook.getSheetByName('Database');
   
   Logger.log('Checking Database sheet last row...');
@@ -119,6 +165,7 @@ function findLastRowWithData(sheet) {
   
   return lastRow;
 }
+
 function testRowNumbers() {
   var formWorkbook = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
   var formResponseSheet = formWorkbook.getSheetByName('Form Responses');
