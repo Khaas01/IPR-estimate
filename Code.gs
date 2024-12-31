@@ -280,9 +280,6 @@ function onFormSubmit(e) {
     var previewUrl = 'https://drive.google.com/file/d/' + pdfFile.getId() + '/view';
     Logger.log('PDF Preview URL: ' + previewUrl);
 
-    // Store the preview URL in a specific cell (adjust range as needed)
-    estimateSheet.getRange('A1').setValue(previewUrl);  // Adjust cell reference as needed
-
     // 7. Send email with the PDF
     MailApp.sendEmail({
       to: senderEmail,
@@ -308,11 +305,9 @@ function onFormSubmit(e) {
       subject: 'Error in onFormSubmit',
       body: 'An error occurred: ' + error.message + '\n\nFull error details:\n' + error.stack
     });
-    // In onFormSubmit function, modify the return statement to be explicit about the preview URL:
-return {
-  success: true,
-  previewUrl: 'https://drive.google.com/file/d/' + pdfFile.getId() + '/preview',  // Changed /view to /preview
-  fileId: pdfFile.getId()
-};
+    return {
+      success: false,
+      error: error.message
+    };
   }
 }
