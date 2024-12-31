@@ -5,71 +5,64 @@ function doGet(e) {
 
 function doPost(e) {
   try {
-    // Parse the form data
+    // Parse the form data with enhanced error checking
     let formData;
-    
-    if (e.parameter && e.parameter.data) {
-      formData = JSON.parse(e.parameter.data);
-    } else if (e.postData && e.postData.contents) {
-      formData = JSON.parse(e.postData.contents);
-    } else {
-      throw new Error('No data received in request');
+    try {
+      if (e.parameter && e.parameter.data) {
+        formData = JSON.parse(e.parameter.data);
+      } else if (e.postData && e.postData.contents) {
+        formData = JSON.parse(e.postData.contents);
+      } else {
+        throw new Error('No data received in request');
+      }
+      Logger.log('Raw form data received: ' + JSON.stringify(formData));
+    } catch (parseError) {
+      throw new Error('Failed to parse form data: ' + parseError.message);
     }
     
-    // Debug log
-    Logger.log('Raw form data received: ' + JSON.stringify(formData));
-    
+    // Validate required workbooks and sheets
     const formWorkbook = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
     const formResponseSheet = formWorkbook.getSheetByName('Form Responses');
+    const estimateWorkbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
+    const estimateSheet = estimateWorkbook.getSheetByName('Estimate');
+    const databaseSheet = estimateWorkbook.getSheetByName('Database');
     
-    if (!formResponseSheet) {
-      throw new Error('Form Responses sheet not found');
+    if (!formResponseSheet || !estimateSheet || !databaseSheet) {
+      throw new Error('Required sheets not found');
     }
 
-    // Get headers
+    // Get and validate headers
     const headers = formResponseSheet.getRange(1, 1, 1, formResponseSheet.getLastColumn()).getValues()[0];
+    if (!headers || headers.length === 0) {
+      throw new Error('No headers found in form response sheet');
+    }
     Logger.log('Sheet headers: ' + JSON.stringify(headers));
 
-    // Prepare row data
+    // Prepare row data with validation
     const rowData = headers.map(header => {
-      // Handle timestamp and user login
-      if (header === "Timestamp") {
-        return new Date();
-      }
-      if (header === "User Login") {
-        return Session.getActiveUser().getEmail() || '';
-      }
-
-      // Get value directly from formData.data using the exact header name
-      if (formData.data && formData.data[header] !== undefined) {
-        return formData.data[header];
-      }
-
-      // If not found, return empty string
-      return '';
+      if (header === "Timestamp") return new Date();
+      if (header === "User Login") return Session.getActiveUser().getEmail() || '';
+      return (formData.data && formData.data[header] !== undefined) ? formData.data[header] : '';
     });
-
-    // Log the final row data
     Logger.log('Final row data to be appended: ' + JSON.stringify(rowData));
 
-    // Append the data
+    // Append data to sheet
     formResponseSheet.appendRow(rowData);
 
-    // Trigger onFormSubmit
-    onFormSubmit();
+  // Get the last row from Database sheet and update Estimate sheet
+// Add a longer delay to allow for IMPORTRANGE to update
+Utilities.sleep(5000); // Increased to 5 seconds
+const lastDatabaseRow = findLastRowWithData(databaseSheet);
+estimateSheet.getRange('K4').setValue(lastDatabaseRow);
+Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
 
-    // Generate PDF and get its ID
-    var folder = DriveApp.getFolderById('13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD');
-    var clientName = formData.data["Owner Name"] || 'Unknown Client';
-    var pdfFileName = clientName + ' - Roofing Estimate';
-    
-    // Get the estimate workbook and sheet
-    var estimateWorkbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
-    var estimateSheet = estimateWorkbook.getSheetByName('Estimate');
+    // Get client information for PDF
+    const clientName = formData.data["Owner Name"] || 'Unknown Client';
+    const folder = DriveApp.getFolderById('13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD');
+    const pdfFileName = `${clientName} - Roofing Estimate`;
 
-    // Generate PDF
-    var url = 'https://docs.google.com/spreadsheets/d/' + estimateWorkbook.getId() + '/export?';
-    var exportOptions = {
+    // Configure PDF export options
+    const exportOptions = {
       format: 'pdf',
       size: 'letter',
       portrait: true,
@@ -90,37 +83,65 @@ function doPost(e) {
       gid: estimateSheet.getSheetId()
     };
 
-    var fullUrl = url + Object.keys(exportOptions).map(function(key) {
-      return key + '=' + exportOptions[key];
-    }).join('&');
+    // Generate PDF URL
+    const baseUrl = `https://docs.google.com/spreadsheets/d/${estimateWorkbook.getId()}/export?`;
+    const fullUrl = baseUrl + Object.entries(exportOptions)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
 
-    var token = ScriptApp.getOAuthToken();
-    var response = UrlFetchApp.fetch(fullUrl, {
-      headers: {
-        'Authorization': 'Bearer ' + token
+    // Fetch and create PDF with error handling
+    let pdfFile;
+    try {
+      const token = ScriptApp.getOAuthToken();
+      const response = UrlFetchApp.fetch(fullUrl, {
+        headers: { 'Authorization': 'Bearer ' + token },
+        muteHttpExceptions: true
+      });
+
+      if (response.getResponseCode() !== 200) {
+        throw new Error(`PDF generation failed with status: ${response.getResponseCode()}`);
       }
-    });
 
-    var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
-    var pdfId = pdfFile.getId();
-    Logger.log('Generated PDF ID: ' + pdfId); // Log the PDF ID
+      pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
+      pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      Logger.log('Generated PDF ID: ' + pdfFile.getId());
+    } catch (pdfError) {
+      throw new Error('Failed to generate PDF: ' + pdfError.message);
+    }
 
-    // Return success with the preview ID
+    // Trigger onFormSubmit with the correct row number
+try {
+  const lastDatabaseRow = findLastRowWithData(databaseSheet);
+  onFormSubmit({
+    lastRow: lastDatabaseRow,
+    clientName: formData.data["Owner Name"],
+    estimateWorkbook: estimateWorkbook,
+    pdfFile: pdfFile
+  });
+} catch (submitError) {
+  Logger.log('Warning: onFormSubmit error: ' + submitError.message);
+}
+
+    // Return success response with preview ID
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
-      previewId: pdfId
+      previewId: pdfFile.getId(),
+      message: 'Form submitted and PDF generated successfully'
     })).setMimeType(ContentService.MimeType.JSON);
     
   } catch(error) {
     Logger.log('Error in doPost: ' + error.message);
+    
     MailApp.sendEmail({
       to: 'khaas@ironpeakroofing.com',
       subject: 'Form Submission Error',
       body: 'Error in doPost: ' + error.message + '\n\nStack trace:\n' + error.stack
     });
+    
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
-      error: error.toString()
+      error: error.toString(),
+      message: 'Form submission failed. Please try again.'
     })).setMimeType(ContentService.MimeType.JSON);
   }
 }
@@ -150,7 +171,8 @@ function findLastRowWithData(sheet) {
   var workbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
   var databaseSheet = workbook.getSheetByName('Database');
   
-  Logger.log('Checking Database sheet last row...');
+  Logger.log('Starting findLastRowWithData function...');
+  Logger.log('Database sheet name: ' + databaseSheet.getName());
   
   // 2. Get the actual last row from Database sheet
   var lastRow = databaseSheet.getLastRow();
@@ -159,10 +181,27 @@ function findLastRowWithData(sheet) {
   // 3. Verify data exists at this row
   var headers = databaseSheet.getRange(2225, 1, 1, databaseSheet.getLastColumn()).getValues()[0];
   var ownerNameCol = headers.indexOf("Owner Name") + 1;
+  Logger.log('Owner Name column index: ' + ownerNameCol);
+  
   var ownerName = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
+  Logger.log('Owner Name at last row ' + lastRow + ': ' + ownerName);
   
-  Logger.log('Owner Name at last row: ' + ownerName);
+  // Add verification for the last few rows
+  Logger.log('Checking previous rows for verification:');
+  Logger.log('Row ' + (lastRow-1) + ' Owner Name: ' + databaseSheet.getRange(lastRow-1, ownerNameCol).getValue());
+  Logger.log('Row ' + (lastRow-2) + ' Owner Name: ' + databaseSheet.getRange(lastRow-2, ownerNameCol).getValue());
+   var currentRowValue = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
+  if (!currentRowValue) {
+    Logger.log('Warning: Empty owner name found at row ' + lastRow + ', checking previous row...');
+    lastRow = lastRow - 1;
+    currentRowValue = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
+    if (!currentRowValue) {
+      Logger.log('Warning: Empty owner name found at row ' + lastRow + ' as well, using original row number');
+      lastRow = lastRow + 1;
+    }
+  }
   
+  Logger.log('Final row number being returned: ' + lastRow);
   return lastRow;
 }
 
@@ -197,23 +236,24 @@ function onFormSubmit(e) {
     var estimateSheet = estimateWorkbook.getSheetByName('Estimate');
     
     Logger.log("Estimate Workbook name: " + estimateWorkbook.getName());
+    Logger.log("Event object received: " + JSON.stringify(e));
 
-    if (!databaseSheet) {
-      throw new Error('Database sheet not found in workbook');
+    if (!databaseSheet || !estimateSheet) {
+      throw new Error('Required sheets not found');
     }
-    if (!estimateSheet) {
-      throw new Error('Estimate sheet not found in workbook');
-    }
+
 
     // 2. Get the last row from Database sheet
-    var lastRow = findLastRowWithData(databaseSheet);
-    Logger.log('Final determined last row from Database: ' + lastRow);
+     var lastRow = e && e.lastRow ? e.lastRow : findLastRowWithData(databaseSheet);
+    Logger.log('Using row number: ' + lastRow);
+    
+    // Update Estimate sheet again to ensure correct row
+    estimateSheet.getRange('K4').setValue(lastRow);
     
     // 3. Get headers from Database sheet (starting at row 2225)
     var headers = databaseSheet.getRange(2225, 1, 1, databaseSheet.getLastColumn()).getValues()[0];
     Logger.log('Headers from Database: ' + headers.join(', '));
 
-    // Helper function for finding columns
     function getColumnByHeader(headerName) {
       var index = headers.indexOf(headerName);
       if (index === -1) {
@@ -222,10 +262,7 @@ function onFormSubmit(e) {
       return index + 1;
     }
 
-    // 4. Update Estimate sheet with the correct row number
-    estimateSheet.getRange('K4').setValue(lastRow);
-
-    // 5. Get client information from Database sheet
+    // 4. Get client information from Database sheet
     var clientName = databaseSheet.getRange(lastRow, getColumnByHeader("Owner Name")).getValue();
     var clientEmail = databaseSheet.getRange(lastRow, getColumnByHeader("Owner Email")).getValue();
     var salesRepName = databaseSheet.getRange(lastRow, getColumnByHeader("Sales Rep Name")).getValue();
@@ -239,7 +276,7 @@ function onFormSubmit(e) {
     Logger.log('Sales Rep Name: ' + salesRepName);
     Logger.log('Company Type: ' + companyType);
 
-    // 6. Email content
+    // 5. Email content
     var subject = clientName + ' - Roofing Estimate';
     var emailBody = 'Dear ' + clientName + ',\n\n' +
                    'Thank you for allowing us the opportunity to assist you with your roofing needs.\n\n' +
@@ -256,37 +293,36 @@ function onFormSubmit(e) {
                    'khaas@ironpeakroofing.com\n' +
                    'ROC # 355152';
 
-  // 7. PDF Generation with adjusted settings
-var folder = DriveApp.getFolderById('13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD');
-var pdfFileName = clientName + ' - Roofing Estimate';
+    // 6. PDF Generation
+    var folder = DriveApp.getFolderById('13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD');
+    var pdfFileName = clientName + ' - Roofing Estimate';
 
-var url = 'https://docs.google.com/spreadsheets/d/' + estimateWorkbook.getId() + '/export?';
-var exportOptions = {
-  format: 'pdf',
-  size: 'letter',
-  portrait: true,
-  fitw: true,        // Fit to width
-  fith: true,        // Fit to height
-  scale: 4,          // Adjusted scale to fit content
-  sheetnames: false,
-  printtitle: false,
-  pagenumbers: false,
-  gridlines: false,
-  fzr: true,         // Freeze rows
-  top_margin: 0.20,  // Reduced margins
-  bottom_margin: 0.20,
-  left_margin: 0.20,
-  right_margin: 0.20,
-  horizontal_alignment: 'CENTER',
-  vertical_alignment: 'TOP',
-  gid: estimateSheet.getSheetId()
-};
+    var url = 'https://docs.google.com/spreadsheets/d/' + estimateWorkbook.getId() + '/export?';
+    var exportOptions = {
+      format: 'pdf',
+      size: 'letter',
+      portrait: true,
+      fitw: true,
+      fith: true,
+      scale: 4,
+      sheetnames: false,
+      printtitle: false,
+      pagenumbers: false,
+      gridlines: false,
+      fzr: true,
+      top_margin: 0.20,
+      bottom_margin: 0.20,
+      left_margin: 0.20,
+      right_margin: 0.20,
+      horizontal_alignment: 'CENTER',
+      vertical_alignment: 'TOP',
+      gid: estimateSheet.getSheetId()
+    };
+
     var fullUrl = url + Object.keys(exportOptions).map(function(key) {
       return key + '=' + exportOptions[key];
     }).join('&');
-    Logger.log('PDF URL: ' + fullUrl);
 
-    // 8. Generate PDF
     var token = ScriptApp.getOAuthToken();
     var response = UrlFetchApp.fetch(fullUrl, {
       headers: {
@@ -295,9 +331,9 @@ var exportOptions = {
     });
 
     var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
-    Logger.log('PDF created: ' + pdfFile.getUrl());
+    pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-    // 9. Send email
+    // 7. Send email with the PDF
     MailApp.sendEmail({
       to: senderEmail,
       cc: 'khaas@ironpeakroofing.com',
