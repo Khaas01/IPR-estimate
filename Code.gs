@@ -279,10 +279,9 @@ function onFormSubmit(e) {
     var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
     pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-    // Get the file ID and create the preview URL
-    var fileId = pdfFile.getId();
-    var previewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
-    Logger.log('PDF Preview URL: ' + previewUrl);
+    // Get the viewing URL
+    var viewUrl = pdfFile.getUrl().replace('/edit', '/preview');
+    Logger.log('PDF Preview URL: ' + viewUrl);
 
     // Send email with the PDF
     MailApp.sendEmail({
@@ -295,11 +294,11 @@ function onFormSubmit(e) {
     
     Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
 
-    // Return the response with the dynamic preview URL
+    // Return the URL in the response
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
       message: 'Form submitted successfully',
-      previewUrl: previewUrl  // Use the dynamic preview URL
+      previewUrl: viewUrl
     })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
