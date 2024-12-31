@@ -5,38 +5,60 @@ const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwafUt0x
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
-// Update the message event listener
 window.addEventListener('message', function(event) {
     console.log('Received message:', event.data); // Debug log
     
-    // Parse the event data if it's a string
-    let data;
     try {
-        data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        // Parse the event data if it's a string
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         console.log('Parsed data:', data); // Debug log
-    } catch (e) {
-        console.error('Error parsing message data:', e);
-        return;
-    }
 
-    if (data.success) {
-        if (data.previewUrl) {
-            console.log('Preview URL received:', data.previewUrl); // Debug log
-            showSection('review-section');
-            const previewFrame = document.getElementById('estimatePreviewFrame');
-            if (previewFrame) {
-                showLoading('Loading preview...');
-                previewFrame.onload = function() {
+        if (data.success) {
+            hideLoading(); // Hide loading overlay
+            
+            if (data.previewUrl) {
+                console.log('Preview URL received:', data.previewUrl); // Debug log
+                
+                // Show review section first
+                showSection('review-section');
+                
+                // Then set up the preview frame
+                const previewFrame = document.getElementById('estimatePreviewFrame');
+                if (previewFrame) {
+                    // Show loading while preview loads
+                    showLoading('Loading preview...');
+                    
+                    // Set up load handlers
+                    previewFrame.onload = function() {
+                        hideLoading();
+                        console.log('Preview loaded successfully');
+                    };
+                    
+                    previewFrame.onerror = function() {
+                        hideLoading();
+                        console.error('Error loading preview');
+                        alert('Error loading preview. Please try again.');
+                    };
+                    
+                    // Set the preview URL
+                    previewFrame.src = data.previewUrl;
+                } else {
+                    console.error('Preview frame not found');
                     hideLoading();
-                };
-                previewFrame.src = data.previewUrl;
+                }
             } else {
-                console.error('Preview frame not found');
+                console.warn('No preview URL in response');
             }
+            
+            alert('Form submitted successfully!');
+        } else {
+            hideLoading();
+            alert('Error submitting form: ' + (data.message || 'Unknown error'));
         }
-        alert('Form submitted successfully!');
-    } else {
-        alert('Error submitting form: ' + (data.message || 'Unknown error'));
+    } catch (error) {
+        hideLoading();
+        console.error('Error processing message:', error);
+        alert('Error processing response. Please try again.');
     }
 });
 // List of all sections in order
@@ -433,7 +455,7 @@ function submitForm(event) {
     if (event) {
         event.preventDefault();
     }
-
+  showLoading('Submitting form...'); // Add this line to show loading overlay
     try {
         const formData = {
             data: {
@@ -505,7 +527,7 @@ function submitForm(event) {
             }
         };
 
-         // Create and submit form
+           // Create and submit form
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = GOOGLE_APPS_SCRIPT_URL;
@@ -523,6 +545,7 @@ function submitForm(event) {
 
         return Promise.resolve();
     } catch (error) {
+        hideLoading(); // Add this line to hide loading overlay on error
         console.error('Error:', error);
         return Promise.reject(error);
     }
@@ -572,11 +595,13 @@ function showLoading(message = 'Processing your estimate...') {
     const loadingText = loadingOverlay.querySelector('.loading-text');
     loadingText.textContent = message;
     loadingOverlay.style.display = 'flex';
+    console.log('Loading overlay shown:', message); // Debug log
 }
 
 function hideLoading() {
     const loadingOverlay = document.querySelector('.loading-overlay');
     loadingOverlay.style.display = 'none';
+    console.log('Loading overlay hidden'); // Debug log
 }
 
 // Update the displayReview function
