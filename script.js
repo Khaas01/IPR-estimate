@@ -569,30 +569,7 @@ function displayReview() {
     showLoading('Loading preview...');
     
     const estimateSheetId = '1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8';
-    const exportOptions = {
-        format: 'pdf',
-        size: 'letter',
-        portrait: true,
-        fitw: true,
-        fith: true,
-        scale: 4,
-        sheetnames: false,
-        printtitle: false,
-        pagenumbers: false,
-        gridlines: false,
-        fzr: true,
-        top_margin: 0.20,
-        bottom_margin: 0.20,
-        left_margin: 0.20,
-        right_margin: 0.20,
-        horizontal_alignment: 'CENTER',
-        vertical_alignment: 'TOP'
-    };
-
-    const baseUrl = `https://docs.google.com/spreadsheets/d/${estimateSheetId}/export?`;
-    const queryString = Object.entries(exportOptions)
-        .map(([key, value]) => `${key}=${value}`)
-        .join('&');
+    const previewUrl = `https://drive.google.com/file/d/${estimateSheetId}/preview`;
     
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
@@ -603,8 +580,6 @@ function displayReview() {
             hideLoading();
             alert('Error loading preview. Please try again.');
         };
-        previewFrame.src = baseUrl + queryString;
+        previewFrame.src = previewUrl;
     }
 }
-
-
