@@ -279,8 +279,9 @@ function onFormSubmit(e) {
     var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
     pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-    // Update the preview URL to use /preview instead of /view
-    var previewUrl = 'https://drive.google.com/file/d/' + pdfFile.getId() + '/preview';
+    // Get the file ID and create the preview URL
+    var fileId = pdfFile.getId();
+    var previewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
     Logger.log('PDF Preview URL: ' + previewUrl);
 
     // Send email with the PDF
@@ -294,22 +295,18 @@ function onFormSubmit(e) {
     
     Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
 
-    // Return an object with the necessary information
-    return {
+    // Return the response with the dynamic preview URL
+    return ContentService.createTextOutput(JSON.stringify({
       success: true,
-      previewUrl: previewUrl  // This should match the URL format expected by the iframe
-    };
+      message: 'Form submitted successfully',
+      previewUrl: previewUrl  // Use the dynamic preview URL
+    })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
-    Logger.log('Error in onFormSubmit: ' + error.message);
-    MailApp.sendEmail({
-      to: 'khaas@ironpeakroofing.com', 
-      subject: 'Error in onFormSubmit',
-      body: 'An error occurred: ' + error.message + '\n\nFull error details:\n' + error.stack
-    });
-    return {
+    Logger.log('Error: ' + error.toString());
+    return ContentService.createTextOutput(JSON.stringify({
       success: false,
-      error: error.message
-    };
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
