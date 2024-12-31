@@ -49,84 +49,29 @@ function doPost(e) {
     // Append data to sheet
     formResponseSheet.appendRow(rowData);
 
-  // Get the last row from Database sheet and update Estimate sheet
-// Add a longer delay to allow for IMPORTRANGE to update
-Utilities.sleep(5000); // Increased to 5 seconds
-const lastDatabaseRow = findLastRowWithData(databaseSheet);
-estimateSheet.getRange('K4').setValue(lastDatabaseRow);
-Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
+    // Get the last row from Database sheet and update Estimate sheet
+    // Add a longer delay to allow for IMPORTRANGE to update
+    Utilities.sleep(5000); // Increased to 5 seconds
+    const lastDatabaseRow = findLastRowWithData(databaseSheet);
+    estimateSheet.getRange('K4').setValue(lastDatabaseRow);
+    Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
 
-    // Get client information for PDF
-    const clientName = formData.data["Owner Name"] || 'Unknown Client';
-    const folder = DriveApp.getFolderById('13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD');
-    const pdfFileName = `${clientName} - Roofing Estimate`;
-
-    // Configure PDF export options
-    const exportOptions = {
-      format: 'pdf',
-      size: 'letter',
-      portrait: true,
-      fitw: true,
-      fith: true,
-      scale: 4,
-      sheetnames: false,
-      printtitle: false,
-      pagenumbers: false,
-      gridlines: false,
-      fzr: true,
-      top_margin: 0.20,
-      bottom_margin: 0.20,
-      left_margin: 0.20,
-      right_margin: 0.20,
-      horizontal_alignment: 'CENTER',
-      vertical_alignment: 'TOP',
-      gid: estimateSheet.getSheetId()
-    };
-
-    // Generate PDF URL
-    const baseUrl = `https://docs.google.com/spreadsheets/d/${estimateWorkbook.getId()}/export?`;
-    const fullUrl = baseUrl + Object.entries(exportOptions)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&');
-
-    // Fetch and create PDF with error handling
-    let pdfFile;
+    // Trigger onFormSubmit with the correct row number and all necessary data
     try {
-      const token = ScriptApp.getOAuthToken();
-      const response = UrlFetchApp.fetch(fullUrl, {
-        headers: { 'Authorization': 'Bearer ' + token },
-        muteHttpExceptions: true
+      onFormSubmit({
+        lastRow: lastDatabaseRow,
+        clientName: formData.data["Owner Name"],
+        clientData: formData.data,
+        estimateWorkbook: estimateWorkbook
       });
-
-      if (response.getResponseCode() !== 200) {
-        throw new Error(`PDF generation failed with status: ${response.getResponseCode()}`);
-      }
-
-      pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
-      pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-      Logger.log('Generated PDF ID: ' + pdfFile.getId());
-    } catch (pdfError) {
-      throw new Error('Failed to generate PDF: ' + pdfError.message);
+    } catch (submitError) {
+      Logger.log('Warning: onFormSubmit error: ' + submitError.message);
     }
 
-    // Trigger onFormSubmit with the correct row number
-try {
-  const lastDatabaseRow = findLastRowWithData(databaseSheet);
-  onFormSubmit({
-    lastRow: lastDatabaseRow,
-    clientName: formData.data["Owner Name"],
-    estimateWorkbook: estimateWorkbook,
-    pdfFile: pdfFile
-  });
-} catch (submitError) {
-  Logger.log('Warning: onFormSubmit error: ' + submitError.message);
-}
-
-    // Return success response with preview ID
+    // Return success response
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
-      previewId: pdfFile.getId(),
-      message: 'Form submitted and PDF generated successfully'
+      message: 'Form submitted successfully'
     })).setMimeType(ContentService.MimeType.JSON);
     
   } catch(error) {
@@ -145,7 +90,6 @@ try {
     })).setMimeType(ContentService.MimeType.JSON);
   }
 }
-
 function getHeaderRow() {
   try {
     var ss = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
@@ -242,9 +186,8 @@ function onFormSubmit(e) {
       throw new Error('Required sheets not found');
     }
 
-
     // 2. Get the last row from Database sheet
-     var lastRow = e && e.lastRow ? e.lastRow : findLastRowWithData(databaseSheet);
+    var lastRow = e && e.lastRow ? e.lastRow : findLastRowWithData(databaseSheet);
     Logger.log('Using row number: ' + lastRow);
     
     // Update Estimate sheet again to ensure correct row
@@ -333,6 +276,13 @@ function onFormSubmit(e) {
     var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
     pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
+    // Get the correct preview URL for the PDF
+    var previewUrl = 'https://drive.google.com/file/d/' + pdfFile.getId() + '/view';
+    Logger.log('PDF Preview URL: ' + previewUrl);
+
+    // Store the preview URL in a specific cell (adjust range as needed)
+    estimateSheet.getRange('A1').setValue(previewUrl);  // Adjust cell reference as needed
+
     // 7. Send email with the PDF
     MailApp.sendEmail({
       to: senderEmail,
@@ -344,6 +294,13 @@ function onFormSubmit(e) {
     
     Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
 
+    // Return the preview URL for use in the web interface
+    return {
+      success: true,
+      previewUrl: previewUrl,
+      fileId: pdfFile.getId()
+    };
+
   } catch (error) {
     Logger.log('Error in onFormSubmit: ' + error.message);
     MailApp.sendEmail({
@@ -351,5 +308,11 @@ function onFormSubmit(e) {
       subject: 'Error in onFormSubmit',
       body: 'An error occurred: ' + error.message + '\n\nFull error details:\n' + error.stack
     });
+    // In onFormSubmit function, modify the return statement to be explicit about the preview URL:
+return {
+  success: true,
+  previewUrl: 'https://drive.google.com/file/d/' + pdfFile.getId() + '/preview',  // Changed /view to /preview
+  fileId: pdfFile.getId()
+};
   }
 }
