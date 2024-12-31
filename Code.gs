@@ -276,11 +276,11 @@ function onFormSubmit(e) {
     var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
     pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-    // Get the correct preview URL for the PDF
-    var previewUrl = 'https://drive.google.com/file/d/' + pdfFile.getId() + '/view';
+    // Update the preview URL to use /preview instead of /view
+    var previewUrl = 'https://drive.google.com/file/d/' + pdfFile.getId() + '/preview';
     Logger.log('PDF Preview URL: ' + previewUrl);
 
-    // 7. Send email with the PDF
+    // Send email with the PDF
     MailApp.sendEmail({
       to: senderEmail,
       cc: 'khaas@ironpeakroofing.com',
@@ -291,11 +291,10 @@ function onFormSubmit(e) {
     
     Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
 
-    // Return the preview URL for use in the web interface
+    // Return an object with the necessary information
     return {
       success: true,
-      previewUrl: previewUrl,
-      fileId: pdfFile.getId()
+      previewUrl: previewUrl  // This should match the URL format expected by the iframe
     };
 
   } catch (error) {
