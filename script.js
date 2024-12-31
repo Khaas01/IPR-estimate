@@ -14,9 +14,12 @@ window.addEventListener('message', function(event) {
 
     if (data.success) {
         alert('Form submitted successfully!');
-        if (data.previewId) {
-            // Store the preview ID and display the review
-            displayReview(data.previewId);
+        if (data.previewUrl) {  // Changed from data.previewId to data.previewUrl
+            // Display the review using the full URL
+            const previewFrame = document.getElementById('estimatePreviewFrame');
+            if (previewFrame) {
+                previewFrame.src = data.previewUrl;
+            }
         }
         document.getElementById('estimateForm').reset();
         showSection('salesRepSection');
@@ -24,7 +27,6 @@ window.addEventListener('message', function(event) {
         alert('Error submitting form: ' + data.substring(6));
     }
 });
-
 // List of all sections in order
 const sections = [
     'salesRepSection',
@@ -566,11 +568,8 @@ function hideLoading() {
 }
 
 // Update the displayReview function
-function displayReview(previewId) {
+function displayReview(previewUrl) {  // Changed parameter from previewId to previewUrl
     showLoading('Loading preview...');
-    
-    // Use the provided preview ID from Apps Script
-    const previewUrl = `https://drive.google.com/file/d/${previewId}/preview`;
     
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
@@ -581,6 +580,6 @@ function displayReview(previewId) {
             hideLoading();
             alert('Error loading preview. Please try again.');
         };
-        previewFrame.src = previewUrl;
+        previewFrame.src = previewUrl;  // Use the full URL directly
     }
 }
