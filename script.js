@@ -1,63 +1,52 @@
 // Part 1: Core Navigation and Section Management
 
 // Constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwafUt0xtsyUlP1vfVgmFitu4LKk4Ebf9BOARExYjb8-YoCnl6tJoQ4pNdVtrR-OBcn/exec'; // Add your deployment URL here
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGXk4KFl5pCzVg96NoJo_QgvsN2gXBlQmCVWuNh3GDwpTikL4gK4g6Yawi83xx9hqe/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
 window.addEventListener('message', function(event) {
-    console.log('Received message:', event.data); // Debug log
+    console.log('Raw message event:', event);
     
     try {
-        // Parse the event data if it's a string
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-        console.log('Parsed data:', data); // Debug log
+        console.log('Parsed response data:', data);
 
         if (data.success) {
-            hideLoading(); // Hide loading overlay
+            hideLoading();
             
             if (data.previewUrl) {
-                console.log('Preview URL received:', data.previewUrl); // Debug log
+                console.log('Received preview URL:', data.previewUrl);
                 
-                // Show review section first
                 showSection('review-section');
-                
-                // Then set up the preview frame
                 const previewFrame = document.getElementById('estimatePreviewFrame');
                 if (previewFrame) {
-                    // Show loading while preview loads
                     showLoading('Loading preview...');
                     
-                    // Set up load handlers
                     previewFrame.onload = function() {
                         hideLoading();
                         console.log('Preview loaded successfully');
                     };
                     
-                    previewFrame.onerror = function() {
+                    previewFrame.onerror = function(e) {
                         hideLoading();
-                        console.error('Error loading preview');
-                        alert('Error loading preview. Please try again.');
+                        console.error('Preview failed to load:', e);
+                        // Show a user-friendly message with the PDF link as fallback
+                        const viewUrl = data.previewUrl.replace('/preview', '/view');
+                        alert('Preview could not be loaded. You can view the PDF directly at: ' + viewUrl);
                     };
                     
                     // Set the preview URL
                     previewFrame.src = data.previewUrl;
-                } else {
-                    console.error('Preview frame not found');
-                    hideLoading();
                 }
-            } else {
-                console.warn('No preview URL in response');
             }
-            
-            alert('Form submitted successfully!');
         } else {
             hideLoading();
             alert('Error submitting form: ' + (data.message || 'Unknown error'));
         }
     } catch (error) {
         hideLoading();
-        console.error('Error processing message:', error);
+        console.error('Error processing response:', error);
         alert('Error processing response. Please try again.');
     }
 });
