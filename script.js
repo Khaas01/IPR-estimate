@@ -249,7 +249,7 @@ function displayPDFPreview(pdfUrl) {
         default:
             console.error("Unknown tile roofing type selected");
     }
-}
+
 
 // Secondary Roof Navigation
 function navigateFromSecondaryRoof() {
