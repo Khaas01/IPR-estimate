@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" 
-      content="frame-src 'self' *.google.com drive.google.com docs.google.com;">
+  <meta http-equiv="Content-Security-Policy" 
+      content="frame-src 'self' *.google.com drive.google.com docs.google.com script.googleusercontent.com *.googleusercontent.com *.oneclickestimate.com oneclickestimate.com;">
     <title>Iron Peak Roofing - Estimate Form</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link to the external CSS file -->
     <link rel="icon" type="image/png" href="https://imgur.com/a/rSdTJ9R">
@@ -13,7 +13,7 @@
 <body>
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
-    <h1>Roofing Estimate Form Version 8</h1>
+    <h1>Roofing Estimate Form Version 9</h1>
 
 
 </header>
@@ -78,10 +78,16 @@
             Use the tool below to measure the roof area. Follow the instructions on the website to accurately outline and calculate the roof dimensions.<br>
             Click "get started" below.
         </p>
-        <iframe 
-            src="https://www.oneclickestimate.com" 
-            style="width:100%; height:500px; border:0;" 
-            title="Roof Measurement Tool" id="measurementToolIframe"></iframe>
+       <iframe 
+    src="https://www.oneclickestimate.com" 
+    style="width:100%; height:500px; border:0;" 
+    title="Roof Measurement Tool" 
+    id="measurementToolIframe"
+    allow="geolocation; camera; fullscreen; accelerometer; autoplay"
+    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-presentation"
+    referrerpolicy="origin"
+    loading="lazy">
+</iframe>
       <div id="navigationButtons">
       <button type="button" id="backButton" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('roofingTypeSection')">Next</button>
