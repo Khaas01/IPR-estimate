@@ -315,12 +315,13 @@ Logger.log('PDF Preview URL: ' + viewUrl);
     Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
 
     // Return the URL in the response
-    return ContentService.createTextOutput(JSON.stringify({
-      success: true,
-      message: 'Form submitted successfully',
-      pdfUrl: 'YOUR_GOOGLE_DRIVE_PDF_URL'
-    })).setMimeType(ContentService.MimeType.JSON);
-
+   return {
+    success: true,
+    message: 'Form submitted successfully',
+    pdfFileId: pdfFile.getId(),
+    previewUrl: viewUrl,
+    pdfUrl: pdfFile.getUrl()
+};
   } catch (error) {
     Logger.log('Error: ' + error.toString());
     return ContentService.createTextOutput(JSON.stringify({
