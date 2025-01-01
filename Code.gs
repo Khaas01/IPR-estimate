@@ -51,7 +51,7 @@ function doPost(e) {
 
     // Get the last row from Database sheet and update Estimate sheet
     // Add a longer delay to allow for IMPORTRANGE to update
-    Utilities.sleep(5000); // Increased to 5 seconds
+    Utilities.sleep(5000); // 5 second delay for IMPORTRANGE
     const lastDatabaseRow = findLastRowWithData(databaseSheet);
     estimateSheet.getRange('K4').setValue(lastDatabaseRow);
     Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
@@ -65,11 +65,27 @@ function doPost(e) {
         estimateWorkbook: estimateWorkbook
       });
 
-      // Return success response including the preview URL from onFormSubmit
+      // Get the PDF file that was created during email attachment
+      let pdfUrl = '';
+      let viewerUrl = '';
+      
+      if (submitResult && submitResult.pdfFileId) {
+        const pdfFile = DriveApp.getFileById(submitResult.pdfFileId);
+        // Ensure the PDF is accessible for viewing
+        pdfFile.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.VIEW);
+        pdfUrl = pdfFile.getUrl();
+        // Create a viewer URL that doesn't require sign-in
+        viewerUrl = 'https://drive.google.com/file/d/' + submitResult.pdfFileId + '/preview';
+      }
+
+      // Return success response with all necessary URLs
       return ContentService.createTextOutput(JSON.stringify({
         success: true,
         message: 'Form submitted successfully',
-        previewUrl: submitResult.previewUrl  // Include the preview URL here
+        previewUrl: submitResult.previewUrl || viewerUrl,
+        pdfUrl: pdfUrl,
+        estimateId: lastDatabaseRow,
+        timestamp: new Date().toISOString()
       })).setMimeType(ContentService.MimeType.JSON);
 
     } catch (submitError) {
@@ -77,19 +93,22 @@ function doPost(e) {
       throw submitError; // Rethrow to be caught by outer catch block
     }
 
-  } catch (error) {  // Added this catch block for the outer try
+  } catch (error) {
     Logger.log('Error in doPost: ' + error.message);
     
+    // Send error notification email
     MailApp.sendEmail({
       to: 'khaas@ironpeakroofing.com',
       subject: 'Form Submission Error',
       body: 'Error in doPost: ' + error.message + '\n\nStack trace:\n' + error.stack
     });
     
+    // Return error response
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
       error: error.toString(),
-      message: 'Form submission failed. Please try again.'
+      message: 'Form submission failed. Please try again.',
+      timestamp: new Date().toISOString()
     })).setMimeType(ContentService.MimeType.JSON);
   }
 }
