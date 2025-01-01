@@ -34,10 +34,13 @@ function doPost(e) {
       throw new Error('No headers found in form response sheet');
     }
 
+    // Key change: formData.data is the actual form data
+    const formDataObj = formData.data || formData;
+
     const rowData = headers.map(header => {
       if (header === "Timestamp") return new Date();
       if (header === "User Login") return Session.getActiveUser().getEmail() || '';
-      return (formData.data && formData.data[header] !== undefined) ? formData.data[header] : '';
+      return formDataObj[header] !== undefined ? formDataObj[header] : '';
     });
 
     formResponseSheet.appendRow(rowData);
@@ -48,8 +51,8 @@ function doPost(e) {
 
     const submitResult = onFormSubmit({
       lastRow: lastDatabaseRow,
-      clientName: formData.data["Owner Name"],
-      clientData: formData.data,
+      clientName: formDataObj["ownerName"],  // Changed from Owner Name to match the form field
+      clientData: formDataObj,
       estimateWorkbook: estimateWorkbook
     });
 
