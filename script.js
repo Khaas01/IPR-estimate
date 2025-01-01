@@ -226,7 +226,7 @@ function navigateFromShingleType() {
     }
 }
 
-// Tile Roofing Navigation
+// PDF Preview function
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (!previewFrame) return;
@@ -235,6 +235,15 @@ function displayPDFPreview(pdfUrl) {
     const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
     previewFrame.src = viewerUrl;
 }
+
+//  Tile Roofing Navigation
+function navigateFromTileRoofingType() {
+    const selectedTileType = document.querySelector('input[name="tile-roofing-type"]:checked');
+    
+    if (!selectedTileType) {
+        alert("Please select a tile roofing type.");
+        return;
+    }
 
     switch(selectedTileType.value) {
         case 'Repair/Partial Roof':
@@ -249,8 +258,7 @@ function displayPDFPreview(pdfUrl) {
         default:
             console.error("Unknown tile roofing type selected");
     }
-
-
+}
 // Secondary Roof Navigation
 function navigateFromSecondaryRoof() {
     const selectedOption = document.querySelector('input[name="secondary-roof"]:checked');
