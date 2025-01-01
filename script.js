@@ -679,8 +679,20 @@ function displayPDFPreview(url) {
 
     showLoading('Loading preview...');
 
-    // Convert Drive URL to preview URL if needed
-    const previewUrl = url.includes('/preview') ? url : url.replace(/\/view.*$/, '/preview');
+    // Extract file ID from either preview or view URL format
+    const fileId = url.match(/\/d\/(.+?)\/(view|preview)/)?.[1];
+    
+    if (!fileId) {
+        console.error('Could not extract file ID from URL:', url);
+        return;
+    }
+
+    // Convert to export URL for PDF.js
+    const exportUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+    const pdfViewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(exportUrl)}`;
+
+    console.log('Using PDF viewer URL:', pdfViewerUrl);
+    previewFrame.src = pdfViewerUrl;
 
     previewFrame.onload = function() {
         hideLoading();
@@ -691,27 +703,10 @@ function displayPDFPreview(url) {
         console.error('Preview failed to load:', error);
         hideLoading();
         
-        // Create fallback container
-        const fallbackContainer = document.createElement('div');
-        fallbackContainer.className = 'preview-fallback';
-        fallbackContainer.innerHTML = `
-            <p>Preview not available. You can:</p>
-            <a href="${url}" target="_blank" class="pdf-link">
-                View PDF in new window
-            </a>
-            <p>Or try refreshing the page.</p>
-        `;
-        
-        // Replace iframe with fallback
-        previewFrame.parentNode.replaceChild(fallbackContainer, previewFrame);
+        // Fallback to Google Drive viewer if PDF.js fails
+        const fallbackUrl = `https://drive.google.com/file/d/${fileId}/preview?embedded=true`;
+        previewFrame.src = fallbackUrl;
     };
-
-    try {
-        previewFrame.src = previewUrl;
-    } catch (error) {
-        console.error('Error setting preview URL:', error);
-        previewFrame.onerror(error);
-    }
 }
 
 
