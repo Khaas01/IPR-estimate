@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" 
-      content="default-src 'self' https://www.oneclickestimate.com https://log.oneclickestimate.com;
-               frame-src 'self' https://*.oneclickestimate.com https://*.google.com https://*.googleusercontent.com;
-               connect-src 'self' https://*.oneclickestimate.com https://log.oneclickestimate.com;
-               script-src 'self' 'unsafe-inline' https://*.oneclickestimate.com https://*.google.com https://*.googleusercontent.com;
-               img-src 'self' * data: blob:;">
+   <meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self';
+               frame-src 'self' *.google.com *.googleusercontent.com *.oneclickestimate.com oneclickestimate.com;
+               script-src 'self' 'unsafe-inline' 'unsafe-eval' *.googleusercontent.com *.google.com;
+               style-src 'self' 'unsafe-inline';
+               img-src 'self' * data: blob:;
+               connect-src 'self' *.google.com *.googleusercontent.com *.oneclickestimate.com;">
     <title>Iron Peak Roofing - Estimate Form</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link to the external CSS file -->
     <link rel="icon" type="image/png" href="https://imgur.com/a/rSdTJ9R">
