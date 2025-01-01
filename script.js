@@ -227,13 +227,14 @@ function navigateFromShingleType() {
 }
 
 // Tile Roofing Navigation
-function navigateFromTileRoofingType() {
-    const selectedTileType = document.querySelector('input[name="tile-roofing-type"]:checked');
-    
-    if (!selectedTileType) {
-        alert("Please select a tile roofing type.");
-        return;
-    }
+function displayPDFPreview(pdfUrl) {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (!previewFrame) return;
+
+    // Use PDF.js viewer with the PDF URL
+    const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+    previewFrame.src = viewerUrl;
+}
 
     switch(selectedTileType.value) {
         case 'Repair/Partial Roof':
