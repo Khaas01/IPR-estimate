@@ -440,102 +440,48 @@ function validateForm(formData) {
 }
 
 
-function submitForm(event) {
-    if (event) {
-        event.preventDefault();
-    }
-  showLoading('Submitting form...'); // Add this line to show loading overlay
+function submitForm() {
+    // Prevent multiple submissions
+    if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
+    
     try {
-        const formData = {
-            data: {
-                "Timestamp": new Date().toISOString(),
-                "User Login": "", // This will be filled by Apps Script
-                //Sales Rep Information
-                "Sales Rep Name": document.getElementById('salesRepName').value,
-                "Sales Rep Email": document.getElementById('salesRepEmail').value,
-                "Sales Rep Phone": document.getElementById('salesRepPhone').value,
-                // Company Information
-                "Company Name": document.getElementById('companyName').value,
-                // Property Owner Information
-                "Owner Name": document.getElementById('ownerName').value,
-                "Owner Address": document.getElementById('ownerAddress').value,
-                "Owner City": document.getElementById('ownerCity').value,
-                "Owner State": document.getElementById('ownerState').value,
-                "Owner ZIP": document.getElementById('ownerZip').value,
-                "Owner Phone": document.getElementById('ownerPhone').value,
-                "Owner Email": document.getElementById('ownerEmail').value,
-                 // Project Type Information
-                "Project Type": document.querySelector('input[name="projectType"]:checked')?.value,
-                // Insurance Information
-                "Insurance Company": document.getElementById('insuranceCompany')?.value,
-                "Insurance Phone": document.getElementById('insurancePhone')?.value,
-                "Claim Number": document.getElementById('claimNumber')?.value,
-                "Policy Number": document.getElementById('policyNumber')?.value,
-                "Date of Loss": document.getElementById('dateOfLoss')?.value,
-                // Roofing Type Information
-                "Roofing Type": document.querySelector('input[name="roofingType"]:checked')?.value,
-                 // Shingle Information
-                "Shingle Type": document.querySelector('input[name="shingleType"]:checked')?.value,
-                "Shingles Repaired": document.getElementById('shingles-repaired')?.value,
-                "Additional Repairs": document.getElementById('repair-anything-else')?.value,
-                "Shingle Replacement Squares": document.getElementById('shingle-replacement')?.value,
-                // Tile Roofing Information
-                "Tile Roofing Type": document.querySelector('input[name="tile-roofing-type"]:checked')?.value,
-                "Tile Repair Squares": document.getElementById('tile-repair-sq')?.value,
-                "Tile Underlayment Squares": document.getElementById('tile-underlayment-sq')?.value,
-                "Tile Type": document.querySelector('input[name="tile-type"]:checked')?.value,
-                "Tile Remove/Replace Squares": document.getElementById('tile-roof-rr')?.value,
-                // Modified Bitumen Information
-                "Modified Bitumen Squares": document.getElementById('modified-bitumen-sq')?.value,
-                // Coating Information
-                "Coating Squares": document.getElementById('coating-squares')?.value,
-                // Secondary Roof Information
-                "Has Secondary Roof": document.querySelector('input[name="secondary-roof"]:checked')?.value,
-                "Secondary Roofing Type": document.querySelector('input[name="secondary-roofing-type"]:checked')?.value,
-                "Secondary Shingles Squares": document.getElementById('shingles-squares')?.value,
-                "Secondary Tile Underlayment Squares": document.getElementById('tile-underlayment-squares')?.value,
-                "Secondary Modified Bitumen Squares": document.getElementById('modified-bitumen-squares')?.value,
-                "Secondary Coating Squares": document.getElementById('coating-squares')?.value,
-                // Third Roof Information
-                "Has Third Roof": document.querySelector('input[name="third-roof"]:checked')?.value,
-                "Third Roof Style": document.querySelector('input[name="third-roof-style"]:checked')?.value,
-                "Third Shingles Squares": document.getElementById('shingles-squares')?.value,
-                "Third Tiles Squares": document.getElementById('tiles-squares')?.value,
-                "Third Modified Squares": document.getElementById('modified-squares')?.value,
-                "Third Coating Squares": document.getElementById('coatings-squares')?.value,
-                // Additional Charges Information
-                "Has Additional Charges": document.querySelector('input[name="additional-charges"]:checked')?.value,
-                "Additional Charges Description": document.getElementById('additional-charges-description')?.value,
-                "Additional Charges Price": document.getElementById('additional-charges-price')?.value,
-                "Has Solar Panels": document.querySelector('input[name="solar"]:checked')?.value,
-                // Solar Panel Information
-                "Solar Detach/Reset Cost": document.getElementById('solar-detach-reset')?.value,
-                //Accounting Information
-                "Amount Collected": "",  // If you have this field, add the value
-                "Unforseen Additions": ""  // If you have this field, add the value
+        // Set submission flag and show loading state
+        isSubmitting = true;
+        showLoading('Submitting form...');
+
+        // Collect form data (assuming you have this function already)
+        const formData = collectFormData();
+        
+        // Make the fetch request to your Google Apps Script URL
+        return fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ data: formData }),
+            headers: {
+                'Content-Type': 'application/json'
             }
-        };
+        })
+        .then(response => {
+            // Check if the response is ok (status in 200-299 range)
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .catch(error => {
+            // Log and rethrow any fetch or parsing errors
+            console.error('Fetch error:', error);
+            throw error;
+        })
+        .finally(() => {
+            // Always clean up, regardless of success or failure
+            isSubmitting = false;
+            hideLoading();
+        });
 
-           // Create and submit form
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = GOOGLE_APPS_SCRIPT_URL;
-        form.target = 'hidden_iframe';
-
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.name = 'data';
-        hiddenInput.value = JSON.stringify(formData);
-        form.appendChild(hiddenInput);
-
-        document.body.appendChild(form);
-        form.submit();
-        document.body.removeChild(form);
-
-        return Promise.resolve();
     } catch (error) {
-        hideLoading(); // Add this line to hide loading overlay on error
-        console.error('Error:', error);
+        // Handle any synchronous errors
+        isSubmitting = false;
+        hideLoading();
         return Promise.reject(error);
     }
 }
@@ -554,11 +500,19 @@ function navigateFromSolar() {
         showLoading('Generating estimate...');
         submitForm()
             .then(response => {
-                if (response.success && response.pdfUrl) {
+                // First check if response exists
+                if (!response) {
+                    throw new Error('No response received from server');
+                }
+                
+                // Parse response if it's a string
+                const data = typeof response === 'string' ? JSON.parse(response) : response;
+                
+                if (data.success && (data.previewUrl || data.pdfUrl)) {
                     showSection('review-section');
-                    displayPDFPreview(response.pdfUrl);
+                    displayPDFPreview(data.previewUrl || data.pdfUrl);
                 } else {
-                    throw new Error('Failed to generate PDF');
+                    throw new Error(data.message || 'Failed to generate PDF preview');
                 }
             })
             .catch(error => {
@@ -571,34 +525,50 @@ function navigateFromSolar() {
     }
 }
 
-function displayPDFPreview(pdfUrl) {
+function displayPDFPreview(url) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame) {
-        // Convert Drive URL to preview URL
-        const previewUrl = pdfUrl.replace(/\/view\?usp=sharing$/, '/preview');
+    if (!previewFrame) {
+        console.error('Preview frame not found');
+        return;
+    }
+
+    showLoading('Loading preview...');
+
+    // Convert Drive URL to preview URL if needed
+    const previewUrl = url.includes('/preview') ? url : url.replace(/\/view.*$/, '/preview');
+
+    previewFrame.onload = function() {
+        hideLoading();
+        console.log('Preview loaded successfully');
+    };
+
+    previewFrame.onerror = function(error) {
+        console.error('Preview failed to load:', error);
+        hideLoading();
         
-        previewFrame.onload = function() {
-            hideLoading();
-        };
+        // Create fallback container
+        const fallbackContainer = document.createElement('div');
+        fallbackContainer.className = 'preview-fallback';
+        fallbackContainer.innerHTML = `
+            <p>Preview not available. You can:</p>
+            <a href="${url}" target="_blank" class="pdf-link">
+                View PDF in new window
+            </a>
+            <p>Or try refreshing the page.</p>
+        `;
         
-        previewFrame.onerror = function(error) {
-            console.error('Preview failed to load:', error);
-            hideLoading();
-            
-            // Fallback: Provide direct link
-            const fallbackMessage = document.createElement('div');
-            fallbackMessage.innerHTML = `
-                <p>Preview not available. You can:</p>
-                <a href="${pdfUrl}" target="_blank" class="pdf-link">
-                    View PDF in new window
-                </a>
-            `;
-            previewFrame.parentNode.appendChild(fallbackMessage);
-        };
-        
+        // Replace iframe with fallback
+        previewFrame.parentNode.replaceChild(fallbackContainer, previewFrame);
+    };
+
+    try {
         previewFrame.src = previewUrl;
+    } catch (error) {
+        console.error('Error setting preview URL:', error);
+        previewFrame.onerror(error);
     }
 }
+
 
 function nextFromSolar() {
     submitForm()
