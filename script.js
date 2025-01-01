@@ -551,16 +551,52 @@ function navigateFromSolar() {
     if (selectedOption.value === 'yes') {
         showSection('solar-detach-reset-section');
     } else {
+        showLoading('Generating estimate...');
         submitForm()
-            .then(() => {
-                showSection('review-section');
-                // displayReview will be called by the message event listener
-                // when it receives the preview ID from Apps Script
+            .then(response => {
+                if (response.success && response.pdfUrl) {
+                    showSection('review-section');
+                    displayPDFPreview(response.pdfUrl);
+                } else {
+                    throw new Error('Failed to generate PDF');
+                }
             })
             .catch(error => {
-                console.error('Error submitting form:', error);
-                alert('There was an error submitting the form. Please try again.');
+                console.error('Error:', error);
+                alert('Error generating estimate: ' + error.message);
+            })
+            .finally(() => {
+                hideLoading();
             });
+    }
+}
+
+function displayPDFPreview(pdfUrl) {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame) {
+        // Convert Drive URL to preview URL
+        const previewUrl = pdfUrl.replace(/\/view\?usp=sharing$/, '/preview');
+        
+        previewFrame.onload = function() {
+            hideLoading();
+        };
+        
+        previewFrame.onerror = function(error) {
+            console.error('Preview failed to load:', error);
+            hideLoading();
+            
+            // Fallback: Provide direct link
+            const fallbackMessage = document.createElement('div');
+            fallbackMessage.innerHTML = `
+                <p>Preview not available. You can:</p>
+                <a href="${pdfUrl}" target="_blank" class="pdf-link">
+                    View PDF in new window
+                </a>
+            `;
+            previewFrame.parentNode.appendChild(fallbackMessage);
+        };
+        
+        previewFrame.src = previewUrl;
     }
 }
 
