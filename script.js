@@ -688,29 +688,24 @@ function displayPDFPreview(pdfUrl) {
 
     showLoading('Loading preview...');
 
-    try {
-        // Use Mozilla's PDF.js viewer to display the PDF
-        const pdfViewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
-        
-        previewFrame.onload = function() {
-            hideLoading();
-            console.log('Preview loaded successfully');
-        };
-
-        previewFrame.onerror = function(error) {
-            console.error('Preview failed to load:', error);
-            hideLoading();
-            // Provide a direct link as fallback
-            alert('Preview could not be loaded. You can open the PDF directly at: ' + pdfUrl);
-        };
-
-        console.log('Setting preview URL:', pdfViewerUrl);
-        previewFrame.src = pdfViewerUrl;
-    } catch (error) {
-        console.error('Error in displayPDFPreview:', error);
+    // Use Mozilla's PDF.js viewer
+    const pdfViewerUrl = 'https://mozilla.github.io/pdf.js/web/viewer.html';
+    const fullUrl = `${pdfViewerUrl}?file=${encodeURIComponent(pdfUrl)}`;
+    
+    previewFrame.onload = function() {
         hideLoading();
-        alert('Error displaying PDF preview. Please try again.');
-    }
+        console.log('PDF preview loaded successfully');
+    };
+
+    previewFrame.onerror = function(error) {
+        console.error('PDF preview failed to load:', error);
+        hideLoading();
+        // Provide direct link as fallback
+        alert('Preview could not be loaded. You can open the PDF directly at: ' + pdfUrl);
+    };
+
+    console.log('Loading PDF with viewer:', fullUrl);
+    previewFrame.src = fullUrl;
 }
 
 // No code should be here between the functions
