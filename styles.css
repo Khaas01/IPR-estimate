@@ -212,7 +212,7 @@ label {
     font-size: 18px;
     color: #333;
 }
-const style = document.createElement('style');
+
 style.textContent = `
     .preview-fallback {
         text-align: center;
