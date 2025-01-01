@@ -669,22 +669,19 @@ function navigateFromSolar() {
 }
 
 // PDF Preview function
+// PDF Preview function
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (!previewFrame) return;
+    if (!previewFrame) {
+        console.error('Preview frame not found');
+        return;
+    }
 
-    // Use PDF.js viewer with the PDF URL
-    const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
-    previewFrame.src = viewerUrl;
-}
+    showLoading('Loading preview...');
 
-    // Convert to export URL for PDF.js
-    const exportUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-    const pdfViewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(exportUrl)}`;
-
-    console.log('Using PDF viewer URL:', pdfViewerUrl);
-    previewFrame.src = pdfViewerUrl;
-
+    // Use Mozilla's PDF.js viewer to display the PDF
+    const pdfViewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+    
     previewFrame.onload = function() {
         hideLoading();
         console.log('Preview loaded successfully');
@@ -693,13 +690,13 @@ function displayPDFPreview(pdfUrl) {
     previewFrame.onerror = function(error) {
         console.error('Preview failed to load:', error);
         hideLoading();
-        
-        // Fallback to Google Drive viewer if PDF.js fails
-        const fallbackUrl = `https://drive.google.com/file/d/${fileId}/preview?embedded=true`;
-        previewFrame.src = fallbackUrl;
+        // Provide a direct link as fallback
+        alert('Preview could not be loaded. You can view the PDF directly at: ' + pdfUrl);
     };
-}
 
+    console.log('Setting preview URL:', pdfViewerUrl);
+    previewFrame.src = pdfViewerUrl;
+}
 
 function nextFromSolar() {
     submitForm()
