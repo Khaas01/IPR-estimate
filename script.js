@@ -628,6 +628,7 @@ function submitForm() {
         return Promise.reject(error);
     }
 }
+console.log('Form submission response:', response);
 // Solar Panel Navigation
 function navigateFromSolar() {
     const selectedOption = document.querySelector('input[name="solar"]:checked');
@@ -643,9 +644,18 @@ function navigateFromSolar() {
         showLoading('Generating estimate...');
         submitForm()
             .then(response => {
-                // First check if response exists
+                console.log('Response from form submission:', response); // Debug log
+                
+                // Check if response exists and has the expected format
                 if (!response) {
                     throw new Error('No response received from server');
+                }
+                
+                // Handle 'no-cors' response
+                if (response.type === 'opaque') {
+                    console.log('Received opaque response, assuming success');
+                    showSection('review-section');
+                    return;
                 }
                 
                 // Parse response if it's a string
@@ -655,11 +665,12 @@ function navigateFromSolar() {
                     showSection('review-section');
                     displayPDFPreview(data.previewUrl || data.pdfUrl);
                 } else {
-                    throw new Error(data.message || 'Failed to generate PDF preview');
+                    throw new Error(data.message || 'No preview URL received');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error in form submission:', error);
+                hideLoading();
                 alert('Error generating estimate: ' + error.message);
             })
             .finally(() => {
