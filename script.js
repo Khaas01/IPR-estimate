@@ -594,18 +594,20 @@ function hideLoading() {
 }
 
 // Update the displayReview function
-function displayReview(previewUrl) {  // Changed parameter from previewId to previewUrl
-    showLoading('Loading preview...');
-    
+function displayReview() {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
+        showLoading('Loading preview...');
+        
         previewFrame.onload = function() {
             hideLoading();
+            console.log('Preview loaded successfully');
         };
-        previewFrame.onerror = function() {
+        
+        previewFrame.onerror = function(error) {
+            console.error('Preview failed to load:', error);
             hideLoading();
             alert('Error loading preview. Please try again.');
         };
-        previewFrame.src = previewUrl;  // Use the full URL directly
     }
 }
