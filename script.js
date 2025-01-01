@@ -696,7 +696,7 @@ function displayPDFPreview(pdfUrl) {
 
     console.log('Setting preview URL:', pdfViewerUrl);
     previewFrame.src = pdfViewerUrl;
-}
+} // Make sure there's a closing bracket here
 
 function nextFromSolar() {
     submitForm()
