@@ -679,33 +679,13 @@ function navigateFromSolar() {
     }
 }
 
+// In your script.js
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (!previewFrame) {
-        console.error('Preview frame not found');
-        return;
-    }
+    if (!previewFrame) return;
 
-    showLoading('Loading preview...');
-
-    // Use Mozilla's PDF.js viewer
-    const pdfViewerUrl = 'https://mozilla.github.io/pdf.js/web/viewer.html';
-    const fullUrl = `${pdfViewerUrl}?file=${encodeURIComponent(pdfUrl)}`;
-    
-    previewFrame.onload = function() {
-        hideLoading();
-        console.log('PDF preview loaded successfully');
-    };
-
-    previewFrame.onerror = function(error) {
-        console.error('PDF preview failed to load:', error);
-        hideLoading();
-        // Provide direct link as fallback
-        alert('Preview could not be loaded. You can open the PDF directly at: ' + pdfUrl);
-    };
-
-    console.log('Loading PDF with viewer:', fullUrl);
-    previewFrame.src = fullUrl;
+    // Just set the URL directly - no need for PDF.js viewer
+    previewFrame.src = pdfUrl;
 }
 
 // No code should be here between the functions
