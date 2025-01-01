@@ -279,9 +279,10 @@ function onFormSubmit(e) {
     var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
     pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-    // Get the viewing URL
-    var viewUrl = pdfFile.getUrl().replace('/edit', '/preview');
-    Logger.log('PDF Preview URL: ' + viewUrl);
+   // Get the file ID and create the embedded preview URL
+var fileId = pdfFile.getId();
+var viewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview?embedded=true';
+Logger.log('PDF Preview URL: ' + viewUrl);
 
     // Send email with the PDF
     MailApp.sendEmail({
