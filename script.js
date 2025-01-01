@@ -539,13 +539,13 @@ function submitForm() {
         isSubmitting = true;
         showLoading('Submitting form...');
 
-        // Get the raw form data
         const rawFormData = collectFormData();
         
-        // Create the proper structure for the Form Responses sheet
+        // Matching EXACTLY with the Form Responses sheet headers
         const formData = {
             data: {
                 "Timestamp": rawFormData.timestamp,
+                "User Login": "Khaas01",
                 "Sales Rep Name": rawFormData.salesRepName,
                 "Sales Rep Email": rawFormData.salesRepEmail,
                 "Sales Rep Phone": rawFormData.salesRepPhone,
@@ -554,7 +554,7 @@ function submitForm() {
                 "Owner Address": rawFormData.ownerAddress,
                 "Owner City": rawFormData.ownerCity,
                 "Owner State": rawFormData.ownerState,
-                "Owner Zip": rawFormData.ownerZip,
+                "Owner ZIP": rawFormData.ownerZip,
                 "Owner Phone": rawFormData.ownerPhone,
                 "Owner Email": rawFormData.ownerEmail,
                 "Project Type": rawFormData.projectType,
@@ -566,27 +566,37 @@ function submitForm() {
                 "Roofing Type": rawFormData.roofingType,
                 "Shingle Type": rawFormData.shingleType,
                 "Shingles Repaired": rawFormData.shinglesRepaired,
-                "Shingle Replacement": rawFormData.shingleReplacement,
+                "Additional Repairs": rawFormData.additionalRepairs,
+                "Shingle Replacement Squares": rawFormData.shingleReplacement,
                 "Tile Roofing Type": rawFormData.tileRoofingType,
-                "Tile Repair Sq": rawFormData.tileRepairSq,
-                "Tile Underlayment Sq": rawFormData.tileUnderlaymentSq,
+                "Tile Repair Squares": rawFormData.tileRepairSq,
+                "Tile Underlayment Squares": rawFormData.tileUnderlaymentSq,
                 "Tile Type": rawFormData.tileType,
-                "Tile Roof RR": rawFormData.tileRoofRR,
-                "Modified Bitumen Sq": rawFormData.modifiedBitumenSq,
+                "Tile Remove/Replace Squares": rawFormData.tileRoofRR,
+                "Modified Bitumen Squares": rawFormData.modifiedBitumenSq,
                 "Coating Squares": rawFormData.coatingSquares,
-                "Secondary Roof": rawFormData.secondaryRoof,
+                "Has Secondary Roof": rawFormData.secondaryRoof,
                 "Secondary Roofing Type": rawFormData.secondaryRoofingType,
-                "Third Roof": rawFormData.thirdRoof,
+                "Secondary Shingles Squares": rawFormData.secondaryShingleSquares,
+                "Secondary Tile Underlayment Squares": rawFormData.secondaryTileSquares,
+                "Secondary Modified Bitumen Squares": rawFormData.secondaryModifiedBitumenSq,
+                "Secondary Coating Squares": rawFormData.secondaryCoatingSquares,
+                "Has Third Roof": rawFormData.thirdRoof,
                 "Third Roof Style": rawFormData.thirdRoofStyle,
-                "Additional Charges": rawFormData.additionalCharges,
+                "Third Shingles Squares": rawFormData.thirdShingleSquares,
+                "Third Tiles Squares": rawFormData.thirdTileSquares,
+                "Third Modified Squares": rawFormData.thirdModifiedSquares,
+                "Third Coating Squares": rawFormData.thirdCoatingSquares,
+                "Has Additional Charges": rawFormData.additionalCharges,
                 "Additional Charges Description": rawFormData.additionalChargesDescription,
                 "Additional Charges Price": rawFormData.additionalChargesPrice,
-                "Solar": rawFormData.solar,
-                "Solar Detach Reset": rawFormData.solarDetachReset
+                "Has Solar Panels": rawFormData.solar,
+                "Solar Detach/Reset Cost": rawFormData.solarDetachReset,
+                "Amount Collected": "",  // Optional field
+                "Unforseen Additions": ""  // Optional field
             }
         };
 
-        // Log the structured data being sent
         console.log('Sending structured form data:', formData);
 
         return fetch(GOOGLE_APPS_SCRIPT_URL, {
@@ -596,7 +606,7 @@ function submitForm() {
             headers: {
                 'Content-Type': 'text/plain;charset=utf-8',
             },
-            body: JSON.stringify(formData)  // Send the properly structured data
+            body: JSON.stringify(formData)
         })
         .then(response => {
             if (response.type === 'opaque') {
