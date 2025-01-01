@@ -438,7 +438,99 @@ function validateForm(formData) {
 
     return true;
 }
+// Global submission state
+let isSubmitting = false;
 
+function collectFormData() {
+    const formData = {
+        // Sales Rep Information
+        salesRepName: document.getElementById('salesRepName')?.value || '',
+        salesRepEmail: document.getElementById('salesRepEmail')?.value || '',
+        salesRepPhone: document.getElementById('salesRepPhone')?.value || '',
+        
+        // Company Information
+        companyName: document.getElementById('companyName')?.value || '',
+        
+        // Property Owner Information
+        ownerName: document.getElementById('ownerName')?.value || '',
+        ownerAddress: document.getElementById('ownerAddress')?.value || '',
+        ownerCity: document.getElementById('ownerCity')?.value || '',
+        ownerState: document.getElementById('ownerState')?.value || '',
+        ownerZip: document.getElementById('ownerZip')?.value || '',
+        ownerPhone: document.getElementById('ownerPhone')?.value || '',
+        ownerEmail: document.getElementById('ownerEmail')?.value || '',
+        
+        // Project Type
+        projectType: document.querySelector('input[name="projectType"]:checked')?.value || '',
+        
+        // Insurance Information
+        insuranceCompany: document.getElementById('insuranceCompany')?.value || '',
+        insurancePhone: document.getElementById('insurancePhone')?.value || '',
+        claimNumber: document.getElementById('claimNumber')?.value || '',
+        policyNumber: document.getElementById('policyNumber')?.value || '',
+        dateOfLoss: document.getElementById('dateOfLoss')?.value || '',
+        
+        // Roofing Details
+        roofingType: document.querySelector('input[name="roofingType"]:checked')?.value || '',
+        shingleType: document.querySelector('input[name="shingleType"]:checked')?.value || '',
+        shinglesRepaired: document.getElementById('shingles-repaired')?.value || '',
+        shingleReplacement: document.getElementById('shingle-replacement')?.value || '',
+        
+        // Tile Details
+        tileRoofingType: document.querySelector('input[name="tile-roofing-type"]:checked')?.value || '',
+        tileRepairSq: document.getElementById('tile-repair-sq')?.value || '',
+        tileUnderlaymentSq: document.getElementById('tile-underlayment-sq')?.value || '',
+        tileType: document.querySelector('input[name="tile-type"]:checked')?.value || '',
+        tileRoofRR: document.getElementById('tile-roof-rr')?.value || '',
+        
+        // Modified Bitumen
+        modifiedBitumenSq: document.getElementById('modified-bitumen-sq')?.value || '',
+        
+        // Coating
+        coatingSquares: document.getElementById('coating-squares')?.value || '',
+        
+        // Secondary Roof
+        secondaryRoof: document.querySelector('input[name="secondary-roof"]:checked')?.value || '',
+        secondaryRoofingType: document.querySelector('input[name="secondary-roofing-type"]:checked')?.value || '',
+        
+        // Third Roof
+        thirdRoof: document.querySelector('input[name="third-roof"]:checked')?.value || '',
+        thirdRoofStyle: document.querySelector('input[name="third-roof-style"]:checked')?.value || '',
+        
+        // Additional Charges
+        additionalCharges: document.querySelector('input[name="additional-charges"]:checked')?.value || '',
+        additionalChargesDescription: document.getElementById('additional-charges-description')?.value || '',
+        additionalChargesPrice: document.getElementById('additional-charges-price')?.value || '',
+        
+        // Solar Panels
+        solar: document.querySelector('input[name="solar"]:checked')?.value || '',
+        solarDetachReset: document.getElementById('solar-detach-reset')?.value || ''
+    };
+    
+    // Add timestamp
+    formData.timestamp = new Date().toISOString();
+    
+    return formData;
+}
+
+function shareEstimate() {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame && previewFrame.src) {
+        const viewUrl = previewFrame.src.replace('/preview', '/view');
+        if (navigator.share) {
+            navigator.share({
+                title: 'Roofing Estimate',
+                text: 'View your roofing estimate from Iron Peak Roofing',
+                url: viewUrl
+            }).catch(err => {
+                console.error('Error sharing:', err);
+                window.open(viewUrl, '_blank');
+            });
+        } else {
+            window.open(viewUrl, '_blank');
+        }
+    }
+}
 
 function submitForm() {
     // Prevent multiple submissions
