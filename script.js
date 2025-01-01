@@ -4,7 +4,7 @@
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzEhaQ4K4YuoCohRE4AGNTY5Wf_JiwhEVJF1LmWPpB7-tuU22YYyU8766E4QlwBg8gHyQ/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
-
+let isSubmitting = false;
 window.addEventListener('message', function(event) {
     console.log('Raw message event:', event);
     
