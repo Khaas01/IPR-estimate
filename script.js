@@ -1,7 +1,7 @@
 // Part 1: Core Navigation and Section Management
 
 // Constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKkgxsHvWkVk95rjGDRKYJanbcjKVjR1tleNu7U0P6ztIn05-Kb6Dc7ESHUze2AStBDw/exec'; // Add your deployment URL here
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbweO3tkur2ZLW0KovfU46xaUn3meMGsNY1jWGSwwSIh3OaWG1vVlumNJE2eZsZvIzwWAw/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
@@ -15,31 +15,17 @@ window.addEventListener('message', function(event) {
         if (data.success) {
             hideLoading();
             
-            if (data.pdfUrl) {  // Change previewUrl to pdfUrl to match Apps Script
+            if (data.pdfUrl) {
                 console.log('Received PDF URL:', data.pdfUrl);
-                
                 showSection('review-section');
                 const previewFrame = document.getElementById('estimatePreviewFrame');
                 if (previewFrame) {
                     showLoading('Loading preview...');
-                    
-                    // Add viewer=true to make it display in Google Drive viewer
-                    const viewerUrl = `${data.pdfUrl}&viewer=true`;
-                    
+                    previewFrame.src = data.pdfUrl;  // Direct URL assignment
                     previewFrame.onload = function() {
                         hideLoading();
                         console.log('Preview loaded successfully');
                     };
-                    
-                    previewFrame.onerror = function(e) {
-                        hideLoading();
-                        console.error('Preview failed to load:', e);
-                        // Show a user-friendly message with the PDF link as fallback
-                        alert('Preview could not be loaded. You can view the PDF directly at: ' + data.pdfUrl);
-                    };
-                    
-                    console.log('Setting iframe src to:', viewerUrl);
-                    previewFrame.src = viewerUrl;
                 }
             } else {
                 console.error('No PDF URL in response');
