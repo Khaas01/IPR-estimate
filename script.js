@@ -226,16 +226,6 @@ function navigateFromShingleType() {
     }
 }
 
-// PDF Preview function
-function displayPDFPreview(pdfUrl) {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (!previewFrame) return;
-
-    // Use PDF.js viewer with the PDF URL
-    const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
-    previewFrame.src = viewerUrl;
-}
-
 //  Tile Roofing Navigation
 function navigateFromTileRoofingType() {
     const selectedTileType = document.querySelector('input[name="tile-roofing-type"]:checked');
@@ -678,22 +668,15 @@ function navigateFromSolar() {
     }
 }
 
-function displayPDFPreview(url) {
+// PDF Preview function
+function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (!previewFrame) {
-        console.error('Preview frame not found');
-        return;
-    }
+    if (!previewFrame) return;
 
-    showLoading('Loading preview...');
-
-    // Extract file ID from either preview or view URL format
-    const fileId = url.match(/\/d\/(.+?)\/(view|preview)/)?.[1];
-    
-    if (!fileId) {
-        console.error('Could not extract file ID from URL:', url);
-        return;
-    }
+    // Use PDF.js viewer with the PDF URL
+    const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+    previewFrame.src = viewerUrl;
+}
 
     // Convert to export URL for PDF.js
     const exportUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
