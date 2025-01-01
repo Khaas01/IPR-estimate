@@ -533,15 +533,62 @@ function shareEstimate() {
 }
 
 function submitForm() {
-    // Prevent multiple submissions
     if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
     
     try {
         isSubmitting = true;
         showLoading('Submitting form...');
 
-        const formData = collectFormData();
+        // Get the raw form data
+        const rawFormData = collectFormData();
         
+        // Create the proper structure for the Form Responses sheet
+        const formData = {
+            data: {
+                "Timestamp": rawFormData.timestamp,
+                "Sales Rep Name": rawFormData.salesRepName,
+                "Sales Rep Email": rawFormData.salesRepEmail,
+                "Sales Rep Phone": rawFormData.salesRepPhone,
+                "Company Name": rawFormData.companyName,
+                "Owner Name": rawFormData.ownerName,
+                "Owner Address": rawFormData.ownerAddress,
+                "Owner City": rawFormData.ownerCity,
+                "Owner State": rawFormData.ownerState,
+                "Owner Zip": rawFormData.ownerZip,
+                "Owner Phone": rawFormData.ownerPhone,
+                "Owner Email": rawFormData.ownerEmail,
+                "Project Type": rawFormData.projectType,
+                "Insurance Company": rawFormData.insuranceCompany,
+                "Insurance Phone": rawFormData.insurancePhone,
+                "Claim Number": rawFormData.claimNumber,
+                "Policy Number": rawFormData.policyNumber,
+                "Date of Loss": rawFormData.dateOfLoss,
+                "Roofing Type": rawFormData.roofingType,
+                "Shingle Type": rawFormData.shingleType,
+                "Shingles Repaired": rawFormData.shinglesRepaired,
+                "Shingle Replacement": rawFormData.shingleReplacement,
+                "Tile Roofing Type": rawFormData.tileRoofingType,
+                "Tile Repair Sq": rawFormData.tileRepairSq,
+                "Tile Underlayment Sq": rawFormData.tileUnderlaymentSq,
+                "Tile Type": rawFormData.tileType,
+                "Tile Roof RR": rawFormData.tileRoofRR,
+                "Modified Bitumen Sq": rawFormData.modifiedBitumenSq,
+                "Coating Squares": rawFormData.coatingSquares,
+                "Secondary Roof": rawFormData.secondaryRoof,
+                "Secondary Roofing Type": rawFormData.secondaryRoofingType,
+                "Third Roof": rawFormData.thirdRoof,
+                "Third Roof Style": rawFormData.thirdRoofStyle,
+                "Additional Charges": rawFormData.additionalCharges,
+                "Additional Charges Description": rawFormData.additionalChargesDescription,
+                "Additional Charges Price": rawFormData.additionalChargesPrice,
+                "Solar": rawFormData.solar,
+                "Solar Detach Reset": rawFormData.solarDetachReset
+            }
+        };
+
+        // Log the structured data being sent
+        console.log('Sending structured form data:', formData);
+
         return fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
@@ -549,7 +596,7 @@ function submitForm() {
             headers: {
                 'Content-Type': 'text/plain;charset=utf-8',
             },
-            body: JSON.stringify({ data: formData })
+            body: JSON.stringify(formData)  // Send the properly structured data
         })
         .then(response => {
             if (response.type === 'opaque') {
