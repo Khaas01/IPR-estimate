@@ -1,6 +1,20 @@
+// Add this function to code.gs at the top
+function setCorsHeaders(response) {
+  return response
+    .setHeader('Access-Control-Allow-Origin', '*')
+    .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    .setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    .setHeader('Access-Control-Max-Age', '86400');
+}
 function doGet(e) {
-  return ContentService.createTextOutput("The web app is working correctly.")
+  let output = ContentService.createTextOutput("The web app is working correctly.")
     .setMimeType(ContentService.MimeType.TEXT);
+  return setCorsHeaders(output);
+}
+// Add a new function to handle OPTIONS requests
+function doOptions(e) {
+  let output = ContentService.createTextOutput('');
+  return setCorsHeaders(output);
 }
 
 function doPost(e) {
@@ -79,14 +93,17 @@ function doPost(e) {
       }
 
       // Return success response with all necessary URLs
-      return ContentService.createTextOutput(JSON.stringify({
-        success: true,
-        message: 'Form submitted successfully',
-        previewUrl: submitResult.previewUrl || viewerUrl,
-        pdfUrl: pdfUrl,
-        estimateId: lastDatabaseRow,
-        timestamp: new Date().toISOString()
-      })).setMimeType(ContentService.MimeType.JSON);
+     let output = ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: 'Form submitted successfully',
+      previewUrl: submitResult.previewUrl || viewerUrl,
+      pdfUrl: pdfUrl,
+      estimateId: lastDatabaseRow,
+      timestamp: new Date().toISOString()
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+    return setCorsHeaders(output);
+
 
     } catch (submitError) {
       Logger.log('Warning: onFormSubmit error: ' + submitError.message);
@@ -104,14 +121,233 @@ function doPost(e) {
     });
     
     // Return error response
-    return ContentService.createTextOutput(JSON.stringify({
+    let output = ContentService.createTextOutput(JSON.stringify({
       success: false,
       error: error.toString(),
       message: 'Form submission failed. Please try again.',
       timestamp: new Date().toISOString()
     })).setMimeType(ContentService.MimeType.JSON);
+    
+    return setCorsHeaders(output);
   }
 }
+
+function getHeaderRow() {
+  try {
+    var ss = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
+    var sheet = ss.getSheetByName('Form Responses');
+    
+    if (!sheet) {
+      throw new Error('Database sheet not found');
+    }
+    
+    var headerRow = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    Logger.log('Headers found: ' + headerRow.join(', '));
+    
+    return headerRow;
+    
+  } catch (error) {
+    Logger.log('Error in getHeaderRow: ' + error.message);
+    throw error;
+  }
+}
+
+function findLastRowWithData(sheet) {
+  // 1. First, get the correct sheet
+  var workbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
+  var databaseSheet = workbook.getSheetByName('Database');
+  
+  Logger.log('Starting findLastRowWithData function...');
+  Logger.log('Database sheet name: ' + databaseSheet.getName());
+  
+  // 2. Get the actual last row from Database sheet
+  var lastRow = databaseSheet.getLastRow();
+  Logger.log('Raw last row from Database sheet: ' + lastRow);
+  
+  // 3. Verify data exists at this row
+  var headers = databaseSheet.getRange(2225, 1, 1, databaseSheet.getLastColumn()).getValues()[0];
+  var ownerNameCol = headers.indexOf("Owner Name") + 1;
+  Logger.log('Owner Name column index: ' + ownerNameCol);
+  
+  var ownerName = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
+  Logger.log('Owner Name at last row ' + lastRow + ': ' + ownerName);
+  
+  // Add verification for the last few rows
+  Logger.log('Checking previous rows for verification:');
+  Logger.log('Row ' + (lastRow-1) + ' Owner Name: ' + databaseSheet.getRange(lastRow-1, ownerNameCol).getValue());
+  Logger.log('Row ' + (lastRow-2) + ' Owner Name: ' + databaseSheet.getRange(lastRow-2, ownerNameCol).getValue());
+   var currentRowValue = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
+  if (!currentRowValue) {
+    Logger.log('Warning: Empty owner name found at row ' + lastRow + ', checking previous row...');
+    lastRow = lastRow - 1;
+    currentRowValue = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
+    if (!currentRowValue) {
+      Logger.log('Warning: Empty owner name found at row ' + lastRow + ' as well, using original row number');
+      lastRow = lastRow + 1;
+    }
+  }
+  
+  Logger.log('Final row number being returned: ' + lastRow);
+  return lastRow;
+}
+
+function testRowNumbers() {
+  var formWorkbook = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
+  var formResponseSheet = formWorkbook.getSheetByName('Form Responses');
+  
+  Logger.log('Testing row numbers...');
+  Logger.log('Sheet name: ' + formResponseSheet.getName());
+  Logger.log('Total rows in sheet: ' + formResponseSheet.getMaxRows());
+  Logger.log('Last row from getLastRow(): ' + formResponseSheet.getLastRow());
+  
+  var lastRow = findLastRowWithData(formResponseSheet);
+  Logger.log('Final adjusted last row: ' + lastRow);
+  
+  // Verify the content
+  var headers = formResponseSheet.getRange(1, 1, 1, formResponseSheet.getLastColumn()).getValues()[0];
+  var ownerNameCol = headers.indexOf("Owner Name") + 1;
+  var ownerName = formResponseSheet.getRange(lastRow, ownerNameCol).getValue();
+  Logger.log('Owner Name at last row: ' + ownerName);
+  
+  return {
+    lastRow: lastRow,
+    ownerName: ownerName
+  };
+}
+// Add this function to code.gs at the top
+function setCorsHeaders(response) {
+  return response
+    .setHeader('Access-Control-Allow-Origin', '*')
+    .setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    .setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    .setHeader('Access-Control-Max-Age', '86400');
+}
+function doGet(e) {
+  let output = ContentService.createTextOutput("The web app is working correctly.")
+    .setMimeType(ContentService.MimeType.TEXT);
+  return setCorsHeaders(output);
+}
+// Add a new function to handle OPTIONS requests
+function doOptions(e) {
+  let output = ContentService.createTextOutput('');
+  return setCorsHeaders(output);
+}
+
+function doPost(e) {
+  try {
+    // Parse the form data with enhanced error checking
+    let formData;
+    try {
+      if (e.parameter && e.parameter.data) {
+        formData = JSON.parse(e.parameter.data);
+      } else if (e.postData && e.postData.contents) {
+        formData = JSON.parse(e.postData.contents);
+      } else {
+        throw new Error('No data received in request');
+      }
+      Logger.log('Raw form data received: ' + JSON.stringify(formData));
+    } catch (parseError) {
+      throw new Error('Failed to parse form data: ' + parseError.message);
+    }
+    
+    // Validate required workbooks and sheets
+    const formWorkbook = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
+    const formResponseSheet = formWorkbook.getSheetByName('Form Responses');
+    const estimateWorkbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
+    const estimateSheet = estimateWorkbook.getSheetByName('Estimate');
+    const databaseSheet = estimateWorkbook.getSheetByName('Database');
+    
+    if (!formResponseSheet || !estimateSheet || !databaseSheet) {
+      throw new Error('Required sheets not found');
+    }
+
+    // Get and validate headers
+    const headers = formResponseSheet.getRange(1, 1, 1, formResponseSheet.getLastColumn()).getValues()[0];
+    if (!headers || headers.length === 0) {
+      throw new Error('No headers found in form response sheet');
+    }
+    Logger.log('Sheet headers: ' + JSON.stringify(headers));
+
+    // Prepare row data with validation
+    const rowData = headers.map(header => {
+      if (header === "Timestamp") return new Date();
+      if (header === "User Login") return Session.getActiveUser().getEmail() || '';
+      return (formData.data && formData.data[header] !== undefined) ? formData.data[header] : '';
+    });
+    Logger.log('Final row data to be appended: ' + JSON.stringify(rowData));
+
+    // Append data to sheet
+    formResponseSheet.appendRow(rowData);
+
+    // Get the last row from Database sheet and update Estimate sheet
+    // Add a longer delay to allow for IMPORTRANGE to update
+    Utilities.sleep(5000); // 5 second delay for IMPORTRANGE
+    const lastDatabaseRow = findLastRowWithData(databaseSheet);
+    estimateSheet.getRange('K4').setValue(lastDatabaseRow);
+    Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
+
+    // Trigger onFormSubmit with the correct row number and all necessary data
+    try {
+      const submitResult = onFormSubmit({
+        lastRow: lastDatabaseRow,
+        clientName: formData.data["Owner Name"],
+        clientData: formData.data,
+        estimateWorkbook: estimateWorkbook
+      });
+
+      // Get the PDF file that was created during email attachment
+      let pdfUrl = '';
+      let viewerUrl = '';
+      
+      if (submitResult && submitResult.pdfFileId) {
+        const pdfFile = DriveApp.getFileById(submitResult.pdfFileId);
+        // Ensure the PDF is accessible for viewing
+        pdfFile.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.VIEW);
+        pdfUrl = pdfFile.getUrl();
+        // Create a viewer URL that doesn't require sign-in
+        viewerUrl = 'https://drive.google.com/file/d/' + submitResult.pdfFileId + '/preview';
+      }
+
+      // Return success response with all necessary URLs
+     let output = ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: 'Form submitted successfully',
+      previewUrl: submitResult.previewUrl || viewerUrl,
+      pdfUrl: pdfUrl,
+      estimateId: lastDatabaseRow,
+      timestamp: new Date().toISOString()
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+    return setCorsHeaders(output);
+
+
+    } catch (submitError) {
+      Logger.log('Warning: onFormSubmit error: ' + submitError.message);
+      throw submitError; // Rethrow to be caught by outer catch block
+    }
+
+  } catch (error) {
+    Logger.log('Error in doPost: ' + error.message);
+    
+    // Send error notification email
+    MailApp.sendEmail({
+      to: 'khaas@ironpeakroofing.com',
+      subject: 'Form Submission Error',
+      body: 'Error in doPost: ' + error.message + '\n\nStack trace:\n' + error.stack
+    });
+    
+    // Return error response
+    let output = ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString(),
+      message: 'Form submission failed. Please try again.',
+      timestamp: new Date().toISOString()
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+    return setCorsHeaders(output);
+  }
+}
+
 function getHeaderRow() {
   try {
     var ss = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
@@ -298,10 +534,10 @@ function onFormSubmit(e) {
     var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
     pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-   // Get the file ID and create the embedded preview URL
-var fileId = pdfFile.getId();
-var viewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview?embedded=true';
-Logger.log('PDF Preview URL: ' + viewUrl);
+    // Get the file ID and create the embedded preview URL
+    var fileId = pdfFile.getId();
+    var viewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview?embedded=true';
+    Logger.log('PDF Preview URL: ' + viewUrl);
 
     // Send email with the PDF
     MailApp.sendEmail({
@@ -314,18 +550,30 @@ Logger.log('PDF Preview URL: ' + viewUrl);
     
     Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
 
-    // Return the URL in the response
-    return ContentService.createTextOutput(JSON.stringify({
+    // Return success response with CORS headers
+    let output = ContentService.createTextOutput(JSON.stringify({
       success: true,
       message: 'Form submitted successfully',
-      previewUrl: viewUrl
+      previewUrl: viewUrl,
+      pdfUrl: pdfFile.getUrl(),
+      fileId: fileId,
+      estimateId: lastRow,
+      timestamp: new Date().toISOString()
     })).setMimeType(ContentService.MimeType.JSON);
+    
+    return setCorsHeaders(output);
 
   } catch (error) {
     Logger.log('Error: ' + error.toString());
-    return ContentService.createTextOutput(JSON.stringify({
+    
+    // Return error response with CORS headers
+    let output = ContentService.createTextOutput(JSON.stringify({
       success: false,
-      message: error.toString()
+      error: error.toString(),
+      message: 'Form submission failed. Please try again.',
+      timestamp: new Date().toISOString()
     })).setMimeType(ContentService.MimeType.JSON);
+    
+    return setCorsHeaders(output);
   }
 }
