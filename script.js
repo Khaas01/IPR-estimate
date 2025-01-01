@@ -545,20 +545,22 @@ function submitForm() {
         const formData = collectFormData();
         
         // Make the fetch request to your Google Apps Script URL
-        return fetch(GOOGLE_APPS_SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({ data: formData }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            // Check if the response is ok (status in 200-299 range)
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
+return fetch(GOOGLE_APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors', // Add this line
+    redirect: 'follow', // Add this line
+    headers: {
+        'Content-Type': 'text/plain;charset=utf-8', // Change this line
+    },
+    body: JSON.stringify({ data: formData })
+})
+.then(response => {
+    if (response.type === 'opaque') {
+        // Handle no-cors response
+        return { success: true };
+    }
+    return response.json();
+})
         .catch(error => {
             // Log and rethrow any fetch or parsing errors
             console.error('Fetch error:', error);
