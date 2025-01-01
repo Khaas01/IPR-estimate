@@ -668,8 +668,6 @@ function navigateFromSolar() {
     }
 }
 
-// PDF Preview function
-// PDF Preview function
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (!previewFrame) {
@@ -679,24 +677,32 @@ function displayPDFPreview(pdfUrl) {
 
     showLoading('Loading preview...');
 
-    // Use Mozilla's PDF.js viewer to display the PDF
-    const pdfViewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
-    
-    previewFrame.onload = function() {
-        hideLoading();
-        console.log('Preview loaded successfully');
-    };
+    try {
+        // Use Mozilla's PDF.js viewer to display the PDF
+        const pdfViewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+        
+        previewFrame.onload = function() {
+            hideLoading();
+            console.log('Preview loaded successfully');
+        };
 
-    previewFrame.onerror = function(error) {
-        console.error('Preview failed to load:', error);
-        hideLoading();
-        // Provide a direct link as fallback
-        alert('Preview could not be loaded. You can view the PDF directly at: ' + pdfUrl);
-    };
+        previewFrame.onerror = function(error) {
+            console.error('Preview failed to load:', error);
+            hideLoading();
+            // Provide a direct link as fallback
+            alert('Preview could not be loaded. You can open the PDF directly at: ' + pdfUrl);
+        };
 
-    console.log('Setting preview URL:', pdfViewerUrl);
-    previewFrame.src = pdfViewerUrl;
-} // Make sure there's a closing bracket here
+        console.log('Setting preview URL:', pdfViewerUrl);
+        previewFrame.src = pdfViewerUrl;
+    } catch (error) {
+        console.error('Error in displayPDFPreview:', error);
+        hideLoading();
+        alert('Error displaying PDF preview. Please try again.');
+    }
+}
+
+// No code should be here between the functions
 
 function nextFromSolar() {
     submitForm()
@@ -710,7 +716,6 @@ function nextFromSolar() {
             alert('There was an error submitting the form. Please try again.');
         });
 }
-
 
 // Add these utility functions for the loading indicator
 function showLoading(message = 'Processing your estimate...') {
