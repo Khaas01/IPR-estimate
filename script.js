@@ -533,6 +533,7 @@ function shareEstimate() {
 }
 
 function submitForm() {
+    // Prevent multiple submissions
     if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
     
     try {
@@ -540,28 +541,21 @@ function submitForm() {
         showLoading('Submitting form...');
 
         const formData = collectFormData();
-        console.log('Form data being sent:', formData); // Debug log
         
         return fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: 'POST',
+            mode: 'no-cors',
+            redirect: 'follow',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'text/plain;charset=utf-8',
             },
             body: JSON.stringify({ data: formData })
         })
         .then(response => {
-            console.log('Response received:', response); // Debug log
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (response.type === 'opaque') {
+                return { success: true };
             }
-            return response.text().then(text => {
-                try {
-                    return JSON.parse(text);
-                } catch (e) {
-                    console.log('Raw response:', text); // Debug log
-                    throw new Error('Failed to parse server response');
-                }
-            });
+            return response.json();
         })
         .catch(error => {
             console.error('Fetch error:', error);
