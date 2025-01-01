@@ -628,7 +628,7 @@ function submitForm() {
         return Promise.reject(error);
     }
 }
-console.log('Form submission response:', response);
+
 // Solar Panel Navigation
 function navigateFromSolar() {
     const selectedOption = document.querySelector('input[name="solar"]:checked');
