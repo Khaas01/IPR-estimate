@@ -13,7 +13,7 @@
 <body>
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
-    <h1>Roofing Estimate Form Version 9</h1>
+    <h1>Roofing Estimate Form Version 10</h1>
 
 
 </header>
@@ -83,10 +83,8 @@
     style="width:100%; height:500px; border:0;" 
     title="Roof Measurement Tool" 
     id="measurementToolIframe"
-    allow="geolocation; camera; fullscreen; accelerometer; autoplay"
-    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-presentation"
-    referrerpolicy="origin"
-    loading="lazy">
+    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-top-navigation"
+    allow="geolocation; camera; fullscreen">
 </iframe>
       <div id="navigationButtons">
       <button type="button" id="backButton" onclick="goBack()">Back</button>
@@ -614,10 +612,10 @@
     <div class="review-instructions">
         <p>Please review your estimate below. You can go back to make changes if needed.</p>
     </div>
-   <iframe id="estimatePreviewFrame" 
+  <iframe id="estimatePreviewFrame" 
     style="width: 100%; height: 600px; border: none;"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-presentation"
+    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-top-navigation"
     allowfullscreen>
 </iframe>
     <div id="navigationButtons">
