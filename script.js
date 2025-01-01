@@ -1,7 +1,7 @@
 // Part 1: Core Navigation and Section Management
 
 // Constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYnHD6zNk5vaEZAaF0AcYTDOMe4YqUU9jmocVJnLmxLglI3buCb_MZ2ytt9CvKRIJdNA/exec'; // Add your deployment URL here
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnLpTy2XfYHO9qslUKtFuM3SvWtgQMAWm_hRZXHjBso0alglZ_jrmVsuMQuQ7eFozKJg/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
@@ -15,13 +15,16 @@ window.addEventListener('message', function(event) {
         if (data.success) {
             hideLoading();
             
-            if (data.previewUrl) {
-                console.log('Received preview URL:', data.previewUrl);
+            if (data.pdfUrl) {  // Change previewUrl to pdfUrl to match Apps Script
+                console.log('Received PDF URL:', data.pdfUrl);
                 
                 showSection('review-section');
                 const previewFrame = document.getElementById('estimatePreviewFrame');
                 if (previewFrame) {
                     showLoading('Loading preview...');
+                    
+                    // Add viewer=true to make it display in Google Drive viewer
+                    const viewerUrl = `${data.pdfUrl}&viewer=true`;
                     
                     previewFrame.onload = function() {
                         hideLoading();
@@ -32,21 +35,23 @@ window.addEventListener('message', function(event) {
                         hideLoading();
                         console.error('Preview failed to load:', e);
                         // Show a user-friendly message with the PDF link as fallback
-                        const viewUrl = data.previewUrl.replace('/preview', '/view');
-                        alert('Preview could not be loaded. You can view the PDF directly at: ' + viewUrl);
+                        alert('Preview could not be loaded. You can view the PDF directly at: ' + data.pdfUrl);
                     };
                     
-                    // Set the preview URL
-                    previewFrame.src = data.previewUrl;
+                    console.log('Setting iframe src to:', viewerUrl);
+                    previewFrame.src = viewerUrl;
                 }
+            } else {
+                console.error('No PDF URL in response');
+                alert('Error: No PDF URL received');
             }
         } else {
             hideLoading();
-            alert('Error submitting form: ' + (data.message || 'Unknown error'));
+            alert('Error: ' + (data.message || 'Unknown error'));
         }
     } catch (error) {
         hideLoading();
-        console.error('Error processing response:', error);
+        console.error('Error processing message:', error);
         alert('Error processing response. Please try again.');
     }
 });
