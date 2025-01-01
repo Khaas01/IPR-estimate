@@ -533,47 +533,46 @@ function shareEstimate() {
 }
 
 function submitForm() {
-    // Prevent multiple submissions
     if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
     
     try {
-        // Set submission flag and show loading state
         isSubmitting = true;
         showLoading('Submitting form...');
 
-        // Collect form data (assuming you have this function already)
         const formData = collectFormData();
+        console.log('Form data being sent:', formData); // Debug log
         
-        // Make the fetch request to your Google Apps Script URL
-return fetch(GOOGLE_APPS_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors', // Add this line
-    redirect: 'follow', // Add this line
-    headers: {
-        'Content-Type': 'text/plain;charset=utf-8', // Change this line
-    },
-    body: JSON.stringify({ data: formData })
-})
-.then(response => {
-    if (response.type === 'opaque') {
-        // Handle no-cors response
-        return { success: true };
-    }
-    return response.json();
-})
+        return fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ data: formData })
+        })
+        .then(response => {
+            console.log('Response received:', response); // Debug log
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text().then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.log('Raw response:', text); // Debug log
+                    throw new Error('Failed to parse server response');
+                }
+            });
+        })
         .catch(error => {
-            // Log and rethrow any fetch or parsing errors
             console.error('Fetch error:', error);
             throw error;
         })
         .finally(() => {
-            // Always clean up, regardless of success or failure
             isSubmitting = false;
             hideLoading();
         });
 
     } catch (error) {
-        // Handle any synchronous errors
         isSubmitting = false;
         hideLoading();
         return Promise.reject(error);
