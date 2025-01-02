@@ -728,7 +728,7 @@ function nextFromSolar() {
 }
 
 // Add these utility functions for the loading indicator
-ffunction showLoading(message = 'Processing your estimate...') {
+function showLoading(message = 'Processing your estimate...') {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
         previewFrame.srcdoc = `
