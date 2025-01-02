@@ -1,41 +1,88 @@
-// Part 1: Core Navigation and Section Management
-// Initialize Google API
+// Global variables
+let tokenClient;
+let gapiInited = false;
+let gisInited = false;
+
+// 1. Load the Google API client
 function loadGoogleAPI() {
-    gapi.load('client:auth2', initClient);
+    gapi.load('client', initializeGapiClient);
 }
 
-function initClient() {
-    gapi.client.init({
-        apiKey: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
-        clientId: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
-        scope: [
-            'https://www.googleapis.com/auth/drive',
-            'https://www.googleapis.com/auth/spreadsheets'
-        ],
-        discoveryDocs: [
-            'https://sheets.googleapis.com/$discovery/rest?version=v4',
-            'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-        ],
-        cookiePolicy: 'single_host_origin'
-    }).then(function() {
-        console.log('Google API client initialized');
-        // Add a check to see if the user is signed in
-        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-            console.log('User is already signed in');
-        } else {
-            console.log('User needs to sign in');
-        }
-    }).catch(function(error) {
-        console.error('Error initializing Google API client:', error);
-    });
+// 2. Initialize the GAPI client
+async function initializeGapiClient() {
+    try {
+        await gapi.client.init({
+            apiKey: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
+            discoveryDocs: [
+                'https://sheets.googleapis.com/$discovery/rest?version=v4',
+                'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+            ]
+        });
+        gapiInited = true;
+        maybeEnableButtons();
+    } catch (error) {
+        console.error('Error initializing GAPI client:', error);
+    }
 }
+
+// 3. Initialize Google Identity Services
+function initializeGIS() {
+    try {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
+            scope: 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets',
+            callback: handleAuthResponse
+        });
+        gisInited = true;
+        maybeEnableButtons();
+    } catch (error) {
+        console.error('Error initializing GIS:', error);
+    }
+}
+
+// 4. Check if both APIs are initialized
+function maybeEnableButtons() {
+    if (gapiInited && gisInited) {
+        console.log('Both APIs initialized successfully');
+        handleAuthClick();
+    }
+}
+
+// 5. Handle the authentication click
+function handleAuthClick() {
+    if (gapi.client.getToken() === null) {
+        tokenClient.requestAccessToken({ prompt: 'consent' });
+    } else {
+        tokenClient.requestAccessToken({ prompt: '' });
+    }
+}
+
+// 6. Handle the authentication response
+function handleAuthResponse(response) {
+    if (response.error !== undefined) {
+        console.error('Auth error:', response);
+        return;
+    }
+    console.log('Successfully authenticated');
+    // Here you can start making API calls
+    updateSignInStatus(true);
+}
+
+// 7. Update UI based on sign-in status
 function updateSignInStatus(isSignedIn) {
-  if (isSignedIn) {
-    console.log('User is signed in');
-  } else {
-    console.log('User is not signed in');
-  }
+    if (isSignedIn) {
+        console.log('User is signed in');
+        // Add your post-authentication logic here
+    } else {
+        console.log('User is not signed in');
+    }
 }
+
+// Initialize everything when the page loads
+window.onload = function() {
+    loadGoogleAPI();
+    initializeGIS();
+};
 // Constants
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQvZe_M3i30mHZLNOsZX87r_mcqAio48Ik1kztAa7UA6HEKOM9dnIppOiyCF5uWQ/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
