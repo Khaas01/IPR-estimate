@@ -631,33 +631,43 @@ function navigateFromSolar() {
 
     if (selectedOption.value === 'yes') {
         showSection('solar-detach-reset-section');
+    // Replace lines 635-670 with:
     } else {
+        // First show the review section
+        showSection('review-section');
+        
+        // Then start form submission
         showLoading('Generating estimate...');
         submitForm()
             .then(response => {
-                console.log('Response from form submission:', response); // Debug log
+                console.log('Response from form submission:', response);
                 
-                // Check if response exists and has the expected format
                 if (!response) {
                     throw new Error('No response received from server');
                 }
                 
                 // Handle 'no-cors' response
                 if (response.type === 'opaque') {
-                    console.log('Received opaque response, assuming success');
-                    showSection('review-section');
+                    console.log('Received opaque response, waiting for PDF...');
                     return;
                 }
                 
-                // Parse response if it's a string
                 const data = typeof response === 'string' ? JSON.parse(response) : response;
                 
                 if (data.success && (data.previewUrl || data.pdfUrl)) {
-                    showSection('review-section');
                     displayPDFPreview(data.previewUrl || data.pdfUrl);
                 } else {
-                    throw new Error(data.message || 'No preview URL received');
+                    throw new Error('No preview URL received');
                 }
+            })
+            .catch(error => {
+                console.error('Error in form submission:', error);
+                alert('Error generating estimate: ' + error.message);
+            })
+            .finally(() => {
+                hideLoading();
+            });
+    }
             })
             .catch(error => {
                 console.error('Error in form submission:', error);
@@ -671,12 +681,17 @@ function navigateFromSolar() {
 }
 
 // In your script.js
+// Replace lines 674-680 with:
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (!previewFrame) return;
+    if (!previewFrame) {
+        console.error('Preview frame not found');
+        return;
+    }
 
-    // Just set the URL directly - no need for PDF.js viewer
+    console.log('Setting preview URL:', pdfUrl);
     previewFrame.src = pdfUrl;
+    previewFrame.style.display = 'block';
 }
 
 // No code should be here between the functions
