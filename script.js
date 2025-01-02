@@ -88,7 +88,7 @@ const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQv
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
-window.addEventListener('message', function(event) 
+window.addEventListener('message', function(event) {
     
     try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
