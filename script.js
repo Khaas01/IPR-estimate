@@ -3,16 +3,16 @@ let tokenClient;
 let gapiInited = false;
 let gisInited = false;
 
-// 1. Load the Google API client
+// Load the Google API client
 function loadGoogleAPI() {
     gapi.load('client', initializeGapiClient);
 }
 
-// 2. Initialize the GAPI client
+// Initialize the GAPI client
 async function initializeGapiClient() {
     try {
         await gapi.client.init({
-            apiKey: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
+            apiKey: 'YOUR_API_KEY',
             discoveryDocs: [
                 'https://sheets.googleapis.com/$discovery/rest?version=v4',
                 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
@@ -25,7 +25,7 @@ async function initializeGapiClient() {
     }
 }
 
-// 3. Initialize Google Identity Services
+// Initialize Google Identity Services
 function initializeGIS() {
     try {
         tokenClient = google.accounts.oauth2.initTokenClient({
@@ -40,7 +40,7 @@ function initializeGIS() {
     }
 }
 
-// 4. Check if both APIs are initialized
+// Check if both APIs are initialized
 function maybeEnableButtons() {
     if (gapiInited && gisInited) {
         console.log('Both APIs initialized successfully');
@@ -48,7 +48,7 @@ function maybeEnableButtons() {
     }
 }
 
-// 5. Handle the authentication click
+// Handle the authentication click
 function handleAuthClick() {
     if (gapi.client.getToken() === null) {
         tokenClient.requestAccessToken({ prompt: 'consent' });
@@ -57,7 +57,7 @@ function handleAuthClick() {
     }
 }
 
-// 6. Handle the authentication response
+// Handle the authentication response
 function handleAuthResponse(response) {
     if (response.error !== undefined) {
         console.error('Auth error:', response);
@@ -68,7 +68,7 @@ function handleAuthResponse(response) {
     updateSignInStatus(true);
 }
 
-// 7. Update UI based on sign-in status
+// Update UI based on sign-in status
 function updateSignInStatus(isSignedIn) {
     if (isSignedIn) {
         console.log('User is signed in');
@@ -80,11 +80,16 @@ function updateSignInStatus(isSignedIn) {
 
 // Initialize everything when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-    loadGoogleAPI();
-    initializeGIS();
+    if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
+        loadGoogleAPI();
+        initializeGIS();
+    } else {
+        console.error('Google APIs are not loaded correctly');
+    }
     hideAllSections();
     showSection(sectionHistory[0]);
 });
+
 // Constants
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQvZe_M3i30mHZLNOsZX87r_mcqAio48Ik1kztAa7UA6HEKOM9dnIppOiyCF5uWQ/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
