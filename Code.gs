@@ -1,3 +1,7 @@
+const scriptProperties = PropertiesService.getScriptProperties();
+const CLIENT_ID = scriptProperties.getProperty('CLIENT_ID');
+const CLIENT_SECRET = scriptProperties.getProperty('CLIENT_SECRET');
+
 function doGet(e) {
   return ContentService.createTextOutput("The web app is working correctly.")
     .setMimeType(ContentService.MimeType.TEXT);
