@@ -668,7 +668,7 @@ function navigateFromSolar() {
                 hideLoading();
             });
     }
-
+}
 
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
