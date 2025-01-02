@@ -708,7 +708,6 @@ function displayPDFPreview(pdfUrl) {
 
     console.log('Setting preview URL:', pdfUrl);
     previewFrame.src = pdfUrl;
-    previewFrame.style.display = 'block';
 }
 
 // No code should be here between the functions
