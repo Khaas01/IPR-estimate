@@ -735,14 +735,16 @@ function showLoading(message = 'Processing your estimate...') {
             <html>
             <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif; background-color: white;">
                 <div style="text-align: center;">
-                    <div style="margin-bottom: 20px;">${message}</div>
-                    <div style="border: 5px solid #f3f3f3; border-radius: 50%; border-top: 5px solid #3498db; width: 50px; height: 50px; margin: 0 auto;">
+                    <div style="margin-bottom: 20px; font-size: 16px;">${message}</div>
+                    <div class="spinner" style="border: 5px solid #f3f3f3; border-radius: 50%; border-top: 5px solid #3498db; width: 50px; height: 50px; margin: 0 auto;">
                         <style>
                             @keyframes spin {
                                 0% { transform: rotate(0deg); }
                                 100% { transform: rotate(360deg); }
                             }
-                            div { animation: spin 1s linear infinite; }
+                            .spinner {
+                                animation: spin 1s linear infinite;
+                            }
                         </style>
                     </div>
                 </div>
