@@ -12,7 +12,7 @@ function initClient() {
   });
 }
 // Constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3dyBV1Zm6Yf66gYrFoR_I1m9NXN289mgp47LiwqDhfkqIk61WjhqcgArd1s5yxbXUsg/exec'; // Add your deployment URL here
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9ap_pg8nPij3LHo5LJPqvxjG-_0AQr3pYGRFMFo1UWrp3GWt_3c863mxsxo74_oRE_g/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
