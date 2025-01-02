@@ -576,20 +576,13 @@ function submitForm() {
         .then(() => {
             isSubmitting = true;
             showLoading('Submitting form...');
-            // Rest of your existing submitForm code...
-        })
-        .catch(error => {
-            hideLoading();
-            alert(error.message);
-            return Promise.reject(error);
-        });
-}
-
-        const rawFormData = collectFormData();
-        
-        // Matching EXACTLY with the Form Responses sheet headers
-        const formData = {
-            data: {
+            
+            try {
+                const rawFormData = collectFormData();
+                
+                // Matching EXACTLY with the Form Responses sheet headers
+                const formData = {
+                    data: {
                 "Timestamp": rawFormData.timestamp,
                 "User Login": "Khaas01",
                 "Sales Rep Name": rawFormData.salesRepName,
@@ -643,95 +636,44 @@ function submitForm() {
             }
         };
 
-        console.log('Sending structured form data:', formData);
+      console.log('Sending structured form data:', formData);
 
-        return fetch(GOOGLE_APPS_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    credentials: 'include', // Add this line to handle cookies
-    redirect: 'follow',
-    headers: {
-        'Content-Type': 'text/plain;charset=utf-8',
-    },
-    body: JSON.stringify(formData)
-})
-        .then(response => {
-            if (response.type === 'opaque') {
-                return { success: true };
+                return fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    credentials: 'include',
+                    redirect: 'follow',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => {
+                    if (response.type === 'opaque') {
+                        return { success: true };
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    throw error;
+                })
+                .finally(() => {
+                    isSubmitting = false;
+                    hideLoading();
+                });
+
+            } catch (error) {
+                isSubmitting = false;
+                hideLoading();
+                return Promise.reject(error);
             }
-            return response.json();
         })
         .catch(error => {
-            console.error('Fetch error:', error);
-            throw error;
-        })
-        .finally(() => {
-            isSubmitting = false;
             hideLoading();
+            alert(error.message);
+            return Promise.reject(error);
         });
-
-    } catch (error) {
-        isSubmitting = false;
-        hideLoading();
-        return Promise.reject(error);
-    }
-}
-
-// Solar Panel Navigation
-function navigateFromSolar() {
-    const selectedOption = document.querySelector('input[name="solar"]:checked');
-    
-    if (!selectedOption) {
-        alert("Please select Yes or No.");
-        return;
-    }
-
-    if (selectedOption.value === 'yes') {
-        showSection('solar-detach-reset-section');
-    } else {
-        // First show review section
-        showSection('review-section');
-        
-        // Show loading in the iframe immediately
-        showLoading('Generating your estimate...');
-        
-        // Then submit form
-        submitForm()
-            .then(response => {
-                if (!response) {
-                    throw new Error('No response received from server');
-                }
-                
-                if (response.type === 'opaque') {
-                    console.log('Received opaque response, waiting for PDF...');
-                    return;
-                }
-                
-                const data = typeof response === 'string' ? JSON.parse(response) : response;
-                
-                if (data.success && (data.previewUrl || data.pdfUrl)) {
-                    displayPDFPreview(data.previewUrl || data.pdfUrl);
-                } else {
-                    throw new Error('No preview URL received');
-                }
-            })
-            .catch(error => {
-                console.error('Error in form submission:', error);
-                const previewFrame = document.getElementById('estimatePreviewFrame');
-                if (previewFrame) {
-                    previewFrame.srcdoc = `
-                        <html>
-                        <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif; background-color: white;">
-                            <div style="color: red; text-align: center;">
-                                Error generating estimate: ${error.message}<br>
-                                <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px;">Try Again</button>
-                            </div>
-                        </body>
-                        </html>
-                    `;
-                }
-            });
-    }
 }
 
 function displayPDFPreview(pdfUrl) {
