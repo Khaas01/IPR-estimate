@@ -58,6 +58,7 @@ function doPost(e) {
 
     // Trigger onFormSubmit with the correct row number and all necessary data
    // In doPost, modify the submitResult handling:
+// In doPost, modify the submitResult section:
 try {
       const submitResult = onFormSubmit({
         lastRow: lastDatabaseRow,
@@ -66,23 +67,15 @@ try {
         estimateWorkbook: estimateWorkbook
       });
 
-      // IMPORTANT: Log the direct response
-      Logger.log('Generated PDF URL: ' + viewUrl);
-
-      // If submitResult contains the PDF URL directly
-      if (submitResult && (submitResult.pdfUrl || submitResult.previewUrl)) {
+      // If submitResult has the URL, return it
+      if (submitResult && submitResult.pdfUrl) {
         return ContentService.createTextOutput(JSON.stringify({
           success: true,
-          message: 'Form submitted successfully',
-          pdfUrl: submitResult.pdfUrl,
-          previewUrl: submitResult.pdfUrl, // Use the same URL for both
-          estimateId: lastDatabaseRow,
-          timestamp: new Date().toISOString()
+          pdfUrl: submitResult.pdfUrl  // This is the key part
         })).setMimeType(ContentService.MimeType.JSON);
       }
 
-      // If no URL was found in submitResult
-      throw new Error('No PDF URL generated');
+      throw new Error('No preview URL generated');
 
     } catch (submitError) {
       Logger.log('Warning: onFormSubmit error: ' + submitError.message);
