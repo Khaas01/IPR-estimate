@@ -79,10 +79,12 @@ function updateSignInStatus(isSignedIn) {
 }
 
 // Initialize everything when the page loads
-window.onload = function() {
+document.addEventListener('DOMContentLoaded', function() {
     loadGoogleAPI();
     initializeGIS();
-};
+    hideAllSections();
+    showSection(sectionHistory[0]);
+});
 // Constants
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQvZe_M3i30mHZLNOsZX87r_mcqAio48Ik1kztAa7UA6HEKOM9dnIppOiyCF5uWQ/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
