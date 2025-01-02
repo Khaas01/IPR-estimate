@@ -668,9 +668,8 @@ function navigateFromSolar() {
                 hideLoading();
             });
     }
-}
-// In your script.js
-// Replace lines 674-680 with:
+
+
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (!previewFrame) {
