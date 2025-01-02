@@ -1,15 +1,37 @@
 // Part 1: Core Navigation and Section Management
-// Add at the top of script.js
+// Replace the existing loadGoogleAPI and initClient functions with:
 function loadGoogleAPI() {
-  gapi.load('client:auth2', initClient);
+  gapi.load('client:auth2', {
+    callback: initClient,
+    onerror: function() {
+      console.error('Failed to load Google API client');
+    }
+  });
 }
 
 function initClient() {
   gapi.client.init({
-    clientId: 'YOUR_CLIENT_ID', // The one you added to Script Properties
-    scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/gmail.send',
-    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
+    apiKey: 'YOUR_API_KEY', // Add your API key
+    clientId: 'YOUR_CLIENT_ID',
+    scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
+    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+    cookiePolicy: 'single_host_origin'
+  }).then(function() {
+    // Listen for sign-in state changes
+    gapi.auth2.getAuthInstance().isSignedIn.listen(updateSignInStatus);
+    // Handle initial sign-in state
+    updateSignInStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+  }).catch(function(error) {
+    console.error('Error initializing Google API client:', error);
   });
+}
+
+function updateSignInStatus(isSignedIn) {
+  if (isSignedIn) {
+    console.log('User is signed in');
+  } else {
+    console.log('User is not signed in');
+  }
 }
 // Constants
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9ap_pg8nPij3LHo5LJPqvxjG-_0AQr3pYGRFMFo1UWrp3GWt_3c863mxsxo74_oRE_g/exec'; // Add your deployment URL here
@@ -533,12 +555,35 @@ function shareEstimate() {
     }
 }
 
+// Add this function to check authentication before form submission
+function checkAuthBeforeSubmit() {
+    if (!gapi.auth2?.getAuthInstance()?.isSignedIn.get()) {
+        return gapi.auth2.getAuthInstance().signIn().then(() => {
+            return true;
+        }).catch((error) => {
+            console.error('Authentication failed:', error);
+            throw new Error('Authentication failed. Please try again.');
+        });
+    }
+    return Promise.resolve(true);
+}
+
+// Modify submitForm to use authentication check
 function submitForm() {
     if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
     
-    try {
-        isSubmitting = true;
-        showLoading('Submitting form...');
+    return checkAuthBeforeSubmit()
+        .then(() => {
+            isSubmitting = true;
+            showLoading('Submitting form...');
+            // Rest of your existing submitForm code...
+        })
+        .catch(error => {
+            hideLoading();
+            alert(error.message);
+            return Promise.reject(error);
+        });
+}
 
         const rawFormData = collectFormData();
         
@@ -601,14 +646,15 @@ function submitForm() {
         console.log('Sending structured form data:', formData);
 
         return fetch(GOOGLE_APPS_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            redirect: 'follow',
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8',
-            },
-            body: JSON.stringify(formData)
-        })
+    method: 'POST',
+    mode: 'no-cors',
+    credentials: 'include', // Add this line to handle cookies
+    redirect: 'follow',
+    headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
+    },
+    body: JSON.stringify(formData)
+})
         .then(response => {
             if (response.type === 'opaque') {
                 return { success: true };
