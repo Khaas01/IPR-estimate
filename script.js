@@ -683,48 +683,6 @@ function navigateFromSolar() {
     }
 }
 
-        // Then submit the form
-        submitForm()
-            .then(response => {
-                console.log('Response from form submission:', response);
-                
-                if (!response) {
-                    throw new Error('No response received from server');
-                }
-                
-                if (response.type === 'opaque') {
-                    // With no-cors, we need to wait for the message event
-                    console.log('Waiting for PDF URL via message event...');
-                    return;
-                }
-                
-                const data = typeof response === 'string' ? JSON.parse(response) : response;
-                
-                if (data.success && (data.previewUrl || data.pdfUrl)) {
-                    displayPDFPreview(data.previewUrl || data.pdfUrl);
-                } else {
-                    throw new Error('No preview URL received');
-                }
-            })
-            .catch(error => {
-                console.error('Error in form submission:', error);
-                if (previewFrame) {
-                    // Show error in the iframe
-                    previewFrame.srcdoc = `
-                        <html>
-                        <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
-                            <div style="color: red; text-align: center;">
-                                Error generating estimate: ${error.message}<br>
-                                <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px;">Try Again</button>
-                            </div>
-                        </body>
-                        </html>
-                    `;
-                }
-            });
-    }
-}
-
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (!previewFrame) {
