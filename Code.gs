@@ -16,13 +16,17 @@ function getOAuthToken() {
 }
 
 function doGet(e) {
-  return ContentService.createTextOutput("The web app is working correctly.")
-    .setMimeType(ContentService.MimeType.TEXT)
-    .addHeader('Access-Control-Allow-Origin', '*');
+  return ContentService.createTextOutput("The web app is working correctly!")
+    .setMimeType(ContentService.MimeType.TEXT);
 }
-
 function doPost(e) {
   try {
+    // Verify authentication
+    const userEmail = Session.getActiveUser().getEmail();
+    if (!userEmail) {
+      throw new Error('User not authenticated');
+    }
+    
     // Parse form data
     let formData;
     try {
@@ -85,7 +89,8 @@ function doPost(e) {
       if (submitResult && submitResult.pdfUrl) {
         return ContentService.createTextOutput(JSON.stringify({
           success: true,
-          pdfUrl: submitResult.pdfUrl
+          pdfUrl: submitResult.pdfUrl,
+          timestamp: new Date().toISOString()
         })).setMimeType(ContentService.MimeType.JSON);
       }
 
@@ -114,7 +119,9 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
       error: error.toString(),
-      message: 'Form submission failed. Please try again.',
+      message: error.message.includes('not authenticated') ? 
+        'Authentication failed. Please sign in and try again.' : 
+        'Form submission failed. Please try again.',
       timestamp: new Date().toISOString()
     })).setMimeType(ContentService.MimeType.JSON);
   }
