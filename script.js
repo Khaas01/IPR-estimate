@@ -88,12 +88,10 @@ const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQv
 let currentSection = 'salesRepSection';
 const sectionHistory = [currentSection];
 
-window.addEventListener('message', function(event) {
-    console.log('Raw message event:', event);
+window.addEventListener('message', function(event) 
     
     try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-        console.log('Parsed response data:', data);
 
         if (data.success) {
             hideLoading();
