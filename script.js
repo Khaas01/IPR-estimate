@@ -632,30 +632,56 @@ function navigateFromSolar() {
     if (selectedOption.value === 'yes') {
         showSection('solar-detach-reset-section');
     } else {
-        // First, show the review section
+        // First show the review section
         showSection('review-section');
         
-        // Show loading state inside the iframe
+        // Initialize the preview frame with loading state
         const previewFrame = document.getElementById('estimatePreviewFrame');
-        if (previewFrame) {
-            // Set a loading message inside the iframe
-            previewFrame.srcdoc = `
-                <html>
-                <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
-                    <div style="text-align: center;">
-                        <div style="margin-bottom: 20px;">Generating your estimate...</div>
-                        <div class="loader" style="border: 5px solid #f3f3f3; border-radius: 50%; border-top: 5px solid #3498db; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
-                    </div>
-                    <style>
-                        @keyframes spin {
-                            0% { transform: rotate(0deg); }
-                            100% { transform: rotate(360deg); }
-                        }
-                    </style>
-                </body>
-                </html>
-            `;
+        if (!previewFrame) {
+            console.error('Preview frame not found');
+            return;
         }
+        
+        showLoading('Generating your estimate...');
+        
+        // Then submit the form
+        submitForm()
+            .then(response => {
+                console.log('Response from form submission:', response);
+                
+                if (!response) {
+                    throw new Error('No response received from server');
+                }
+                
+                // Handle 'no-cors' response
+                if (response.type === 'opaque') {
+                    console.log('Received opaque response, waiting for PDF...');
+                    return;
+                }
+                
+                const data = typeof response === 'string' ? JSON.parse(response) : response;
+                
+                if (data.success && (data.previewUrl || data.pdfUrl)) {
+                    displayPDFPreview(data.previewUrl || data.pdfUrl);
+                } else {
+                    throw new Error('No preview URL received');
+                }
+            })
+            .catch(error => {
+                console.error('Error in form submission:', error);
+                previewFrame.srcdoc = `
+                    <html>
+                    <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                        <div style="color: red; text-align: center;">
+                            Error generating estimate: ${error.message}<br>
+                            <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px;">Try Again</button>
+                        </div>
+                    </body>
+                    </html>
+                `;
+            });
+    }
+}
 
         // Then submit the form
         submitForm()
@@ -707,6 +733,30 @@ function displayPDFPreview(pdfUrl) {
     }
 
     console.log('Setting preview URL:', pdfUrl);
+    
+    // Show loading state while PDF loads
+    showLoading('Loading preview...');
+    
+    previewFrame.onload = function() {
+        // Hide loading only after PDF is loaded
+        hideLoading();
+        console.log('Preview loaded successfully');
+    };
+    
+    previewFrame.onerror = function(error) {
+        console.error('Preview failed to load:', error);
+        previewFrame.srcdoc = `
+            <html>
+            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                <div style="color: red; text-align: center;">
+                    Error loading preview. Please try again.<br>
+                    <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px;">Try Again</button>
+                </div>
+            </body>
+            </html>
+        `;
+    };
+    
     previewFrame.src = pdfUrl;
 }
 
@@ -727,17 +777,32 @@ function nextFromSolar() {
 
 // Add these utility functions for the loading indicator
 function showLoading(message = 'Processing your estimate...') {
-    const loadingOverlay = document.querySelector('.loading-overlay');
-    const loadingText = loadingOverlay.querySelector('.loading-text');
-    loadingText.textContent = message;
-    loadingOverlay.style.display = 'flex';
-    console.log('Loading overlay shown:', message); // Debug log
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame) {
+        previewFrame.srcdoc = `
+            <html>
+            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                <div style="text-align: center;">
+                    <div style="margin-bottom: 20px;">${message}</div>
+                    <div class="loader" style="border: 5px solid #f3f3f3; border-radius: 50%; border-top: 5px solid #3498db; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            </body>
+            </html>
+        `;
+    }
 }
 
 function hideLoading() {
-    const loadingOverlay = document.querySelector('.loading-overlay');
-    loadingOverlay.style.display = 'none';
-    console.log('Loading overlay hidden'); // Debug log
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame && previewFrame.srcdoc) {
+        previewFrame.srcdoc = '';
+    }
 }
 
 // Update the displayReview function
