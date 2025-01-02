@@ -1,5 +1,16 @@
 // Part 1: Core Navigation and Section Management
+// Add at the top of script.js
+function loadGoogleAPI() {
+  gapi.load('client:auth2', initClient);
+}
 
+function initClient() {
+  gapi.client.init({
+    clientId: 'YOUR_CLIENT_ID', // The one you added to Script Properties
+    scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/gmail.send',
+    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
+  });
+}
 // Constants
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3dyBV1Zm6Yf66gYrFoR_I1m9NXN289mgp47LiwqDhfkqIk61WjhqcgArd1s5yxbXUsg/exec'; // Add your deployment URL here
 let currentSection = 'salesRepSection';
