@@ -7,7 +7,7 @@ function loadGoogleAPI() {
 function initClient() {
     gapi.client.init({
         apiKey: 'YOUR_API_KEY', // Add your API key
-        clientId: 'YOUR_CLIENT_ID',
+        clientId: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
         scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
         discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
         cookiePolicy: 'single_host_origin'
