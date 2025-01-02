@@ -632,7 +632,7 @@ function navigateFromSolar() {
     if (selectedOption.value === 'yes') {
         showSection('solar-detach-reset-section');
     // Replace lines 635-670 with:
-    } else {
+   } else {
         // First show the review section
         showSection('review-section');
         
@@ -668,18 +668,7 @@ function navigateFromSolar() {
                 hideLoading();
             });
     }
-            })
-            .catch(error => {
-                console.error('Error in form submission:', error);
-                hideLoading();
-                alert('Error generating estimate: ' + error.message);
-            })
-            .finally(() => {
-                hideLoading();
-            });
-    }
 }
-
 // In your script.js
 // Replace lines 674-680 with:
 function displayPDFPreview(pdfUrl) {
