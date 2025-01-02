@@ -632,28 +632,19 @@ function navigateFromSolar() {
     if (selectedOption.value === 'yes') {
         showSection('solar-detach-reset-section');
     } else {
-        // First show the review section
+        // First show review section
         showSection('review-section');
         
-        // Initialize the preview frame with loading state
-        const previewFrame = document.getElementById('estimatePreviewFrame');
-        if (!previewFrame) {
-            console.error('Preview frame not found');
-            return;
-        }
-        
+        // Show loading in the iframe immediately
         showLoading('Generating your estimate...');
         
-        // Then submit the form
+        // Then submit form
         submitForm()
             .then(response => {
-                console.log('Response from form submission:', response);
-                
                 if (!response) {
                     throw new Error('No response received from server');
                 }
                 
-                // Handle 'no-cors' response
                 if (response.type === 'opaque') {
                     console.log('Received opaque response, waiting for PDF...');
                     return;
@@ -669,16 +660,19 @@ function navigateFromSolar() {
             })
             .catch(error => {
                 console.error('Error in form submission:', error);
-                previewFrame.srcdoc = `
-                    <html>
-                    <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
-                        <div style="color: red; text-align: center;">
-                            Error generating estimate: ${error.message}<br>
-                            <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px;">Try Again</button>
-                        </div>
-                    </body>
-                    </html>
-                `;
+                const previewFrame = document.getElementById('estimatePreviewFrame');
+                if (previewFrame) {
+                    previewFrame.srcdoc = `
+                        <html>
+                        <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif; background-color: white;">
+                            <div style="color: red; text-align: center;">
+                                Error generating estimate: ${error.message}<br>
+                                <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px;">Try Again</button>
+                            </div>
+                        </body>
+                        </html>
+                    `;
+                }
             });
     }
 }
@@ -734,22 +728,24 @@ function nextFromSolar() {
 }
 
 // Add these utility functions for the loading indicator
-function showLoading(message = 'Processing your estimate...') {
+ffunction showLoading(message = 'Processing your estimate...') {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
         previewFrame.srcdoc = `
             <html>
-            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif; background-color: white;">
                 <div style="text-align: center;">
                     <div style="margin-bottom: 20px;">${message}</div>
-                    <div class="loader" style="border: 5px solid #f3f3f3; border-radius: 50%; border-top: 5px solid #3498db; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
+                    <div style="border: 5px solid #f3f3f3; border-radius: 50%; border-top: 5px solid #3498db; width: 50px; height: 50px; margin: 0 auto;">
+                        <style>
+                            @keyframes spin {
+                                0% { transform: rotate(0deg); }
+                                100% { transform: rotate(360deg); }
+                            }
+                            div { animation: spin 1s linear infinite; }
+                        </style>
+                    </div>
                 </div>
-                <style>
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                </style>
             </body>
             </html>
         `;
