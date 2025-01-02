@@ -2,14 +2,28 @@ const scriptProperties = PropertiesService.getScriptProperties();
 const CLIENT_ID = scriptProperties.getProperty('CLIENT_ID');
 const CLIENT_SECRET = scriptProperties.getProperty('CLIENT_SECRET');
 
+// Add OAuth handling
+function getOAuthToken() {
+  return OAuth2.createService('sheets')
+      .setClientId(CLIENT_ID)
+      .setClientSecret(CLIENT_SECRET)
+      .setCallbackFunction('authCallback')
+      .setPropertyStore(PropertiesService.getUserProperties())
+      .setScope('https://www.googleapis.com/auth/spreadsheets')
+      .setTokenHeaders({
+        'Authorization': 'Bearer ' + ScriptApp.getOAuthToken()
+      });
+}
+
 function doGet(e) {
   return ContentService.createTextOutput("The web app is working correctly.")
-    .setMimeType(ContentService.MimeType.TEXT);
+    .setMimeType(ContentService.MimeType.TEXT)
+    .addHeader('Access-Control-Allow-Origin', '*');
 }
 
 function doPost(e) {
   try {
-    // Parse the form data with enhanced error checking
+    // Parse form data
     let formData;
     try {
       if (e.parameter && e.parameter.data) {
@@ -23,8 +37,8 @@ function doPost(e) {
     } catch (parseError) {
       throw new Error('Failed to parse form data: ' + parseError.message);
     }
-    
-    // Validate required workbooks and sheets
+
+    // Open and validate required spreadsheets
     const formWorkbook = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
     const formResponseSheet = formWorkbook.getSheetByName('Form Responses');
     const estimateWorkbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
@@ -35,15 +49,15 @@ function doPost(e) {
       throw new Error('Required sheets not found');
     }
 
-    // Get and validate headers
-    const headers = formResponseSheet.getRange(1, 1, 1, formResponseSheet.getLastColumn()).getValues()[0];
-    if (!headers || headers.length === 0) {
+    // Get and validate sheet headers
+    const tableHeaders = formResponseSheet.getRange(1, 1, 1, formResponseSheet.getLastColumn()).getValues()[0];
+    if (!tableHeaders || tableHeaders.length === 0) {
       throw new Error('No headers found in form response sheet');
     }
-    Logger.log('Sheet headers: ' + JSON.stringify(headers));
+    Logger.log('Sheet headers: ' + JSON.stringify(tableHeaders));
 
-    // Prepare row data with validation
-    const rowData = headers.map(header => {
+    // Prepare row data
+    const rowData = tableHeaders.map(header => {
       if (header === "Timestamp") return new Date();
       if (header === "User Login") return Session.getActiveUser().getEmail() || '';
       return (formData.data && formData.data[header] !== undefined) ? formData.data[header] : '';
@@ -53,17 +67,14 @@ function doPost(e) {
     // Append data to sheet
     formResponseSheet.appendRow(rowData);
 
-    // Get the last row from Database sheet and update Estimate sheet
-    // Add a longer delay to allow for IMPORTRANGE to update
+    // Update Estimate sheet with Database row
     Utilities.sleep(5000); // 5 second delay for IMPORTRANGE
     const lastDatabaseRow = findLastRowWithData(databaseSheet);
     estimateSheet.getRange('K4').setValue(lastDatabaseRow);
     Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
 
-    // Trigger onFormSubmit with the correct row number and all necessary data
-   // In doPost, modify the submitResult handling:
-// In doPost, modify the submitResult section:
-try {
+    // Process form submission and generate PDF
+    try {
       const submitResult = onFormSubmit({
         lastRow: lastDatabaseRow,
         clientName: formData.data["Owner Name"],
@@ -71,11 +82,10 @@ try {
         estimateWorkbook: estimateWorkbook
       });
 
-      // If submitResult has the URL, return it
       if (submitResult && submitResult.pdfUrl) {
         return ContentService.createTextOutput(JSON.stringify({
           success: true,
-          pdfUrl: submitResult.pdfUrl  // This is the key part
+          pdfUrl: submitResult.pdfUrl
         })).setMimeType(ContentService.MimeType.JSON);
       }
 
