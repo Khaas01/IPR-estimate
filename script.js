@@ -631,13 +631,33 @@ function navigateFromSolar() {
 
     if (selectedOption.value === 'yes') {
         showSection('solar-detach-reset-section');
-    // Replace lines 635-670 with:
-   } else {
-        // First show the review section
+    } else {
+        // First, show the review section
         showSection('review-section');
         
-        // Then start form submission
-        showLoading('Generating estimate...');
+        // Show loading state inside the iframe
+        const previewFrame = document.getElementById('estimatePreviewFrame');
+        if (previewFrame) {
+            // Set a loading message inside the iframe
+            previewFrame.srcdoc = `
+                <html>
+                <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                    <div style="text-align: center;">
+                        <div style="margin-bottom: 20px;">Generating your estimate...</div>
+                        <div class="loader" style="border: 5px solid #f3f3f3; border-radius: 50%; border-top: 5px solid #3498db; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
+                    </div>
+                    <style>
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                </body>
+                </html>
+            `;
+        }
+
+        // Then submit the form
         submitForm()
             .then(response => {
                 console.log('Response from form submission:', response);
@@ -646,9 +666,9 @@ function navigateFromSolar() {
                     throw new Error('No response received from server');
                 }
                 
-                // Handle 'no-cors' response
                 if (response.type === 'opaque') {
-                    console.log('Received opaque response, waiting for PDF...');
+                    // With no-cors, we need to wait for the message event
+                    console.log('Waiting for PDF URL via message event...');
                     return;
                 }
                 
@@ -662,10 +682,19 @@ function navigateFromSolar() {
             })
             .catch(error => {
                 console.error('Error in form submission:', error);
-                alert('Error generating estimate: ' + error.message);
-            })
-            .finally(() => {
-                hideLoading();
+                if (previewFrame) {
+                    // Show error in the iframe
+                    previewFrame.srcdoc = `
+                        <html>
+                        <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                            <div style="color: red; text-align: center;">
+                                Error generating estimate: ${error.message}<br>
+                                <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px;">Try Again</button>
+                            </div>
+                        </body>
+                        </html>
+                    `;
+                }
             });
     }
 }
