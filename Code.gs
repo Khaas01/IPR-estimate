@@ -57,7 +57,8 @@ function doPost(e) {
     Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
 
     // Trigger onFormSubmit with the correct row number and all necessary data
-    try {
+   // In doPost, modify the submitResult handling:
+try {
       const submitResult = onFormSubmit({
         lastRow: lastDatabaseRow,
         clientName: formData.data["Owner Name"],
@@ -65,32 +66,31 @@ function doPost(e) {
         estimateWorkbook: estimateWorkbook
       });
 
-      // Get the PDF file that was created during email attachment
-      let pdfUrl = '';
-      let viewerUrl = '';
-      
-      if (submitResult && submitResult.pdfFileId) {
-        const pdfFile = DriveApp.getFileById(submitResult.pdfFileId);
-        // Ensure the PDF is accessible for viewing
-        pdfFile.setSharing(DriveApp.Access.ANYONE, DriveApp.Permission.VIEW);
-        pdfUrl = pdfFile.getUrl();
-        // Create a viewer URL that doesn't require sign-in
-        viewerUrl = 'https://drive.google.com/file/d/' + submitResult.pdfFileId + '/preview';
+      // IMPORTANT: Log the direct response
+      Logger.log('Generated PDF URL: ' + viewUrl);
+
+      // If submitResult contains the PDF URL directly
+      if (submitResult && (submitResult.pdfUrl || submitResult.previewUrl)) {
+        return ContentService.createTextOutput(JSON.stringify({
+          success: true,
+          message: 'Form submitted successfully',
+          pdfUrl: submitResult.pdfUrl,
+          previewUrl: submitResult.pdfUrl, // Use the same URL for both
+          estimateId: lastDatabaseRow,
+          timestamp: new Date().toISOString()
+        })).setMimeType(ContentService.MimeType.JSON);
       }
 
-      // Return success response with all necessary URLs
-      return ContentService.createTextOutput(JSON.stringify({
-        success: true,
-        message: 'Form submitted successfully',
-        previewUrl: submitResult.previewUrl || viewerUrl,
-        pdfUrl: pdfUrl,
-        estimateId: lastDatabaseRow,
-        timestamp: new Date().toISOString()
-      })).setMimeType(ContentService.MimeType.JSON);
+      // If no URL was found in submitResult
+      throw new Error('No PDF URL generated');
 
     } catch (submitError) {
       Logger.log('Warning: onFormSubmit error: ' + submitError.message);
-      throw submitError; // Rethrow to be caught by outer catch block
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        message: submitError.message,
+        timestamp: new Date().toISOString()
+      })).setMimeType(ContentService.MimeType.JSON);
     }
 
   } catch (error) {
@@ -298,9 +298,9 @@ function onFormSubmit(e) {
     var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
     pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-   // Get the file ID and create the embedded preview URL
-// After creating the PDF file
- var fileId = pdfFile.getId();
+    // Get the file ID and create the embedded preview URL
+    // After creating the PDF file
+    var fileId = pdfFile.getId();
     var viewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
     console.log('Generated PDF URL:', viewUrl); // Debug log
 
@@ -315,12 +315,11 @@ function onFormSubmit(e) {
     
     Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
 
-    // Single return statement with all necessary data
+    // Return with URL
     return {
-        success: true,
-        message: 'Form submitted successfully',
-        pdfFileId: fileId,
-        pdfUrl: viewUrl
+      success: true,
+      message: 'Form submitted successfully',
+      pdfUrl: viewUrl
     };
    
   } catch (error) {
@@ -329,4 +328,5 @@ function onFormSubmit(e) {
       success: false,
       message: error.toString()
     };
-  }}
+  }
+}
