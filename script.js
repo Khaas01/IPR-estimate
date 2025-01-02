@@ -1,29 +1,21 @@
 // Part 1: Core Navigation and Section Management
-// Replace the existing loadGoogleAPI and initClient functions with:
+// Initialize Google API
 function loadGoogleAPI() {
-  gapi.load('client:auth2', {
-    callback: initClient,
-    onerror: function() {
-      console.error('Failed to load Google API client');
-    }
-  });
+    gapi.load('client:auth2', initClient);
 }
 
 function initClient() {
-  gapi.client.init({
-    apiKey: 'YOUR_API_KEY', // Add your API key
-    clientId: 'YOUR_CLIENT_ID',
-    scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
-    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-    cookiePolicy: 'single_host_origin'
-  }).then(function() {
-    // Listen for sign-in state changes
-    gapi.auth2.getAuthInstance().isSignedIn.listen(updateSignInStatus);
-    // Handle initial sign-in state
-    updateSignInStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-  }).catch(function(error) {
-    console.error('Error initializing Google API client:', error);
-  });
+    gapi.client.init({
+        apiKey: 'YOUR_API_KEY', // Add your API key
+        clientId: 'YOUR_CLIENT_ID',
+        scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
+        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+        cookiePolicy: 'single_host_origin'
+    }).then(function() {
+        console.log('Google API client initialized');
+    }).catch(function(error) {
+        console.error('Error initializing Google API client:', error);
+    });
 }
 
 function updateSignInStatus(isSignedIn) {
