@@ -6,18 +6,29 @@ function loadGoogleAPI() {
 
 function initClient() {
     gapi.client.init({
-        apiKey: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254', // Add your API key
+        apiKey: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
         clientId: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
-        scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
-        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+        scope: [
+            'https://www.googleapis.com/auth/drive',
+            'https://www.googleapis.com/auth/spreadsheets'
+        ],
+        discoveryDocs: [
+            'https://sheets.googleapis.com/$discovery/rest?version=v4',
+            'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+        ],
         cookiePolicy: 'single_host_origin'
     }).then(function() {
         console.log('Google API client initialized');
+        // Add a check to see if the user is signed in
+        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+            console.log('User is already signed in');
+        } else {
+            console.log('User needs to sign in');
+        }
     }).catch(function(error) {
         console.error('Error initializing Google API client:', error);
     });
 }
-
 function updateSignInStatus(isSignedIn) {
   if (isSignedIn) {
     console.log('User is signed in');
