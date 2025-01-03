@@ -5,7 +5,7 @@ let gisInited = false;
 let apiLoadRetries = 0;
 const MAX_RETRIES = 3;
 // Add these at the top of script.js with your other global variables
-const API_KEY = 'YOUR-ACTUAL-API-KEY';
+const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
 const CLIENT_ID = '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets';
 
