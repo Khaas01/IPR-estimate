@@ -28,22 +28,73 @@ function loadGoogleAPI() {
         }
     });
 }
+// Add to script.js
+function checkStorageAccess() {
+    try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+        return true;
+    } catch (e) {
+        console.warn('Storage access is blocked. Using memory fallback.');
+        return false;
+    }
+}
+
+// Create a storage fallback
+const memoryStorage = new Map();
+
+function getStorageItem(key) {
+    if (checkStorageAccess()) {
+        return localStorage.getItem(key);
+    }
+    return memoryStorage.get(key);
+}
+
+function setStorageItem(key, value) {
+    if (checkStorageAccess()) {
+        localStorage.setItem(key, value);
+    } else {
+        memoryStorage.set(key, value);
+    }
+}
+
 
 // Initialize the GAPI client
-async function initializeGapiClient() {
-    try {
-        await gapi.client.init({
-            apiKey: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
-            discoveryDocs: [
-                'https://sheets.googleapis.com/$discovery/rest?version=v4',
-                'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-            ]
+// In script.js
+function initializeGapiClient() {
+    return new Promise((resolve, reject) => {
+        try {
+            gapi.client.init({
+                apiKey: 'YOUR_API_KEY',
+                discoveryDocs: [
+                    'https://sheets.googleapis.com/$discovery/rest?version=v4',
+                    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+                ]
+            }).then(() => {
+                gapiInited = true;
+                maybeEnableButtons();
+                resolve();
+            }).catch((error) => {
+                console.error('Error initializing GAPI client:', error);
+                reject(error);
+            });
+        } catch (error) {
+            console.error('Exception during GAPI initialization:', error);
+            reject(error);
+        }
+    });
+}
+
+// Add initialization status check
+function checkInitialization() {
+    if (!gapiInited || !gisInited) {
+        console.warn('APIs not fully initialized. Current status:', {
+            gapi: gapiInited ? 'Initialized' : 'Not initialized',
+            gis: gisInited ? 'Initialized' : 'Not initialized'
         });
-        gapiInited = true;
-        maybeEnableButtons();
-    } catch (error) {
-        console.error('Error initializing GAPI client:', error);
+        return false;
     }
+    return true;
 }
 
 // Initialize Google Identity Services
