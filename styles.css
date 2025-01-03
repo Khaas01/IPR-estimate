@@ -42,8 +42,9 @@ h2 {
 
 /* Form Container */
 form {
-    max-width: 100%;
-    margin: 0 auto;
+    max-width: 600px;  /* Set a fixed max-width */
+    width: 100%;       /* Keep full width up to max-width */
+    margin: 0 auto;    /* Center the form */
     padding: 15px;
     background: white;
     border-radius: 8px;
