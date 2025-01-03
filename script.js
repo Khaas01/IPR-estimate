@@ -28,6 +28,7 @@ async function getDecodedServiceAccountCredentials() {
         throw error;
     }
 }
+/*
 // Initialization function for Google APIs
 async function initializeGoogleAPIs() {
     try {
@@ -108,7 +109,33 @@ function updateSignInStatus(isSignedIn) {
         console.log('User is not signed in');
     }
 }
+*/
+async function fetchFiles() {
+    try {
+        // Update the URL to point to your backend server
+        const response = await fetch('http://localhost:3000/files');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const files = await response.json();
+        displayFiles(files);
+    } catch (error) {
+        console.error('Error fetching files:', error);
+    }
+}
 
+function displayFiles(files) {
+    const container = document.getElementById('pdf-previews');
+    files.forEach(file => {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
+        iframe.width = '600px';
+        iframe.height = '400px';
+        container.appendChild(iframe);
+    });
+}
+
+fetchFiles();
 // Event listener for DOMContentLoaded to initialize the form and Google APIs
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the section history with the actual first section ID
