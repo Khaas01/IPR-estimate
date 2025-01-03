@@ -12,10 +12,23 @@ const SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets'
 ].join(' ');
 
-
+// Function to fetch and decode the Base64-encoded service account content
+async function getDecodedServiceAccountCredentials() {
+    try {
+        const response = await fetch('path/to/service-account-base64.txt');
+        const base64Content = await response.text();
+        const jsonContent = Buffer.from(base64Content, 'base64').toString('utf8');
+        return JSON.parse(jsonContent);
+    } catch (error) {
+        console.error('Error fetching or decoding service account credentials:', error);
+        throw error;
+    }
+}
 // Initialization function for Google APIs
 async function initializeGoogleAPIs() {
     try {
+        const credentials = await getDecodedServiceAccountCredentials();
+
         // Wait for the Google API client library to load
         await new Promise((resolve) => gapi.load('client', resolve));
 
@@ -30,7 +43,7 @@ async function initializeGoogleAPIs() {
 
         // Initialize GIS
         tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: CLIENT_ID,
+            client_id: credentials.client_id,
             scope: SCOPES,
             callback: handleAuthResponse
         });
@@ -38,7 +51,7 @@ async function initializeGoogleAPIs() {
         gapiInited = true;
         gisInited = true;
         console.log('APIs initialized successfully');
-        
+
         // Attempt authentication
         handleAuthClick();
         return true;
