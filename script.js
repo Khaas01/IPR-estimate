@@ -7,6 +7,7 @@ let sectionHistory = []; // Initialize sectionHistory
 // API configuration constants
 const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
 const CLIENT_ID = '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com';
+const REDIRECT_URI = 'https://khaas01.github.io'; 
 const SCOPES = [
     'https://www.googleapis.com/auth/drive',
     'https://www.googleapis.com/auth/spreadsheets'
