@@ -45,7 +45,7 @@
     <script src="script.js" defer></script>
 
     <!-- Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="
+   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     
     script-src 'self' 'unsafe-inline' 'unsafe-eval'
@@ -55,8 +55,9 @@
         https://www.gstatic.com
         https://*.googleusercontent.com
         https://www.google.com
-        https://github.com/Khaas01/IPR-estimate ;
-
+        https://github.com/Khaas01/IPR-estimate
+        http://localhost:3000/;
+    
     style-src 'self' 'unsafe-inline'
         https://fonts.googleapis.com
         https://www.gstatic.com
@@ -78,7 +79,8 @@
         https://www.google.com
         https://securetoken.googleapis.com
         https://content-sheets.googleapis.com
-        https://content.googleapis.com;
+        https://content.googleapis.com
+        http://localhost:3000/;
     
     frame-src 'self'
         https://accounts.google.com
@@ -106,7 +108,6 @@
     form-action 'self'
         https://accounts.google.com
         https://*.googleapis.com;">
-    
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://i.imgur.com/kj09wS4.png">
     <link rel="shortcut icon" type="image/png" href="https://i.imgur.com/kj09wS4.png">
