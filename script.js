@@ -134,14 +134,14 @@ function handleAuthClick() {
 // Handle the authentication response
 function handleAuthResponse(response) {
     if (response.error !== undefined) {
-        console.error('Auth error:', response);
+        console.error('Auth error:', response.error);
+        // Add user-friendly error message
+        alert('Authentication failed. Please try again.');
         return;
     }
     console.log('Successfully authenticated');
-    // Here you can start making API calls
     updateSignInStatus(true);
 }
-
 // Update UI based on sign-in status
 function updateSignInStatus(isSignedIn) {
     if (isSignedIn) {
