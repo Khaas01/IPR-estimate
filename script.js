@@ -48,33 +48,22 @@ async function initializeGoogleAPIs() {
         return false;
     }
 }
-
-function handleApiError(error) {
-    let errorMessage = 'An error occurred with the Google APIs. ';
-    
-    if (error instanceof Error) {
-        errorMessage += error.message;
-    } else if (typeof error === 'string') {
-        errorMessage += error;
-    } else if (error.error) {
-        if (error.error.status === 'PERMISSION_DENIED') {
-            errorMessage += 'Please check your API key and permissions.';
-        } else if (error.error.status === 'NOT_FOUND') {
-            errorMessage += 'Required API services are not enabled.';
-        } else {
-            errorMessage += error.error.message || 'Unknown error occurred.';
-        }
-    }
-    
-    console.error(errorMessage);
-    alert(errorMessage);
-}
 // Handle the authentication click
 function handleAuthClick() {
     if (gapi.client.getToken() === null) {
-        tokenClient.requestAccessToken({ prompt: 'consent' });
+        try {
+            tokenClient.requestAccessToken({ prompt: 'consent' });
+        } catch (error) {
+            console.error('Popup window blocked:', error);
+            alert('Popup window blocked. Please allow popups for this site to proceed with authentication.');
+        }
     } else {
-        tokenClient.requestAccessToken({ prompt: '' });
+        try {
+            tokenClient.requestAccessToken({ prompt: '' });
+        } catch (error) {
+            console.error('Popup window blocked:', error);
+            alert('Popup window blocked. Please allow popups for this site to proceed with authentication.');
+        }
     }
 }
 
