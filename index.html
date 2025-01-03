@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<!DOCTYPE html>
-<html lang="en">
-<head>
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="same-origin">
+
     <title>Iron Peak Roofing - Estimate Form</title>
     
     <!-- Load Google API Client Library -->
@@ -75,6 +76,10 @@
     form-action 'self'
         https://accounts.google.com
         https://*.googleapis.com;">
+
+    <!-- Cross-Origin Policies -->
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="same-origin">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://i.imgur.com/kj09wS4.png">
@@ -85,26 +90,28 @@
 
     <!-- Inline styles -->
     <style>  
-        .preview-fallback {
-            text-align: center;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-        
-        .pdf-link {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-        
-        .pdf-link:hover {
-            background-color: #0056b3;
+        @media (forced-colors: active) {
+            .preview-fallback {
+                text-align: center;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                margin: 10px 0;
+            }
+            
+            .pdf-link {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                margin: 10px 0;
+            }
+            
+            .pdf-link:hover {
+                background-color: #0056b3;
+            }
         }
     </style>
 </head>
