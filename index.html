@@ -16,10 +16,10 @@
     <link rel="stylesheet" href="styles.css">
 
     <!-- Load the Google Identity Services library -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <!-- Load the Google API client library -->
-    <script src="https://apis.google.com/js/api.js"></script>
-    <!-- Your custom script should be loaded after the GIS and API client libraries -->
+    <script src="https://apis.google.com/js/api.js" async defer
+    onerror="console.error('Failed to load Google API')"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer
+    onerror="console.error('Failed to load Google Identity Services')"></script>
     <script src="script.js" defer></script>
 <style>
     .preview-fallback {
