@@ -14,6 +14,38 @@ function gapiLoaded() {
     gapi.load('client', initializeGapiClient);
 }
 
+function gisLoaded() {
+    console.log('GIS loaded');
+    gisInited = true;
+    maybeEnableButtons();
+}
+
+function maybeEnableButtons() {
+    if (gapiInited && gisInited) {
+        console.log('Both APIs initialized successfully');
+        handleAuthClick();
+    }
+}
+
+// Initialize the APIs when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add script loading programmatically
+    const gapiScript = document.createElement('script');
+    gapiScript.src = 'https://apis.google.com/js/api.js';
+    gapiScript.async = true;
+    gapiScript.defer = true;
+    gapiScript.onload = gapiLoaded;
+    document.body.appendChild(gapiScript);
+
+    const gisScript = document.createElement('script');
+    gisScript.src = 'https://accounts.google.com/gsi/client';
+    gisScript.async = true;
+    gisScript.defer = true;
+    gisScript.onload = gisLoaded;
+    document.body.appendChild(gisScript);
+});
+
+
 async function initializeGapiClient() {
     try {
         await gapi.client.init({
