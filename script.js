@@ -2,59 +2,16 @@
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
-let apiLoadRetries = 0;
-const MAX_RETRIES = 3;
 
 // API configuration constants
 const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
 const CLIENT_ID = '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets';
+const SCOPES = [
+    'https://www.googleapis.com/auth/drive',
+    'https://www.googleapis.com/auth/spreadsheets'
+].join(' ');
 
-// API initialization functions
-function gapiLoaded() {
-    console.log('GAPI loaded');
-    gapi.load('client', initializeGapiClient);
-}
-
-function gisLoaded() {
-    console.log('GIS loaded');
-    gisInited = true;
-    maybeEnableButtons();
-}
-
-function maybeEnableButtons() {
-    if (gapiInited && gisInited) {
-        console.log('Both APIs initialized successfully');
-        handleAuthClick();
-    }
-}
-
-// Initialize APIs when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof gapi === 'undefined') {
-        console.error('Google APIs are not loaded correctly');
-        return;
-    }
-    
-    // Initialize GAPI
-    gapi.load('client', initializeGapiClient);
-    
-    // Initialize GIS
-    try {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: CLIENT_ID,
-            scope: SCOPES,
-            callback: handleAuthResponse
-        });
-        gisInited = true;
-        maybeEnableButtons();
-    } catch (error) {
-        console.error('Error initializing GIS:', error);
-        handleApiError(error);
-    }
-});
-
-async function initializeGapiClient() {
+async function initializeApis() {
     try {
         await gapi.client.init({
             apiKey: API_KEY,
@@ -64,123 +21,22 @@ async function initializeGapiClient() {
             ]
         });
         
-        gapiInited = true;
-        console.log('GAPI Client initialized successfully');
-        maybeEnableButtons();
-    } catch (error) {
-        console.error('Error initializing GAPI client:', error);
-        handleApiError(error);
-    }
-}
-
-function handleApiError(error) {
-    let errorMessage = 'An error occurred while initializing Google APIs. ';
-    if (error.error) {
-        if (error.error.status === 'PERMISSION_DENIED') {
-            errorMessage += 'Please check your API key and permissions.';
-        } else if (error.error.status === 'NOT_FOUND') {
-            errorMessage += 'Required API services are not enabled.';
-        } else {
-            errorMessage += error.error.message || 'Unknown error occurred.';
-        }
-    }
-    console.error(errorMessage);
-    alert(errorMessage);
-}
-function loadGoogleAPI() {
-    if (typeof gapi === 'undefined') {
-        if (apiLoadRetries < MAX_RETRIES) {
-            console.log(`Retrying Google API load... Attempt ${apiLoadRetries + 1}`);
-            apiLoadRetries++;
-            setTimeout(loadGoogleAPI, 1000); // Retry after 1 second
-            return;
-        }
-        console.error('Failed to load Google API after multiple attempts');
-        return;
-    }
-    
-    gapi.load('client', {
-        callback: initializeGapiClient,
-        onerror: function() {
-            console.error('Error loading GAPI client');
-        },
-        timeout: 5000, // 5 seconds timeout
-        ontimeout: function() {
-            console.error('Timeout loading GAPI client');
-        }
-    });
-}
-// Add to script.js
-function checkStorageAccess() {
-    try {
-        localStorage.setItem('test', 'test');
-        localStorage.removeItem('test');
-        return true;
-    } catch (e) {
-        console.warn('Storage access is blocked. Using memory fallback.');
-        return false;
-    }
-}
-
-// Create a storage fallback
-const memoryStorage = new Map();
-
-function getStorageItem(key) {
-    if (checkStorageAccess()) {
-        return localStorage.getItem(key);
-    }
-    return memoryStorage.get(key);
-}
-
-function setStorageItem(key, value) {
-    if (checkStorageAccess()) {
-        localStorage.setItem(key, value);
-    } else {
-        memoryStorage.set(key, value);
-    }
-}
-
-
-// Initialize the GAPI client
-// In script.js
-function initializeGapiClient() {
-    return new Promise((resolve, reject) => {
-        try {
-            gapi.client.init({
-                apiKey: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',  // Replace with your real API key
-                clientId: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com', // You already have this
-                discoveryDocs: [
-                    'https://sheets.googleapis.com/$discovery/rest?version=v4',
-                    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-                ],
-                scope: 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets'
-            }).then(() => {
-                gapiInited = true;
-                maybeEnableButtons();
-                resolve();
-            }).catch((error) => {
-                console.error('Error initializing GAPI client:', error);
-                reject(error);
-            });
-        } catch (error) {
-            console.error('Exception during GAPI initialization:', error);
-            reject(error);
-        }
-    });
-}
-
-// Add initialization status check
-function checkInitialization() {
-    if (!gapiInited || !gisInited) {
-        console.warn('APIs not fully initialized. Current status:', {
-            gapi: gapiInited ? 'Initialized' : 'Not initialized',
-            gis: gisInited ? 'Initialized' : 'Not initialized'
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: CLIENT_ID,
+            scope: SCOPES,
+            callback: handleAuthResponse
         });
+        
+        gapiInited = true;
+        gisInited = true;
+        console.log('APIs initialized successfully');
+        return true;
+    } catch (error) {
+        console.error('API initialization error:', error);
+        handleApiError(error);
         return false;
     }
-    return true;
 }
-
 // Initialize Google Identity Services
 function initializeGIS() {
     try {
