@@ -14,7 +14,11 @@
  <script>
         async function fetchFiles() {
             try {
-                const response = await fetch('/files');
+                // Update the URL to point to your backend server
+                const response = await fetch('http://your-backend-server-url/files');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const files = await response.json();
                 displayFiles(files);
             } catch (error) {
