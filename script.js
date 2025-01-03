@@ -109,7 +109,7 @@ function updateSignInStatus(isSignedIn) {
         console.log('User is not signed in');
     }
 }
-*/
+
 async function fetchFiles() {
     try {
         // Update the URL to point to your backend server
@@ -134,7 +134,7 @@ function displayFiles(files) {
         container.appendChild(iframe);
     });
 }
-
+*/
 fetchFiles();
 // Event listener for DOMContentLoaded to initialize the form and Google APIs
 document.addEventListener('DOMContentLoaded', function() {
