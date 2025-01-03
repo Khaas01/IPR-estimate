@@ -765,20 +765,21 @@ function submitForm() {
 
       console.log('Sending structured form data:', formData);
 
-                return fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    credentials: 'omit',
-                    redirect: 'follow',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                    timestamp: new Date().toISOString(), // Current time
-                    user: 'Khaas01',
-                    data: formData
-                })
-            })
+               // Replace the problematic section in your submitForm function (around line 793)
+return fetch(GOOGLE_APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    credentials: 'omit',
+    redirect: 'follow',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        timestamp: new Date().toISOString(),
+        user: 'Khaas01',
+        data: formData
+    })
+})
 .then(response => {
     if (response.type === 'opaque') {
         // no-cors mode returns an opaque response
@@ -786,14 +787,14 @@ function submitForm() {
     }
     return response.json();
 })
-                    .catch(error => {
+.catch(error => {
     console.error('Fetch error:', error);
     throw new Error('Failed to submit form: ' + error.message);
+})
+.finally(() => {
+    isSubmitting = false;
+    hideLoading();
 });
-                .finally(() => {
-                    isSubmitting = false;
-                    hideLoading();
-                });
 
             } catch (error) {
                 isSubmitting = false;
