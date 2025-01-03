@@ -28,7 +28,7 @@ async function getDecodedServiceAccountCredentials() {
         throw error;
     }
 }
-/*
+
 // Initialization function for Google APIs
 async function initializeGoogleAPIs() {
     try {
@@ -70,6 +70,7 @@ function handleApiError(error) {
     console.error('An error occurred:', error);
     alert('An error occurred. Please try again later.');
 }
+/*
 // Handle the authentication click
 function handleAuthClick() {
     if (gapi.client.getToken() === null) {
