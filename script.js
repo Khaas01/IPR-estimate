@@ -4,6 +4,51 @@ let gapiInited = false;
 let gisInited = false;
 let apiLoadRetries = 0;
 const MAX_RETRIES = 3;
+// Add these at the top of script.js with your other global variables
+const API_KEY = 'YOUR-ACTUAL-API-KEY';
+const CLIENT_ID = '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets';
+
+function gapiLoaded() {
+    console.log('GAPI loaded');
+    gapi.load('client', initializeGapiClient);
+}
+
+async function initializeGapiClient() {
+    try {
+        await gapi.client.init({
+            apiKey: API_KEY,
+            clientId: CLIENT_ID,
+            discoveryDocs: [
+                'https://sheets.googleapis.com/$discovery/rest?version=v4',
+                'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+            ],
+            scope: SCOPES
+        });
+        gapiInited = true;
+        console.log('GAPI Client initialized successfully');
+        maybeEnableButtons();
+    } catch (error) {
+        console.error('Error initializing GAPI client:', error);
+        // Implement user-friendly error handling
+        handleApiError(error);
+    }
+}
+
+function handleApiError(error) {
+    let errorMessage = 'An error occurred while initializing Google APIs. ';
+    if (error.error) {
+        if (error.error.status === 'PERMISSION_DENIED') {
+            errorMessage += 'Please check your API key and permissions.';
+        } else if (error.error.status === 'NOT_FOUND') {
+            errorMessage += 'Required API services are not enabled.';
+        } else {
+            errorMessage += error.error.message || 'Unknown error occurred.';
+        }
+    }
+    console.error(errorMessage);
+    alert(errorMessage);
+}
 
 function loadGoogleAPI() {
     if (typeof gapi === 'undefined') {
