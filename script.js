@@ -1,9 +1,9 @@
-// Global variables
+// Global variables (keep these at the top)
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
 
-// API configuration constants
+// API configuration constants (keep these)
 const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
 const CLIENT_ID = '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com';
 const SCOPES = [
@@ -11,8 +11,10 @@ const SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets'
 ].join(' ');
 
-async function initializeApis() {
+// New unified initialization function
+async function initializeGoogleAPIs() {
     try {
+        // Initialize GAPI first
         await gapi.client.init({
             apiKey: API_KEY,
             discoveryDocs: [
@@ -20,16 +22,20 @@ async function initializeApis() {
                 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
             ]
         });
-        
+
+        // Initialize GIS
         tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: CLIENT_ID,
             scope: SCOPES,
             callback: handleAuthResponse
         });
-        
+
         gapiInited = true;
         gisInited = true;
         console.log('APIs initialized successfully');
+        
+        // Attempt authentication
+        handleAuthClick();
         return true;
     } catch (error) {
         console.error('API initialization error:', error);
@@ -37,28 +43,39 @@ async function initializeApis() {
         return false;
     }
 }
-// Initialize Google Identity Services
-function initializeGIS() {
-    try {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
-            scope: 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets',
-            callback: handleAuthResponse
-        });
-        gisInited = true;
-        maybeEnableButtons();
-    } catch (error) {
-        console.error('Error initializing GIS:', error);
+
+// Update the DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
+        initializeGoogleAPIs();
+    } else {
+        console.error('Google APIs are not loaded correctly');
+        handleApiError(new Error('Google APIs failed to load'));
     }
+    hideAllSections();
+    showSection(sectionHistory[0]);
+});
+function handleApiError(error) {
+    let errorMessage = 'An error occurred with the Google APIs. ';
+    
+    if (error instanceof Error) {
+        errorMessage += error.message;
+    } else if (typeof error === 'string') {
+        errorMessage += error;
+    } else if (error.error) {
+        if (error.error.status === 'PERMISSION_DENIED') {
+            errorMessage += 'Please check your API key and permissions.';
+        } else if (error.error.status === 'NOT_FOUND') {
+            errorMessage += 'Required API services are not enabled.';
+        } else {
+            errorMessage += error.error.message || 'Unknown error occurred.';
+        }
+    }
+    
+    console.error(errorMessage);
+    alert(errorMessage);
 }
 
-// Check if both APIs are initialized
-function maybeEnableButtons() {
-    if (gapiInited && gisInited) {
-        console.log('Both APIs initialized successfully');
-        handleAuthClick();
-    }
-}
 
 // Handle the authentication click
 function handleAuthClick() {
