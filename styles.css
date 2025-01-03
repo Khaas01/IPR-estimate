@@ -212,7 +212,18 @@ label {
         display: block;
     }
 }
-
+@media (forced-colors: active) {
+    /* Add forced colors mode styles */
+    button {
+        forced-color-adjust: none;
+        background-color: ButtonFace;
+        color: ButtonText;
+    }
+    
+    input[type="radio"] {
+        forced-color-adjust: none;
+    }
+    
 /* Larger Screen Media Queries */
 @media (min-width: 601px) {
     header .logo {
