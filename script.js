@@ -15,9 +15,12 @@ const SCOPES = [
 // Function to fetch and decode the Base64-encoded service account content
 async function getDecodedServiceAccountCredentials() {
     try {
-        const response = await fetch('service-account-base64.txt');
+        const response = await fetch('service-account-base64.txt'); // Path to the file
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         const base64Content = await response.text();
-        const jsonContent = Buffer.from(base64Content, 'base64').toString('utf8');
+        const jsonContent = atob(base64Content);
         return JSON.parse(jsonContent);
     } catch (error) {
         console.error('Error fetching or decoding service account credentials:', error);
@@ -60,6 +63,10 @@ async function initializeGoogleAPIs() {
         handleApiError(error);
         return false;
     }
+}
+function handleApiError(error) {
+    console.error('An error occurred:', error);
+    alert('An error occurred. Please try again later.');
 }
 // Handle the authentication click
 function handleAuthClick() {
