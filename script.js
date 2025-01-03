@@ -44,17 +44,6 @@ async function initializeGoogleAPIs() {
     }
 }
 
-// Update the DOMContentLoaded event listener
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
-        initializeGoogleAPIs();
-    } else {
-        console.error('Google APIs are not loaded correctly');
-        handleApiError(new Error('Google APIs failed to load'));
-    }
-    hideAllSections();
-    showSection(sectionHistory[0]);
-});
 function handleApiError(error) {
     let errorMessage = 'An error occurred with the Google APIs. ';
     
@@ -107,16 +96,40 @@ function updateSignInStatus(isSignedIn) {
     }
 }
 
-// Initialize everything when the page loads
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Google APIs
     if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
-        loadGoogleAPI();
-        initializeGIS();
+        initializeGoogleAPIs();
     } else {
         console.error('Google APIs are not loaded correctly');
+        handleApiError(new Error('Google APIs failed to load'));
     }
+
+    // Initialize form sections
     hideAllSections();
     showSection(sectionHistory[0]);
+
+    // Setup solar section radio buttons
+    const solarRadios = document.querySelectorAll('input[name="solar"]');
+    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
+    
+    solarRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (navigationButtons) {
+                if (this.value === 'no') {
+                    navigationButtons.innerHTML = `
+                        <button type="button" onclick="goBack()">Back</button>
+                        <button type="button" onclick="navigateFromSolar()" class="submit-button">Submit</button>
+                    `;
+                } else {
+                    navigationButtons.innerHTML = `
+                        <button type="button" onclick="goBack()">Back</button>
+                        <button type="button" onclick="navigateFromSolar()" class="next-button">Next</button>
+                    `;
+                }
+            }
+        });
+    });
 });
 
 // Constants
