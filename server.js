@@ -29,6 +29,11 @@ async function listFiles() {
     return res.data.files;
 }
 
+// Add this route to handle GET requests to the root URL
+app.get('/', (req, res) => {
+    res.send('Welcome to the IPR Roofing Estimate Form API');
+});
+
 app.get('/files', async (req, res) => {
     try {
         const files = await listFiles();
