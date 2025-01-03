@@ -4,11 +4,13 @@ let gapiInited = false;
 let gisInited = false;
 let apiLoadRetries = 0;
 const MAX_RETRIES = 3;
-// Add these at the top of script.js with your other global variables
+
+// API configuration constants
 const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
 const CLIENT_ID = '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets';
 
+// API initialization functions
 function gapiLoaded() {
     console.log('GAPI loaded');
     gapi.load('client', initializeGapiClient);
@@ -27,42 +29,46 @@ function maybeEnableButtons() {
     }
 }
 
-// Initialize the APIs when the page loads
+// Initialize APIs when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-    // Add script loading programmatically
-    const gapiScript = document.createElement('script');
-    gapiScript.src = 'https://apis.google.com/js/api.js';
-    gapiScript.async = true;
-    gapiScript.defer = true;
-    gapiScript.onload = gapiLoaded;
-    document.body.appendChild(gapiScript);
-
-    const gisScript = document.createElement('script');
-    gisScript.src = 'https://accounts.google.com/gsi/client';
-    gisScript.async = true;
-    gisScript.defer = true;
-    gisScript.onload = gisLoaded;
-    document.body.appendChild(gisScript);
+    if (typeof gapi === 'undefined') {
+        console.error('Google APIs are not loaded correctly');
+        return;
+    }
+    
+    // Initialize GAPI
+    gapi.load('client', initializeGapiClient);
+    
+    // Initialize GIS
+    try {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: CLIENT_ID,
+            scope: SCOPES,
+            callback: handleAuthResponse
+        });
+        gisInited = true;
+        maybeEnableButtons();
+    } catch (error) {
+        console.error('Error initializing GIS:', error);
+        handleApiError(error);
+    }
 });
-
 
 async function initializeGapiClient() {
     try {
         await gapi.client.init({
             apiKey: API_KEY,
-            clientId: CLIENT_ID,
             discoveryDocs: [
                 'https://sheets.googleapis.com/$discovery/rest?version=v4',
                 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-            ],
-            scope: SCOPES
+            ]
         });
+        
         gapiInited = true;
         console.log('GAPI Client initialized successfully');
         maybeEnableButtons();
     } catch (error) {
         console.error('Error initializing GAPI client:', error);
-        // Implement user-friendly error handling
         handleApiError(error);
     }
 }
@@ -81,7 +87,6 @@ function handleApiError(error) {
     console.error(errorMessage);
     alert(errorMessage);
 }
-
 function loadGoogleAPI() {
     if (typeof gapi === 'undefined') {
         if (apiLoadRetries < MAX_RETRIES) {
