@@ -90,8 +90,8 @@ function updateSignInStatus(isSignedIn) {
 
 // Event listener for DOMContentLoaded to initialize the form and Google APIs
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the section history with the first section ID
-    sectionHistory.push('salesRepSection'); // Replace 'firstSectionId' with the actual ID of your first section
+    // Initialize the section history with the actual first section ID
+    sectionHistory.push('salesRepSection'); // Corrected section ID
 
     // Initialize Google APIs
     if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
@@ -126,7 +126,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});   // Setup solar section radio buttons
+});
+  
     const solarRadios = document.querySelectorAll('input[name="solar"]');
     const navigationButtons = document.querySelector('#solar-section #navigationButtons');
     
