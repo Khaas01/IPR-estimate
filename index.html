@@ -16,10 +16,20 @@
     <link rel="stylesheet" href="styles.css">
 
     <!-- Load the Google Identity Services library -->
-    <script src="https://apis.google.com/js/api.js" async defer
-    onerror="console.error('Failed to load Google API')"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer
-    onerror="console.error('Failed to load Google Identity Services')"></script>
+   <!--  Google API scripts -->
+<script>
+    function gapiLoaded() {
+        gapi.load('client', initializeGapiClient);
+    }
+
+    function gisLoaded() {
+        gisInited = true;
+        maybeEnableButtons();
+    }
+</script>
+
+<script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
+<script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
     <script src="script.js" defer></script>
 <style>
     .preview-fallback {
