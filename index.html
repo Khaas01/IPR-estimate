@@ -17,23 +17,11 @@
 
     <!-- Load the Google Identity Services library -->
    <!--  Google API scripts -->
-<!-- Replace or update your Google API script tags -->
-<script>
-    function gapiLoaded() {
-        console.log('GAPI loaded');
-        gapi.load('client', initializeGapiClient);
-    }
-
-    function gisLoaded() {
-        console.log('GIS loaded');
-        gisInited = true;
-        maybeEnableButtons();
-    }
-</script>
-
-<script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
-<script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
-<style>
+<!-- In index.html, remove the existing script block and just keep the script tags -->
+<script src="https://apis.google.com/js/api.js" async defer></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="script.js" defer></script>
+    
     .preview-fallback {
         text-align: center;
         padding: 20px;
