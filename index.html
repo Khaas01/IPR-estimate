@@ -1,9 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Iron Peak Roofing - Estimate Form</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iron Peak Roofing - Estimate Form</title>
+    
+    <!-- Load Google API Client Library -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    
+    <!-- Load Custom Script -->
+    <script src="script.js" defer></script>
+
+    <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     
@@ -65,8 +76,11 @@
         https://accounts.google.com
         https://*.googleapis.com;">
     
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://i.imgur.com/kj09wS4.png">
     <link rel="shortcut icon" type="image/png" href="https://i.imgur.com/kj09wS4.png">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
 
     <!-- Inline styles -->
@@ -93,11 +107,6 @@
             background-color: #0056b3;
         }
     </style>
-
-    <!-- Google API Scripts - Load in correct order without async/defer -->
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://accounts.google.com/gsi/client"></script>
-    <script src="script.js" defer></script>
 </head>
 <body>
 <header>
