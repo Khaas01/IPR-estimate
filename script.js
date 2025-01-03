@@ -158,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
 
 // Event listener for receiving messages (PDF URL) from Google Apps Script
 window.addEventListener('message', function(event) {
