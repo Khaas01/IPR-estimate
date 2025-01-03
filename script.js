@@ -2,10 +2,31 @@
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
+let apiLoadRetries = 0;
+const MAX_RETRIES = 3;
 
-// Load the Google API client
 function loadGoogleAPI() {
-    gapi.load('client', initializeGapiClient);
+    if (typeof gapi === 'undefined') {
+        if (apiLoadRetries < MAX_RETRIES) {
+            console.log(`Retrying Google API load... Attempt ${apiLoadRetries + 1}`);
+            apiLoadRetries++;
+            setTimeout(loadGoogleAPI, 1000); // Retry after 1 second
+            return;
+        }
+        console.error('Failed to load Google API after multiple attempts');
+        return;
+    }
+    
+    gapi.load('client', {
+        callback: initializeGapiClient,
+        onerror: function() {
+            console.error('Error loading GAPI client');
+        },
+        timeout: 5000, // 5 seconds timeout
+        ontimeout: function() {
+            console.error('Timeout loading GAPI client');
+        }
+    });
 }
 
 // Initialize the GAPI client
