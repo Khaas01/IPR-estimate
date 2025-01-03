@@ -69,29 +69,7 @@ async function initializeGoogleAPIs() {
 function handleApiError(error) {
     console.error('An error occurred:', error);
     alert('An error occurred. Please try again later.');
-}
-/*
-// Handle the authentication click
-function handleAuthClick() {
-    if (gapi.client.getToken() === null) {
-        try {
-            tokenClient.requestAccessToken({ prompt: 'consent' });
-        } catch (error) {
-            console.error('Popup window blocked:', error);
-            alert('Popup window blocked. Please allow popups for this site to proceed with authentication.');
-        }
-    } else {
-        try {
-            tokenClient.requestAccessToken({ prompt: '' });
-        } catch (error) {
-            console.error('Popup window blocked:', error);
-            alert('Popup window blocked. Please allow popups for this site to proceed with authentication.');
-        }
-    }
-}
-
-// Handle the authentication response
-function handleAuthResponse(response) {
+}function handleAuthResponse(response) {
     if (response.error !== undefined) {
         console.error('Auth error:', response.error);
         alert('Authentication failed. Please try again.');
@@ -100,6 +78,42 @@ function handleAuthResponse(response) {
     console.log('Successfully authenticated');
     updateSignInStatus(true);
 }
+
+function handleApiError(error) {
+    console.error('An error occurred:', error);
+    alert('An error occurred. Please try again later.');
+}
+
+async function initializeGoogleAPIs() {
+    try {
+        const credentials = await getDecodedServiceAccountCredentials();
+        await new Promise((resolve) => gapi.load('client', resolve));
+        await gapi.client.init({
+            apiKey: API_KEY,
+            discoveryDocs: [
+                'https://sheets.googleapis.com/$discovery/rest?version=v4',
+                'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+            ]
+        });
+
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: credentials.client_id,
+            scope: SCOPES,
+            callback: handleAuthResponse
+        });
+
+        gapiInited = true;
+        gisInited = true;
+        console.log('APIs initialized successfully');
+        handleAuthClick();
+        return true;
+    } catch (error) {
+        console.error('API initialization error:', error);
+        handleApiError(error);
+        return false;
+    }
+}
+
 
 // Update UI based on sign-in status
 function updateSignInStatus(isSignedIn) {
@@ -110,33 +124,6 @@ function updateSignInStatus(isSignedIn) {
         console.log('User is not signed in');
     }
 }
-
-async function fetchFiles() {
-    try {
-        // Update the URL to point to your backend server
-        const response = await fetch('http://localhost:3000/files');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const files = await response.json();
-        displayFiles(files);
-    } catch (error) {
-        console.error('Error fetching files:', error);
-    }
-}
-
-function displayFiles(files) {
-    const container = document.getElementById('pdf-previews');
-    files.forEach(file => {
-        const iframe = document.createElement('iframe');
-        iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
-        iframe.width = '600px';
-        iframe.height = '400px';
-        container.appendChild(iframe);
-    });
-}
-*/
-fetchFiles();
 // Event listener for DOMContentLoaded to initialize the form and Google APIs
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the section history with the actual first section ID
