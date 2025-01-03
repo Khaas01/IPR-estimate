@@ -15,7 +15,7 @@ const SCOPES = [
 // Function to fetch and decode the Base64-encoded service account content
 async function getDecodedServiceAccountCredentials() {
     try {
-        const response = await fetch('path/to/service-account-base64.txt');
+        const response = await fetch('service-account-base64.txt');
         const base64Content = await response.text();
         const jsonContent = Buffer.from(base64Content, 'base64').toString('utf8');
         return JSON.parse(jsonContent);
