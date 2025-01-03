@@ -1,4 +1,4 @@
-/ Global variables
+// Global variables
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
