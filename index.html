@@ -4,13 +4,66 @@
     <title>Iron Peak Roofing - Estimate Form</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
-        style-src 'self' 'unsafe-inline' https://apis.google.com https://www.gstatic.com;
-        img-src 'self' https://i.imgur.com https://www.gstatic.com;
-        script-src 'self' 'unsafe-inline' https://apis.google.com https://accounts.google.com https://www.gstatic.com https://*.googleapis.com;
-        connect-src 'self' https://apis.google.com https://accounts.google.com https://www.googleapis.com https://*.googleapis.com https://content-sheets.googleapis.com https://content.googleapis.com;
-        frame-src 'self' https://accounts.google.com https://*.googleapis.com https://content-sheets.googleapis.com https://content.googleapis.com https://www.gstatic.com;
-        font-src 'self' https://www.gstatic.com;">
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    
+    script-src 'self' 'unsafe-inline' 'unsafe-eval'
+        https://apis.google.com
+        https://*.googleapis.com
+        https://accounts.google.com
+        https://www.gstatic.com
+        https://*.googleusercontent.com
+        https://www.google.com;
+    
+    style-src 'self' 'unsafe-inline'
+        https://fonts.googleapis.com
+        https://www.gstatic.com
+        https://apis.google.com;
+    
+    img-src 'self' data: blob:
+        https://i.imgur.com
+        https://*.googleapis.com
+        https://*.gstatic.com
+        https://*.google.com
+        https://*.googleusercontent.com;
+    
+    connect-src 'self'
+        https://apis.google.com
+        https://*.googleapis.com
+        https://accounts.google.com
+        https://oauth2.googleapis.com
+        https://*.gstatic.com
+        https://www.google.com
+        https://securetoken.googleapis.com
+        https://content-sheets.googleapis.com
+        https://content.googleapis.com;
+    
+    frame-src 'self'
+        https://accounts.google.com
+        https://*.googleapis.com
+        https://content-sheets.googleapis.com
+        https://content.googleapis.com
+        https://www.google.com
+        https://*.gstatic.com;
+    
+    font-src 'self'
+        https://fonts.gstatic.com
+        https://fonts.googleapis.com
+        https://www.gstatic.com;
+    
+    worker-src 'self' blob:;
+    
+    child-src 'self' blob:;
+    
+    media-src 'self' blob:;
+    
+    object-src 'none';
+    
+    base-uri 'self';
+    
+    form-action 'self'
+        https://accounts.google.com
+        https://*.googleapis.com;">
     
     <link rel="icon" type="image/png" href="https://i.imgur.com/kj09wS4.png">
     <link rel="shortcut icon" type="image/png" href="https://i.imgur.com/kj09wS4.png">
