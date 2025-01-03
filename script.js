@@ -1,7 +1,8 @@
-// Global variables
+/ Global variables
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
+let sectionHistory = []; // Initialize sectionHistory
 
 // API configuration constants
 const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
@@ -11,10 +12,14 @@ const SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets'
 ].join(' ');
 
+
 // Initialization function for Google APIs
 async function initializeGoogleAPIs() {
     try {
-        // Initialize GAPI first
+        // Wait for the Google API client library to load
+        await new Promise((resolve) => gapi.load('client', resolve));
+
+        // Initialize GAPI client
         await gapi.client.init({
             apiKey: API_KEY,
             discoveryDocs: [
@@ -93,8 +98,12 @@ function updateSignInStatus(isSignedIn) {
         console.log('User is not signed in');
     }
 }
+
 // Event listener for DOMContentLoaded to initialize the form and Google APIs
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the section history with the first section ID
+    sectionHistory.push('firstSectionId'); // Replace 'firstSectionId' with the actual ID of your first section
+
     // Initialize Google APIs
     if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
         initializeGoogleAPIs();
@@ -108,6 +117,27 @@ document.addEventListener('DOMContentLoaded', function() {
     showSection(sectionHistory[0]);
 
     // Setup solar section radio buttons
+    const solarRadios = document.querySelectorAll('input[name="solar"]');
+    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
+    
+    solarRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (navigationButtons) {
+                if (this.value === 'no') {
+                    navigationButtons.innerHTML = `
+                        <button type="button" onclick="goBack()">Back</button>
+                        <button type="button" onclick="nextFromSolar()" class="submit-button">Submit</button>
+                    `;
+                } else {
+                    navigationButtons.innerHTML = `
+                        <button type="button" onclick="goBack()">Back</button>
+                        <button type="button" onclick="nextFromSolar()" class="next-button">Next</button>
+                    `;
+                }
+            }
+        });
+    });
+});   // Setup solar section radio buttons
     const solarRadios = document.querySelectorAll('input[name="solar"]');
     const navigationButtons = document.querySelector('#solar-section #navigationButtons');
     
