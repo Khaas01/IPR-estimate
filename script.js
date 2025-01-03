@@ -65,11 +65,13 @@ function initializeGapiClient() {
     return new Promise((resolve, reject) => {
         try {
             gapi.client.init({
-                apiKey: 'YOUR_API_KEY',
+                apiKey: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',  // Replace with your real API key
+                clientId: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com', // You already have this
                 discoveryDocs: [
                     'https://sheets.googleapis.com/$discovery/rest?version=v4',
                     'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-                ]
+                ],
+                scope: 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets'
             }).then(() => {
                 gapiInited = true;
                 maybeEnableButtons();
