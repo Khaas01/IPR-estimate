@@ -1,19 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
-    <meta http-equiv="Cross-Origin-Embedder-Policy" content="same-origin">
-
-    <title>Iron Peak Roofing - Estimate Form</title>
-    
-    <!-- Load Google API Client Library -->
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://accounts.google.com/gsi/client"></script>
- <script>
-      <!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -104,7 +90,7 @@
 
         async function submitFormAndDisplayPDF(formData) {
             try {
-                const response = await fetch('http://localhost:3000/submit-form', {
+                const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_ENDPOINT', { // Replace with your actual Google Apps Script endpoint
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
