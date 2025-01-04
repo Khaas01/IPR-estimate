@@ -318,6 +318,12 @@ function onFormSubmit(e) {
     var viewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
     console.log('Generated PDF URL:', viewUrl); // Debug log
 
+return {
+    success: true,
+    message: 'Form submitted successfully',
+    pdfUrl: viewUrl,
+    fileId: fileId  // Add this line
+};
     // Send email with the PDF
     MailApp.sendEmail({
       to: senderEmail,
@@ -328,13 +334,6 @@ function onFormSubmit(e) {
     });
     
     Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
-
-    // Return with URL
-    return {
-      success: true,
-      message: 'Form submitted successfully',
-      pdfUrl: viewUrl
-    };
    
   } catch (error) {
     Logger.log('Error: ' + error.toString());
