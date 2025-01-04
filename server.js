@@ -8,43 +8,42 @@ const app = express();
 const port = 3000;
 
 app.use(cors({
-    origin: 'https://khaas01.github.io'
+    origin: 'https://khaas01.github.io' // Allow requests from GitHub Pages
 }));
 
-async function getDecodedServiceAccountCredentials() {
-    const base64Content = fs.readFileSync(path.resolve(__dirname, 'service-account-base64.txt'), 'utf8');
-    const jsonContent = Buffer.from(base64Content, 'base64').toString('utf8');
-    return JSON.parse(jsonContent);
-}
+app.use(express.json()); // Parse JSON request bodies
 
-async function listFiles() {
-    const credentials = await getDecodedServiceAccountCredentials();
+async function executeAppScript(formData) {
+    // Assuming you have a way to execute the Google Apps Script and get the response
+    const scriptId = 'YOUR_SCRIPT_ID';
     const auth = new google.auth.GoogleAuth({
-        credentials,
-        scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+        scopes: ['https://www.googleapis.com/auth/script.projects']
+    });
+    const script = google.script({ version: 'v1', auth });
+
+    const res = await script.scripts.run({
+        scriptId: scriptId,
+        resource: {
+            function: 'doPost',
+            parameters: [formData]
+        }
     });
 
-    const drive = google.drive({ version: 'v3', auth });
+    if (res.data.error) {
+        throw new Error(res.data.error.details[0].errorMessage);
+    }
 
-    const res = await drive.files.list({
-        pageSize: 10,
-        fields: 'files(id, name)',
-    });
-
-    return res.data.files;
+    return res.data.response.result;
 }
 
-app.get('/', (req, res) => {
-    res.send('Welcome to the IPR Roofing Estimate Form API');
-});
-
-app.get('/files', async (req, res) => {
+app.post('/submit-form', async (req, res) => {
     try {
-        const files = await listFiles();
-        res.json(files);
+        const formData = req.body;
+        const result = await executeAppScript(formData);
+        res.json(result);
     } catch (error) {
         console.error('The API returned an error:', error);
-        res.status(500).send('Error fetching files');
+        res.status(500).send('Error submitting form');
     }
 });
 
