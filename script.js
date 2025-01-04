@@ -759,9 +759,7 @@ function navigateFromAdditionalCharges() {
 function nextFromSolar() {
     submitForm()
         .then(() => {
-            showSection('review-section');
-            // displayReview will be called by the message event listener
-            // when it receives the preview ID from Apps Script
+            showReviewSection(); // Change this to call showReviewSection instead of showSection
         })
         .catch(error => {
             console.error('Error submitting form:', error);
