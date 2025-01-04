@@ -29,7 +29,6 @@ async function getDecodedServiceAccountCredentials() {
     }
 }
 
-// Initialization function for Google APIs
 async function initializeGoogleAPIs() {
     try {
         const credentials = await getDecodedServiceAccountCredentials();
@@ -66,10 +65,31 @@ async function initializeGoogleAPIs() {
         return false;
     }
 }
+
 function handleApiError(error) {
     console.error('An error occurred:', error);
     alert('An error occurred. Please try again later.');
-}function handleAuthResponse(response) {
+}
+
+function handleAuthClick() {
+    if (gapi.client.getToken() === null) {
+        try {
+            tokenClient.requestAccessToken({ prompt: 'consent' });
+        } catch (error) {
+            console.error('Popup window blocked:', error);
+            alert('Popup window blocked. Please allow popups for this site to proceed with authentication.');
+        }
+    } else {
+        try {
+            tokenClient.requestAccessToken({ prompt: '' });
+        } catch (error) {
+            console.error('Popup window blocked:', error);
+            alert('Popup window blocked. Please allow popups for this site to proceed with authentication.');
+        }
+    }
+}
+
+function handleAuthResponse(response) {
     if (response.error !== undefined) {
         console.error('Auth error:', response.error);
         alert('Authentication failed. Please try again.');
@@ -79,38 +99,12 @@ function handleApiError(error) {
     updateSignInStatus(true);
 }
 
-function handleApiError(error) {
-    console.error('An error occurred:', error);
-    alert('An error occurred. Please try again later.');
-}
-
-async function initializeGoogleAPIs() {
-    try {
-        const credentials = await getDecodedServiceAccountCredentials();
-        await new Promise((resolve) => gapi.load('client', resolve));
-        await gapi.client.init({
-            apiKey: API_KEY,
-            discoveryDocs: [
-                'https://sheets.googleapis.com/$discovery/rest?version=v4',
-                'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-            ]
-        });
-
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: credentials.client_id,
-            scope: SCOPES,
-            callback: handleAuthResponse
-        });
-
-        gapiInited = true;
-        gisInited = true;
-        console.log('APIs initialized successfully');
-        handleAuthClick();
-        return true;
-    } catch (error) {
-        console.error('API initialization error:', error);
-        handleApiError(error);
-        return false;
+function updateSignInStatus(isSignedIn) {
+    if (isSignedIn) {
+        console.log('User is signed in');
+        // Add your post-authentication logic here
+    } else {
+        console.log('User is not signed in');
     }
 }
 
