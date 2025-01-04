@@ -469,20 +469,19 @@ function submitForm() {
                 console.log('Sending structured form data:', formData);
 
                 return fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    credentials: 'omit',
-                    redirect: 'follow',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        timestamp: new Date().toISOString(),
-                        user: 'Khaas01',
-                        data: formData
-                    })
-                })
-  
+    method: 'POST',
+    mode: 'no-cors',
+    credentials: 'omit',
+    redirect: 'follow',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        timestamp: new Date().toISOString(),
+        user: 'Khaas01',
+        data: formData
+    })
+}) // <-- Add closing parenthesis here
 .then(response => {
     hideLoading();
     if (response.success) {
@@ -495,11 +494,11 @@ function submitForm() {
     console.error('Error:', error);
     hideLoading();
     throw error;
+})
+.finally(() => {
+    isSubmitting = false;
+    hideLoading();
 });
-                .finally(() => {
-                    isSubmitting = false;
-                    hideLoading();
-                });
 
             } catch (error) {
                 isSubmitting = false;
