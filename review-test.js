@@ -2,19 +2,39 @@
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQvZe_M3i30mHZLNOsZX87r_mcqAio48Ik1kztAa7UA6HEKOM9dnIppOiyCF5uWQ/exec';
 
 // Function to show review section
-function showReviewSection() {
-    // Hide any other sections that might be visible
-    const allSections = document.querySelectorAll('div[id$="Section"], div[id*="-section"]');
-    allSections.forEach(section => section.style.display = 'none');
-    
+// In review-test.js
+function showReviewSection(fileId) {
     // Show the review section
     const reviewSection = document.getElementById('review-section');
     if (reviewSection) {
         reviewSection.style.display = 'block';
-        console.log('Review section shown');
+        
+        // Get the iframe
+        const previewFrame = document.getElementById('estimatePreviewFrame');
+        if (previewFrame && fileId) {
+            // Set the iframe src with the file ID
+            previewFrame.src = `https://drive.google.com/file/${fileId}/preview`;
+            console.log('Preview URL set:', previewFrame.src);
+        } else {
+            console.error('Preview frame not found or no file ID provided');
+        }
     } else {
         console.error('Review section not found');
     }
+}
+
+// Function to handle form submission response
+function handleFormResponse(response) {
+    if (response && response.fileId) {
+        showReviewSection(response.fileId);
+    } else {
+        console.error('No file ID in response');
+    }
+}
+
+// Function to go back
+function goBack() {
+    window.history.back();
 }
 
 // Function to generate preview
