@@ -89,6 +89,20 @@ function showLoading() {
         `;
     }
 }
+function getLatestPdfFromSheet() {
+  // Get the Form Responses sheet
+  var sheet = SpreadsheetApp.openById("1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw").getSheetByName("Form Responses");
+  
+  // Get last row and find PDF_ID column
+  var lastRow = sheet.getLastRow();
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var pdfIdColumn = headers.indexOf('PDF_ID') + 1;
+  
+  // Get the ID from the last row of the PDF_ID column
+  var pdfId = sheet.getRange(lastRow, pdfIdColumn).getValue();
+  
+  return pdfId;
+}
 // In review-test.js
 function loadLatestPDF() {
   showLoading(); // Add a loading indicator if you have one
