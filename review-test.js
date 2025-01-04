@@ -1,24 +1,48 @@
 // Configuration (though we won't need this anymore)
-// const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQvZe_M3i30mHZLNOsZX87r_mcqAio48Ik1kztAa7UA6HEKOM9dnIppOiyCF5uWQ/exec';
+ const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQvZe_M3i30mHZLNOsZX87r_mcqAio48Ik1kztAa7UA6HEKOM9dnIppOiyCF5uWQ/exec';
 
 // Function to display estimate based on file ID input
 function displayEstimate() {
     const fileIdInput = document.getElementById('fileIdInput');
+    if (!fileIdInput) {
+        console.error('File ID input not found');
+        return;
+    }
+
     const fileId = fileIdInput.value.trim();
-    
     if (!fileId) {
         alert('Please enter a file ID');
         return;
     }
 
-    showLoading();
     const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame) {
-        previewFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
-        console.log('Preview URL set:', previewFrame.src);
+    if (!previewFrame) {
+        console.error('Preview frame not found');
+        return;
     }
+
+    // Show loading state
+    showLoading();
+
+    // Set the iframe properties
+    previewFrame.width = '100%';
+    previewFrame.height = '600px';
+    previewFrame.style.border = 'none';
+    previewFrame.style.display = 'block'; // Ensure iframe is visible
+    
+    // Construct and set the URL
+    const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+    console.log('Setting preview URL:', previewUrl);
+    previewFrame.src = previewUrl;
 }
 
+// Make sure your HTML iframe has these attributes:
+// <iframe id="estimatePreviewFrame" 
+//         width="100%" 
+//         height="600px" 
+//         style="border: none; display: block;" 
+//         allowfullscreen>
+// </iframe>
 // Function to show review section and set up the iframe
 function showReviewSection() {
     const reviewSection = document.getElementById('review-section');
