@@ -62,17 +62,6 @@
         https://accounts.google.com
         https://*.googleapis.com;">
 </head>
-<body>
-    <h1>Iron Peak Roofing - Estimate Form</h1>
-    <form id="estimate-form">
-        <label for="owner-name">Owner Name:</label>
-        <input type="text" id="owner-name" name="ownerName" required>
-        <!-- Add other form fields as needed -->
-        <button type="submit">Submit</button>
-    </form>
-
-    <div id="pdf-previews"></div>
-
     <script>
         document.getElementById('estimate-form').addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevent the default form submission
@@ -121,31 +110,6 @@
             container.appendChild(iframe);
         }
     </script>
-    <style>  
-        @media (forced-colors: active) {
-            .preview-fallback {
-                text-align: center;
-                padding: 20px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                margin: 10px 0;
-            }
-            
-            .pdf-link {
-                display: inline-block;
-                padding: 10px 20px;
-                background-color: #007bff;
-                color: white;
-                text-decoration: none;
-                border-radius: 4px;
-                margin: 10px 0;
-            }
-            
-            .pdf-link:hover {
-                background-color: #0056b3;
-            }
-        }
-    </style>
 </head>
 <body>
 <header>
