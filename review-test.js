@@ -48,16 +48,13 @@ function showError() {
     }
 }
 
-// Initialize when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Page loaded');
     const urlParams = new URLSearchParams(window.location.search);
-    const pdfId = urlParams.get('pdfId');
+    const pdfId = urlParams.get('id');
     
     if (pdfId) {
-        displayPDF(pdfId);
-    } else {
-        showError();
+        const previewFrame = document.getElementById('estimatePreviewFrame');
+        previewFrame.src = `https://drive.google.com/file/${pdfId}/preview`;
     }
 });
 // Function to get latest PDF ID and display it
