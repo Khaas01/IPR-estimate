@@ -210,6 +210,9 @@ function testRowNumbers() {
 }
 function onFormSubmit(e) {
   try {
+    const formData = JSON.parse(e.parameter.data);
+    const doc = DocumentApp.create(`Estimate for ${formData.data.ownerName}`);
+    const documentId = doc.getId();
     // 1. Initialize workbooks and get specific sheets
     var estimateWorkbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
     var databaseSheet = estimateWorkbook.getSheetByName('Database');
