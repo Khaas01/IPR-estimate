@@ -1,37 +1,7 @@
-// Configuration (though we won't need this anymore)
- const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXqfOtVpNsmkk1U6LsBU1FtmsR_6BK8tcgr00lRFD_LLsAvmWXB0bJVCEPfS9blbVFoQ/exec';
+// Configuration
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXqfOtVpNsmkk1U6LsBU1FtmsR_6BK8tcgr00lRFD_LLsAvmWXB0bJVCEPfS9blbVFoQ/exec';
 
-// Function to display estimate based on file ID input
-// Add this function to review-test.js
-function getPDFUrlFromLog(executionLog) {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (!previewFrame) {
-        console.error('Preview frame not found');
-        return;
-    }
-
-    // Extract the file ID from the execution log
-    // Assuming the log contains the file ID in some format
-    const fileId = executionLog.fileId; // Adjust based on your log structure
-    
-    if (fileId) {
-        const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-        console.log('Setting preview URL:', previewUrl);
-        previewFrame.src = previewUrl;
-    } else {
-        showError();
-    }
-}
-
-// Add this to review-test.js
-function handleAppScriptResponse(response) {
-    if (response && response.success && response.fileId) {
-        getPDFUrlFromLog({fileId: response.fileId});
-    } else {
-        showError();
-    }
-}
-
+// Function to handle the PDF display
 function displayEstimate(response) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (!previewFrame) {
@@ -39,82 +9,68 @@ function displayEstimate(response) {
         return;
     }
 
+    showLoading();
+
     if (response && response.success) {
-        // Use the pdfUrl directly from the response
-        console.log('Setting preview URL:', response.pdfUrl);
-        previewFrame.src = response.pdfUrl;
+        if (response.pdfUrl) {
+            console.log('Setting preview URL:', response.pdfUrl);
+            previewFrame.src = response.pdfUrl;
+        } else if (response.fileId) {
+            const previewUrl = `https://drive.google.com/file/d/${response.fileId}/preview`;
+            console.log('Setting preview URL from fileId:', previewUrl);
+            previewFrame.src = previewUrl;
+        } else {
+            showError();
+        }
     } else {
         showError();
     }
 }
 
-// Add this function to handle the form submission response
-function handleFormSubmissionResponse(responseText) {
+// Function to handle form submission response
+async function handleFormSubmissionResponse(formData) {
     try {
-        const response = JSON.parse(responseText);
-        if (response.success) {
-            displayEstimate(response);
+        showLoading();
+        console.log('Handling form submission response...');
+
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+        console.log('Response from Apps Script:', data);
+
+        if (data.success) {
+            displayEstimate(data);
         } else {
-            console.error('Form submission failed:', response.message);
+            console.error('Form submission failed:', data.message);
             showError();
         }
     } catch (error) {
-        console.error('Error parsing response:', error);
+        console.error('Error handling form submission:', error);
         showError();
+    } finally {
+        hideLoading();
     }
 }
-    const fileId = fileIdInput.value.trim();
-    if (!fileId) {
-        alert('Please enter a file ID');
-        return;
-    }
 
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (!previewFrame) {
-        console.error('Preview frame not found');
-        return;
-    }
-
-    // Directly set the src attribute with the Google Drive URL
-    const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-    console.log('Setting preview URL:', previewUrl);
-    previewFrame.src = previewUrl;
-}
-
-// Function to go back
-function goBack() {
-    window.history.back();
-}
-
-// Initialize when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Page loaded');
-});
-
-// Function to show review section and set up the iframe
+// Function to show review section
 function showReviewSection() {
     const reviewSection = document.getElementById('review-section');
     if (reviewSection) {
         reviewSection.style.display = 'block';
+        // Try to display the latest PDF
+        handleFormSubmissionResponse({ action: 'getLatestPDF' });
     }
 }
 
 // Function to go back
 function goBack() {
     window.history.back();
-}
-
-// Function to share estimate
-function shareEstimate() {
-    const fileIdInput = document.getElementById('fileIdInput');
-    const fileId = fileIdInput.value.trim();
-    
-    if (fileId) {
-        // Implement share functionality here
-        alert('Share functionality will be implemented');
-    } else {
-        alert('Please load an estimate first');
-    }
 }
 
 // Function to show loading indicator
@@ -162,12 +118,27 @@ function showError() {
 // Initialize when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Page loaded');
-    showReviewSection();
     
     // Add event listener for iframe load
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
         previewFrame.onload = hideLoading;
         previewFrame.onerror = showError;
+    }
+
+    // Add form submission handler
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            // Gather form data
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+            
+            // Submit form and handle response
+            await handleFormSubmissionResponse({ data: data });
+        });
     }
 });
