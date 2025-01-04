@@ -13,7 +13,7 @@ function showReviewSection(fileId) {
         const previewFrame = document.getElementById('estimatePreviewFrame');
         if (previewFrame && fileId) {
             // Set the iframe src with the file ID
-            previewFrame.src = `https://drive.google.com/file/d/{fileId}/preview`;
+            previewFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
             console.log('Preview URL set:', previewFrame.src);
         } else {
             console.error('Preview frame not found or no file ID provided');
