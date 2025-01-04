@@ -1,4 +1,6 @@
 // Configuration
+// Configuration
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQHetZcUUuqpYhTeTfXH1csQuG1PvYCP5U7GYTJLFVPRjnxQdXHObTylNFhSOF3SZGDQ/exec';
 const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
 const SHEET_NAME = "Form Responses";
 
