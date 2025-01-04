@@ -78,32 +78,34 @@ function doPost(e) {
     Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
 
     // Process form submission and generate PDF
-    try {
-      const submitResult = onFormSubmit({
+    // Inside doPost function, update this part:
+try {
+  const submitResult = onFormSubmit({
+    parameter: {
+      data: JSON.stringify({
         lastRow: lastDatabaseRow,
-        clientName: formData.data["Owner Name"],
-        clientData: formData.data,
-        estimateWorkbook: estimateWorkbook
-      });
-
-      if (submitResult && submitResult.pdfUrl) {
-        return ContentService.createTextOutput(JSON.stringify({
-          success: true,
-          pdfUrl: submitResult.pdfUrl,
-          timestamp: new Date().toISOString()
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
-
-      throw new Error('No preview URL generated');
-
-    } catch (submitError) {
-      Logger.log('Warning: onFormSubmit error: ' + submitError.message);
-      return ContentService.createTextOutput(JSON.stringify({
-        success: false,
-        message: submitError.message,
-        timestamp: new Date().toISOString()
-      })).setMimeType(ContentService.MimeType.JSON);
+        data: {
+          ownerName: formData.data["Owner Name"],
+          ...formData.data
+        }
+      })
     }
+  });
+
+  if (submitResult) {
+    return submitResult; // The response is already formatted in onFormSubmit
+  }
+
+  throw new Error('No response from form submission');
+
+} catch (submitError) {
+  Logger.log('Warning: onFormSubmit error: ' + submitError.message);
+  return ContentService.createTextOutput(JSON.stringify({
+    success: false,
+    message: submitError.message,
+    timestamp: new Date().toISOString()
+  })).setMimeType(ContentService.MimeType.JSON);
+}
 
   } catch (error) {
     Logger.log('Error in doPost: ' + error.message);
@@ -210,10 +212,12 @@ function testRowNumbers() {
 }
 function onFormSubmit(e) {
   try {
+    // Initial document creation
     const formData = JSON.parse(e.parameter.data);
     const doc = DocumentApp.create(`Estimate for ${formData.data.ownerName}`);
     const documentId = doc.getId();
-    // 1. Initialize workbooks and get specific sheets
+
+    // Your existing workbook and sheet initialization code...
     var estimateWorkbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
     var databaseSheet = estimateWorkbook.getSheetByName('Database');
     var estimateSheet = estimateWorkbook.getSheetByName('Estimate');
@@ -312,8 +316,8 @@ function onFormSubmit(e) {
       }
     });
 
-    var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
-    pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+     var fileId = pdfFile.getId();
+    var viewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
 
     // Get the file ID and create the embedded preview URL
     // After creating the PDF file
@@ -352,13 +356,19 @@ return {
       attachments: [pdfFile.getAs(MimeType.PDF)]
     });
     
-    Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
-   
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      fileId: documentId,
+      pdfUrl: viewUrl,
+      message: 'Document created successfully'
+    })).setMimeType(ContentService.MimeType.JSON);
+
   } catch (error) {
-    Logger.log('Error: ' + error.toString());
-    return {
+    Logger.log('Error in onFormSubmit: ' + error.toString());
+    return ContentService.createTextOutput(JSON.stringify({
       success: false,
-      message: error.toString()
-    };
+      error: error.toString(),
+      message: 'Failed to process form submission'
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
