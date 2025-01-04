@@ -5,14 +5,16 @@ const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
 const SHEET_NAME = "Form Responses";
 
 // Function to display PDF in iframe
+// Function to display PDF in iframe
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame) {
+    if (previewFrame && pdfId) {
         const previewUrl = `https://drive.google.com/file/${pdfId}/preview`;
         console.log('Setting preview URL:', previewUrl);
         previewFrame.src = previewUrl;
     } else {
-        console.error('Preview frame not found');
+        console.error('Preview frame not found or invalid PDF ID');
+        showError();
     }
 }
 
@@ -46,6 +48,18 @@ function showError() {
     }
 }
 
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded');
+    const urlParams = new URLSearchParams(window.location.search);
+    const pdfId = urlParams.get('pdfId');
+    
+    if (pdfId) {
+        displayPDF(pdfId);
+    } else {
+        showError();
+    }
+});
 // Function to get latest PDF ID and display it
 async function loadLatestPDF() {
     try {
