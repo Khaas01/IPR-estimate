@@ -10,7 +10,7 @@
     <script src="https://accounts.google.com/gsi/client"></script>
     <script src="review-test.js" defer></script>
     <link rel="stylesheet" href="styles.css">
-    <meta http-equiv="Content-Security-Policy" content="
+   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     script-src 'self' 'unsafe-inline' 'unsafe-eval'
         https://apis.google.com
@@ -41,6 +41,9 @@
         https://securetoken.googleapis.com
         https://content-sheets.googleapis.com
         https://content.googleapis.com
+        https://script.google.com
+        https://*.script.google.com
+        https://*.script.googleusercontent.com
         http://localhost:3000/;
     frame-src 'self'
         https://accounts.google.com
@@ -48,7 +51,9 @@
         https://content-sheets.googleapis.com
         https://content.googleapis.com
         https://www.google.com
-        https://*.gstatic.com;
+        https://*.gstatic.com
+        https://script.google.com
+        https://*.script.google.com;
     font-src 'self'
         https://fonts.gstatic.com
         https://fonts.googleapis.com
