@@ -3,23 +3,62 @@ const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQv
 
 // Function to show review section
 // In review-test.js
+// Function to load estimate preview based on estimate ID
+function loadEstimatePreview() {
+    const estimateId = document.getElementById('estimateId').value;
+    if (!estimateId) {
+        alert('Please enter an estimate ID');
+        return;
+    }
+
+    // Show loading state
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame) {
+        previewFrame.srcdoc = '<h3 style="text-align: center">Loading estimate preview...</h3>';
+    }
+
+    // Call Google Apps Script to get the file ID for this estimate ID
+    google.script.run
+        .withSuccessHandler(function(fileId) {
+            if (fileId) {
+                showReviewSection(fileId);
+            } else {
+                previewFrame.srcdoc = '<h3 style="text-align: center">Estimate not found</h3>';
+            }
+        })
+        .withFailureHandler(function(error) {
+            console.error('Error loading estimate:', error);
+            previewFrame.srcdoc = '<h3 style="text-align: center">Error loading estimate</h3>';
+        })
+        .getFileIdForEstimate(estimateId); // You'll need to create this function in your Apps Script
+}
+
+// Function to show review section and set up the iframe
 function showReviewSection(fileId) {
-    // Show the review section
     const reviewSection = document.getElementById('review-section');
     if (reviewSection) {
         reviewSection.style.display = 'block';
         
-        // Get the iframe
         const previewFrame = document.getElementById('estimatePreviewFrame');
         if (previewFrame && fileId) {
-            // Set the iframe src with the file ID
             previewFrame.src = `https://drive.google.com/file/d/${fileId}/preview`;
             console.log('Preview URL set:', previewFrame.src);
-        } else {
-            console.error('Preview frame not found or no file ID provided');
         }
+    }
+}
+
+// Function to go back
+function goBack() {
+    window.history.back();
+}
+
+// Function to share estimate
+function shareEstimate() {
+    const estimateId = document.getElementById('estimateId').value;
+    if (estimateId) {
+        alert(`Share functionality will be implemented for estimate ${estimateId}`);
     } else {
-        console.error('Review section not found');
+        alert('Please load an estimate first');
     }
 }
 
@@ -30,11 +69,6 @@ function handleFormResponse(response) {
     } else {
         console.error('No file ID in response');
     }
-}
-
-// Function to go back
-function goBack() {
-    window.history.back();
 }
 
 // Function to generate preview
@@ -119,11 +153,6 @@ function showError() {
             </html>
         `;
     }
-}
-
-// Function to share estimate
-function shareEstimate() {
-    alert('Share functionality will be implemented');
 }
 
 // Function to go back
