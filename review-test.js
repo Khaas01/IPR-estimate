@@ -1,5 +1,5 @@
 // Configuration (though we won't need this anymore)
- const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTT0sztIHLMHCxH5-RifWwV1o4S2wFryJrk7knKSXV-sCQG3cqICvSIH9m08kUAmBrBw/exec';
+ const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8gpHzgzB8taqbFQ5hozGwdd_HufsBeGzIiHt70eTF-FnkDZ4VhxHcAkKLMxsqwjHzgw/exec';
 
 // Function to display estimate based on file ID input
 function displayEstimate() {
