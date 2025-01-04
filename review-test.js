@@ -89,7 +89,42 @@ function showLoading() {
         `;
     }
 }
+// In review-test.js
+function loadLatestPDF() {
+  showLoading(); // Add a loading indicator if you have one
+  
+  google.script.run
+    .withSuccessHandler(function(result) {
+      if (result.success && result.fileId) {
+        const previewFrame = document.getElementById('estimatePreviewFrame');
+        if (previewFrame) {
+          previewFrame.src = result.previewUrl;
+          console.log('Loading PDF preview:', result.previewUrl);
+        }
+      } else {
+        console.error('Failed to get PDF ID:', result.message);
+        // Handle error - maybe show an error message to user
+      }
+    })
+    .withFailureHandler(function(error) {
+      console.error('Error loading PDF:', error);
+      // Handle error - maybe show an error message to user
+    })
+    .getLatestPdfId();
+}
 
+// Load PDF when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  loadLatestPDF();
+});
+
+// Optionally, add a refresh button
+function addRefreshButton() {
+  const refreshButton = document.createElement('button');
+  refreshButton.textContent = 'Refresh PDF';
+  refreshButton.onclick = loadLatestPDF;
+  document.getElementById('review-section').prepend(refreshButton);
+}
 // Function to hide loading indicator
 function hideLoading() {
     const previewFrame = document.getElementById('estimatePreviewFrame');
