@@ -13,17 +13,6 @@ async function initializeGoogleAPIs() {
     }
 }
 
-function showReviewSection() {
-    const reviewSection = document.getElementById('review-section');
-    if (reviewSection) {
-        reviewSection.style.display = 'block';
-        console.log('Review section displayed');
-        generatePreview();
-    } else {
-        console.error('Review section element not found');
-    }
-}
-
 // Generate preview
 function generatePreview() {
     const previewFrame = document.getElementById('estimatePreviewFrame');
@@ -119,6 +108,13 @@ document.addEventListener('DOMContentLoaded', initializeGoogleAPIs);
 
 // Add this function to be called when showing the review section
 function showReviewSection() {
-    document.getElementById('review-section').style.display = 'block';
-    generatePreview();
+    const reviewSection = document.getElementById('review-section');
+    if (reviewSection) {
+        hideAllSections(); // Add this line to hide other sections
+        reviewSection.style.display = 'block';
+        console.log('Review section displayed');
+        generatePreview();
+    } else {
+        console.error('Review section element not found');
+    }
 }
