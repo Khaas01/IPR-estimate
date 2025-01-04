@@ -32,13 +32,37 @@ function handleAppScriptResponse(response) {
     }
 }
 
-function displayEstimate() {
-    const fileIdInput = document.getElementById('fileIdInput');
-    if (!fileIdInput) {
-        console.error('File ID input not found');
+function displayEstimate(response) {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (!previewFrame) {
+        console.error('Preview frame not found');
         return;
     }
 
+    if (response && response.success) {
+        // Use the pdfUrl directly from the response
+        console.log('Setting preview URL:', response.pdfUrl);
+        previewFrame.src = response.pdfUrl;
+    } else {
+        showError();
+    }
+}
+
+// Add this function to handle the form submission response
+function handleFormSubmissionResponse(responseText) {
+    try {
+        const response = JSON.parse(responseText);
+        if (response.success) {
+            displayEstimate(response);
+        } else {
+            console.error('Form submission failed:', response.message);
+            showError();
+        }
+    } catch (error) {
+        console.error('Error parsing response:', error);
+        showError();
+    }
+}
     const fileId = fileIdInput.value.trim();
     if (!fileId) {
         alert('Please enter a file ID');
