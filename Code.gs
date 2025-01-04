@@ -78,34 +78,33 @@ function doPost(e) {
     Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
 
     // Process form submission and generate PDF
-    // Inside doPost function, update this part:
-try {
-  const submitResult = onFormSubmit({
-    parameter: {
-      data: JSON.stringify({
+    try {
+      const submitResult = onFormSubmit({
         lastRow: lastDatabaseRow,
-        data: {
-          ownerName: formData.data["Owner Name"],
-          ...formData.data
-        }
-      })
+        clientName: formData.data["Owner Name"],
+        clientData: formData.data,
+        estimateWorkbook: estimateWorkbook
+      });
+
+      if (submitResult && submitResult.pdfUrl) {
+        return ContentService.createTextOutput(JSON.stringify({
+          success: true,
+          pdfUrl: submitResult.pdfUrl,
+          fileId: submitResult.fileId, 
+          timestamp: new Date().toISOString()
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+
+      throw new Error('No preview URL generated');
+
+    } catch (submitError) {
+      Logger.log('Warning: onFormSubmit error: ' + submitError.message);
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        message: submitError.message,
+        timestamp: new Date().toISOString()
+      })).setMimeType(ContentService.MimeType.JSON);
     }
-  });
-
-  if (submitResult) {
-    return submitResult; // The response is already formatted in onFormSubmit
-  }
-
-  throw new Error('No response from form submission');
-
-} catch (submitError) {
-  Logger.log('Warning: onFormSubmit error: ' + submitError.message);
-  return ContentService.createTextOutput(JSON.stringify({
-    success: false,
-    message: submitError.message,
-    timestamp: new Date().toISOString()
-  })).setMimeType(ContentService.MimeType.JSON);
-}
 
   } catch (error) {
     Logger.log('Error in doPost: ' + error.message);
@@ -212,12 +211,7 @@ function testRowNumbers() {
 }
 function onFormSubmit(e) {
   try {
-    // Initial document creation
-    const formData = JSON.parse(e.parameter.data);
-    const doc = DocumentApp.create(`Estimate for ${formData.data.ownerName}`);
-    const documentId = doc.getId();
-
-    // Initialize workbooks and sheets
+    // 1. Initialize workbooks and get specific sheets
     var estimateWorkbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
     var databaseSheet = estimateWorkbook.getSheetByName('Database');
     var estimateSheet = estimateWorkbook.getSheetByName('Estimate');
@@ -229,18 +223,17 @@ function onFormSubmit(e) {
       throw new Error('Required sheets not found');
     }
 
-    // Get the last row from Database sheet
+    // 2. Get the last row from Database sheet
     var lastRow = e && e.lastRow ? e.lastRow : findLastRowWithData(databaseSheet);
     Logger.log('Using row number: ' + lastRow);
     
-    // Update Estimate sheet with the row number
+    // Update Estimate sheet again to ensure correct row
     estimateSheet.getRange('K4').setValue(lastRow);
     
-    // Get headers from Database sheet (starting at row 2225)
+    // 3. Get headers from Database sheet (starting at row 2225)
     var headers = databaseSheet.getRange(2225, 1, 1, databaseSheet.getLastColumn()).getValues()[0];
     Logger.log('Headers from Database: ' + headers.join(', '));
 
-    // Function to get column index by header name
     function getColumnByHeader(headerName) {
       var index = headers.indexOf(headerName);
       if (index === -1) {
@@ -249,30 +242,28 @@ function onFormSubmit(e) {
       return index + 1;
     }
 
-    // Get client information from Database sheet
+    // 4. Get client information from Database sheet
     var clientName = databaseSheet.getRange(lastRow, getColumnByHeader("Owner Name")).getValue();
     var clientEmail = databaseSheet.getRange(lastRow, getColumnByHeader("Owner Email")).getValue();
     var salesRepName = databaseSheet.getRange(lastRow, getColumnByHeader("Sales Rep Name")).getValue();
     var companyType = databaseSheet.getRange(lastRow, getColumnByHeader("Company Name")).getValue();
     var senderEmail = 'khaas@ironpeakroofing.com';
 
-    // Log retrieved values for debugging
+    // Log retrieved values
     Logger.log('Retrieved values:');
     Logger.log('Client Name: ' + clientName);
     Logger.log('Client Email: ' + clientEmail);
     Logger.log('Sales Rep Name: ' + salesRepName);
     Logger.log('Company Type: ' + companyType);
 
-    // Prepare email content
+    // 5. Email content
     var subject = clientName + ' - Roofing Estimate';
     var emailBody = 'Dear ' + clientName + ',\n\n' +
                    'Thank you for allowing us the opportunity to assist you with your roofing needs.\n\n' +
                    'Attached is our detailed estimate that addresses the roof repairs as specified. ' +
                    'It includes a breakdown of the repairs and the costs to restore the roof\'s integrity.\n\n' +
-                   'If you have any questions or need clarification, please do not hesitate to reach out. ' +
-                   'My contact information is below. I am here to assist you in any way we can.\n\n' +
-                   'We look forward to working with you on this project and ensuring your roofing needs ' +
-                   'are met with the highest level of quality and service.\n\n' +
+                   'If you have any questions or need clarification, please do not hesitate to reach out. My contact information is below. I am here to assist you in any way we can.\n\n' +
+                   'We look forward to working with you on this project and ensuring your roofing needs are met with the highest level of quality and service.\n\n' +
                    'Best regards,\n\n' +
                    'Kris Haas\n' +
                    'General Manager\n' +
@@ -282,11 +273,10 @@ function onFormSubmit(e) {
                    'khaas@ironpeakroofing.com\n' +
                    'ROC # 355152';
 
-    // Set up PDF generation
+    // 6. PDF Generation
     var folder = DriveApp.getFolderById('13M5SRYJLVSspb9A5-KqrNMVdLsemcRaD');
     var pdfFileName = clientName + ' - Roofing Estimate';
 
-    // Create export URL with options
     var url = 'https://docs.google.com/spreadsheets/d/' + estimateWorkbook.getId() + '/export?';
     var exportOptions = {
       format: 'pdf',
@@ -309,12 +299,10 @@ function onFormSubmit(e) {
       gid: estimateSheet.getSheetId()
     };
 
-    // Build the full URL for PDF export
     var fullUrl = url + Object.keys(exportOptions).map(function(key) {
       return key + '=' + exportOptions[key];
     }).join('&');
 
-    // Get OAuth token and fetch PDF
     var token = ScriptApp.getOAuthToken();
     var response = UrlFetchApp.fetch(fullUrl, {
       headers: {
@@ -322,16 +310,16 @@ function onFormSubmit(e) {
       }
     });
 
-    // Create PDF file in Drive
     var pdfFile = folder.createFile(response.getBlob().setName(pdfFileName + ".pdf"));
     pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-    // Get file ID and create preview URL
+    // Get the file ID and create the embedded preview URL
+    // After creating the PDF file
     var fileId = pdfFile.getId();
     var viewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
-    Logger.log('Generated PDF URL: ' + viewUrl);
+    console.log('Generated PDF URL:', viewUrl); // Debug log
 
-    // Send email with PDF attachment
+    // Send email with the PDF
     MailApp.sendEmail({
       to: senderEmail,
       cc: 'khaas@ironpeakroofing.com',
@@ -340,30 +328,21 @@ function onFormSubmit(e) {
       attachments: [pdfFile.getAs(MimeType.PDF)]
     });
     
-    Logger.log('Email sent successfully with PDF attachment');
+    Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
 
-    // Return success response with all necessary information
-    return ContentService.createTextOutput(JSON.stringify({
+    // Return with URL
+    return {
       success: true,
-      fileId: documentId,
-      pdfId: fileId,
+      message: 'Form submitted successfully',
       pdfUrl: viewUrl,
-      message: 'Document created and email sent successfully',
-      timestamp: new Date().toISOString()
-    })).setMimeType(ContentService.MimeType.JSON);
-
+      fileId: fileId ,
+    };
+   
   } catch (error) {
-    // Log the error details
-    Logger.log('Error in onFormSubmit: ' + error.toString());
-    Logger.log('Error stack: ' + error.stack);
-
-    // Return error response
-    return ContentService.createTextOutput(JSON.stringify({
+    Logger.log('Error: ' + error.toString());
+    return {
       success: false,
-      error: error.toString(),
-      message: 'Failed to process form submission',
-      timestamp: new Date().toISOString(),
-      stack: error.stack
-    })).setMimeType(ContentService.MimeType.JSON);
+      message: error.toString()
+    };
   }
 }
