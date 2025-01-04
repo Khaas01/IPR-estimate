@@ -2,6 +2,7 @@
  const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQvZe_M3i30mHZLNOsZX87r_mcqAio48Ik1kztAa7UA6HEKOM9dnIppOiyCF5uWQ/exec';
 
 // Function to display estimate based on file ID input
+// Function to display estimate based on file ID input
 function displayEstimate() {
     const fileIdInput = document.getElementById('fileIdInput');
     if (!fileIdInput) {
@@ -21,20 +22,21 @@ function displayEstimate() {
         return;
     }
 
-    // Show loading state
-    showLoading();
-
-    // Set the iframe properties
-    previewFrame.width = '100%';
-    previewFrame.height = '600px';
-    previewFrame.style.border = 'none';
-    previewFrame.style.display = 'block'; // Ensure iframe is visible
-    
-    // Construct and set the URL
+    // Directly set the src attribute with the Google Drive URL
     const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
     console.log('Setting preview URL:', previewUrl);
     previewFrame.src = previewUrl;
 }
+
+// Function to go back
+function goBack() {
+    window.history.back();
+}
+
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded');
+});
 
 // Make sure your HTML iframe has these attributes:
 // <iframe id="estimatePreviewFrame" 
