@@ -14,7 +14,7 @@ async function initializeGoogleAPIs() {
         // Wait for the Google API client library to load
         await new Promise((resolve) => gapi.load('client', resolve));
 
-        // Initialize GAPI client
+        // Initialize GAPI client with only API key
         await gapi.client.init({
             apiKey: API_KEY,
             discoveryDocs: [
@@ -23,8 +23,6 @@ async function initializeGoogleAPIs() {
             ]
         });
 
-        // Initialize authentication
-        await initializeAuth();
         console.log('APIs initialized successfully');
         
         // For testing: Generate a sample preview
@@ -33,34 +31,6 @@ async function initializeGoogleAPIs() {
         console.error('API initialization error:', error);
         handleApiError(error);
     }
-}
-
-// Initialize authentication
-async function initializeAuth() {
-    try {
-        const tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: CLIENT_ID,
-            scope: SCOPES,
-            callback: handleAuthResponse
-        });
-
-        if (!gapi.client.getToken()) {
-            tokenClient.requestAccessToken({ prompt: 'consent' });
-        }
-    } catch (error) {
-        console.error('Auth initialization error:', error);
-        handleApiError(error);
-    }
-}
-
-// Handle authentication response
-function handleAuthResponse(response) {
-    if (response.error) {
-        console.error('Auth error:', response.error);
-        alert('Authentication failed. Please try again.');
-        return;
-    }
-    console.log('Successfully authenticated');
 }
 
 // Generate preview (test function)
@@ -74,12 +44,25 @@ function generatePreview() {
     // Show loading state
     showLoading();
 
-    // Simulate API call to get PDF URL
-    setTimeout(() => {
-        // For testing, we'll create a sample embedded PDF viewer
-        const testPdfUrl = 'https://docs.google.com/spreadsheets/d/e/YOUR_SHEET_ID/pub?output=pdf';
-        displayPDFPreview(testPdfUrl);
-    }, 2000);
+    // Make request to your Google Apps Script endpoint
+    fetch(GOOGLE_APPS_SCRIPT_URL, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.pdfUrl) {
+            displayPDFPreview(data.pdfUrl);
+        } else {
+            throw new Error('No PDF URL received');
+        }
+    })
+    .catch(error => {
+        console.error('Preview generation error:', error);
+        showError();
+    });
 }
 
 // Display PDF preview
