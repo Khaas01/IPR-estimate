@@ -722,12 +722,17 @@
 <div id="review-section" style="display:block;">
     <h2>Review Your Estimate</h2>
     <div class="review-instructions">
-        <p>Please review your estimate below. You can go back to make changes if needed.</p>
+        <p>Please review your estimate below.</p>
+        <div class="estimate-id-input">
+            <label for="estimateId">Enter Estimate ID:</label>
+            <input type="text" id="estimateId" name="estimateId" placeholder="Enter estimate number">
+            <button type="button" onclick="loadEstimatePreview()">Load Estimate</button>
+        </div>
     </div>
     <iframe id="estimatePreviewFrame" style="width: 100%; height: 600px; border: none; margin-bottom: 20px;"></iframe>
-    <div id="navigationButtons" style="display: flex; justify-content: space-between; padding: 20px;">
-        <button type="button" onclick="goBack()" style="padding: 10px 20px; cursor: pointer;">Back</button>
-        <button type="button" onclick="shareEstimate()" class="share-button" style="padding: 10px 20px; cursor: pointer; background-color: #4CAF50; color: white; border: none; border-radius: 4px;">Share</button>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="shareEstimate()" class="share-button">Share</button>
     </div>
 </div>
 </form>
