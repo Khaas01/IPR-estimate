@@ -2,6 +2,27 @@
  const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXqfOtVpNsmkk1U6LsBU1FtmsR_6BK8tcgr00lRFD_LLsAvmWXB0bJVCEPfS9blbVFoQ/exec';
 
 // Function to display estimate based on file ID input
+// Add this function to review-test.js
+function getPDFUrlFromLog(executionLog) {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (!previewFrame) {
+        console.error('Preview frame not found');
+        return;
+    }
+
+    // Extract the file ID from the execution log
+    // Assuming the log contains the file ID in some format
+    const fileId = executionLog.fileId; // Adjust based on your log structure
+    
+    if (fileId) {
+        const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+        console.log('Setting preview URL:', previewUrl);
+        previewFrame.src = previewUrl;
+    } else {
+        showError();
+    }
+}
+
 function displayEstimate() {
     const fileIdInput = document.getElementById('fileIdInput');
     if (!fileIdInput) {
