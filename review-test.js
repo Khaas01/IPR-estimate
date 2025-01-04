@@ -13,6 +13,17 @@ async function initializeGoogleAPIs() {
     }
 }
 
+function showReviewSection() {
+    const reviewSection = document.getElementById('review-section');
+    if (reviewSection) {
+        reviewSection.style.display = 'block';
+        console.log('Review section displayed');
+        generatePreview();
+    } else {
+        console.error('Review section element not found');
+    }
+}
+
 // Generate preview
 function generatePreview() {
     const previewFrame = document.getElementById('estimatePreviewFrame');
