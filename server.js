@@ -1,10 +1,15 @@
 const express = require('express');
+const cors = require('cors');
 const { google } = require('googleapis');
 const fs = require('fs');
 const path = require('path');
 
 const app = express();
 const port = 3000;
+
+app.use(cors({
+    origin: 'https://khaas01.github.io'
+}));
 
 async function getDecodedServiceAccountCredentials() {
     const base64Content = fs.readFileSync(path.resolve(__dirname, 'service-account-base64.txt'), 'utf8');
@@ -29,7 +34,6 @@ async function listFiles() {
     return res.data.files;
 }
 
-// Add this route to handle GET requests to the root URL
 app.get('/', (req, res) => {
     res.send('Welcome to the IPR Roofing Estimate Form API');
 });
