@@ -1,5 +1,5 @@
 // Configuration
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXqfOtVpNsmkk1U6LsBU1FtmsR_6BK8tcgr00lRFD_LLsAvmWXB0bJVCEPfS9blbVFoQ/exec';
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCghxJL8Upfc5GF-6RcZPzQCC1ZAJv12dcShQBeCF5P8ri8Q8bIkihr9pa386mt-qWNA/exec';
 
 // Function to handle the PDF display
 function displayEstimate(response) {
