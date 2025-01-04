@@ -23,6 +23,15 @@ function getPDFUrlFromLog(executionLog) {
     }
 }
 
+// Add this to review-test.js
+function handleAppScriptResponse(response) {
+    if (response && response.success && response.fileId) {
+        getPDFUrlFromLog({fileId: response.fileId});
+    } else {
+        showError();
+    }
+}
+
 function displayEstimate() {
     const fileIdInput = document.getElementById('fileIdInput');
     if (!fileIdInput) {
