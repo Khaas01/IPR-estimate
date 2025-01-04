@@ -12,42 +12,19 @@
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
  <script>
-        async function fetchFiles() {
-            try {
-                // Update the URL to point to your backend server
-                const response = await fetch('https://github.com/Khaas01/IPR-estimate');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const files = await response.json();
-                displayFiles(files);
-            } catch (error) {
-                console.error('Error fetching files:', error);
-            }
-        }
-
-        function displayFiles(files) {
-            const container = document.getElementById('pdf-previews');
-            files.forEach(file => {
-                const iframe = document.createElement('iframe');
-                iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
-                iframe.width = '600px';
-                iframe.height = '400px';
-                container.appendChild(iframe);
-            });
-        }
-
-        fetchFiles();
-    </script>
-
-    
-    <!-- Load Custom Script -->
+      <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="same-origin">
+    <title>Iron Peak Roofing - Estimate Form</title>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
     <script src="script.js" defer></script>
-
-    <!-- Content Security Policy -->
- <meta http-equiv="Content-Security-Policy" content="
+    <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    
     script-src 'self' 'unsafe-inline' 'unsafe-eval'
         https://apis.google.com
         https://*.googleapis.com
@@ -57,19 +34,16 @@
         https://www.google.com
         https://github.com/Khaas01/IPR-estimate
         http://localhost:3000/;
-    
     style-src 'self' 'unsafe-inline'
         https://fonts.googleapis.com
         https://www.gstatic.com
         https://apis.google.com;
-    
     img-src 'self' data: blob:
         https://i.imgur.com
         https://*.googleapis.com
         https://*.gstatic.com
         https://*.google.com
         https://*.googleusercontent.com;
-    
     connect-src 'self'
         https://apis.google.com
         https://*.googleapis.com
@@ -81,7 +55,6 @@
         https://content-sheets.googleapis.com
         https://content.googleapis.com
         http://localhost:3000/;
-    
     frame-src 'self'
         https://accounts.google.com
         https://*.googleapis.com
@@ -89,33 +62,78 @@
         https://content.googleapis.com
         https://www.google.com
         https://*.gstatic.com;
-    
     font-src 'self'
         https://fonts.gstatic.com
         https://fonts.googleapis.com
         https://www.gstatic.com;
-    
     worker-src 'self' blob:;
-    
     child-src 'self' blob:;
-    
     media-src 'self' blob:;
-    
     object-src 'none';
-    
     base-uri 'self';
-    
     form-action 'self'
         https://accounts.google.com
         https://*.googleapis.com;">
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://i.imgur.com/kj09wS4.png">
-    <link rel="shortcut icon" type="image/png" href="https://i.imgur.com/kj09wS4.png">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Iron Peak Roofing - Estimate Form</h1>
+    <form id="estimate-form">
+        <label for="owner-name">Owner Name:</label>
+        <input type="text" id="owner-name" name="ownerName" required>
+        <!-- Add other form fields as needed -->
+        <button type="submit">Submit</button>
+    </form>
 
-    <!-- Inline styles -->
+    <div id="pdf-previews"></div>
+
+    <script>
+        document.getElementById('estimate-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Capture form data
+            const formData = {
+                data: {
+                    "Owner Name": document.getElementById('owner-name').value,
+                    // Add other form fields as needed
+                }
+            };
+
+            // Call the function to submit form data and display PDF
+            await submitFormAndDisplayPDF(formData);
+        });
+
+        async function submitFormAndDisplayPDF(formData) {
+            try {
+                const response = await fetch('http://localhost:3000/submit-form', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                if (data.success) {
+                    displayPDF(data.pdfUrl);
+                } else {
+                    console.error('Error in form submission:', data.message);
+                }
+            } catch (error) {
+                console.error('Error submitting form:', error);
+            }
+        }
+
+        function displayPDF(pdfUrl) {
+            const container = document.getElementById('pdf-previews');
+            const iframe = document.createElement('iframe');
+            iframe.src = pdfUrl;
+            iframe.width = '600px';
+            iframe.height = '400px';
+            container.appendChild(iframe);
+        }
+    </script>
     <style>  
         @media (forced-colors: active) {
             .preview-fallback {
