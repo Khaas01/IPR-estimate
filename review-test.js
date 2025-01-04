@@ -1,20 +1,15 @@
 // Configuration
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQvZe_M3i30mHZLNOsZX87r_mcqAio48Ik1kztAa7UA6HEKOM9dnIppOiyCF5uWQ/exec';
 
-// Initialize Google APIs
-async function initializeGoogleAPIs() {
-    try {
-        // No need for OAuth since we're using service account
-        console.log('APIs initialized successfully');
-        // We'll call generatePreview only when needed, not automatically
-    } catch (error) {
-        console.error('API initialization error:', error);
-        handleApiError(error);
-    }
-}
+// When the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, generating preview...');
+    generatePreview();
+});
 
 // Generate preview
 function generatePreview() {
+    console.log('Generating preview...');
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (!previewFrame) {
         console.error('Preview frame not found');
@@ -71,6 +66,7 @@ function showLoading() {
             <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
                 <div style="text-align: center;">
                     <div style="margin-bottom: 20px;">Loading preview...</div>
+                    <div class="spinner"></div>
                 </div>
             </body>
             </html>
@@ -103,18 +99,12 @@ function showError() {
     }
 }
 
-// Initialize when the page loads
-document.addEventListener('DOMContentLoaded', initializeGoogleAPIs);
+// Placeholder for share function
+function shareEstimate() {
+    alert('Share functionality will be implemented here');
+}
 
-// Add this function to be called when showing the review section
-function showReviewSection() {
-    const reviewSection = document.getElementById('review-section');
-    if (reviewSection) {
-        hideAllSections(); // Add this line to hide other sections
-        reviewSection.style.display = 'block';
-        console.log('Review section displayed');
-        generatePreview();
-    } else {
-        console.error('Review section element not found');
-    }
+// Placeholder for back function
+function goBack() {
+    window.history.back();
 }
