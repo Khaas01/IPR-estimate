@@ -662,7 +662,7 @@
 </div>
 
  -->
-<div id="review-section" style="display:block;">
+<div id="review-section">
     <h2>Review Your Estimate</h2>
     <div class="review-instructions">
         <p>Please review your estimate below.</p>
@@ -671,21 +671,16 @@
             <button onclick="displayEstimate()">Display Estimate</button>
         </div>
     </div>
+    
     <iframe id="estimatePreviewFrame" 
             style="width: 100%; 
                    height: 600px; 
                    border: none; 
                    margin-bottom: 20px;">
     </iframe>
+    
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="shareEstimate()" class="share-button">Share</button>
-    </div>
-</div>
-    <iframe id="estimatePreviewFrame" style="width: 100%; height: 600px; border: none; margin-bottom: 20px;"></iframe>
-    <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="shareEstimate()" class="share-button">Share</button>
     </div>
 </div>
 </form>
