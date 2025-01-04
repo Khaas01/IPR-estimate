@@ -481,17 +481,20 @@ function submitForm() {
                         data: formData
                     })
                 })
-                .then(response => {
-                    if (response.type === 'opaque') {
-                        // no-cors mode returns an opaque response
-                        return { success: true };
-                    }
-                    return response.json();
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    throw new Error('Failed to submit form: ' + error.message);
-                })
+  
+.then(response => {
+    hideLoading();
+    if (response.success) {
+        // Redirect to review page with file ID
+        window.location.href = `review-test.html?id=${response.fileId}`;
+    }
+    return response;
+})
+.catch(error => {
+    console.error('Error:', error);
+    hideLoading();
+    throw error;
+});
                 .finally(() => {
                     isSubmitting = false;
                     hideLoading();
