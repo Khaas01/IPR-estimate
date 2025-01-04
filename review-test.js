@@ -29,8 +29,15 @@ async function getLatestPdfId() {
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
-        previewFrame.src = `https://drive.google.com/file/${pdfId}/preview`;
-        console.log('PDF preview loaded:', pdfId);
+        // Make sure to properly format the Google Drive preview URL
+        const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
+        console.log('Setting preview URL:', previewUrl);
+        previewFrame.src = previewUrl;
+        
+        // Add load event listener to verify iframe loads correctly
+        previewFrame.onload = () => {
+            console.log('Preview frame loaded successfully');
+        };
     } else {
         console.error('Preview frame not found or invalid PDF ID');
         showError();
@@ -74,6 +81,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     try {
         const pdfId = await getLatestPdfId();
+        console.log('Retrieved PDF ID:', pdfId); // Debug log
+        
         if (pdfId) {
             displayPDF(pdfId);
         } else {
