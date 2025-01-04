@@ -2,7 +2,6 @@
  const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTT0sztIHLMHCxH5-RifWwV1o4S2wFryJrk7knKSXV-sCQG3cqICvSIH9m08kUAmBrBw/exec';
 
 // Function to display estimate based on file ID input
-// Function to display estimate based on file ID input
 function displayEstimate() {
     const fileIdInput = document.getElementById('fileIdInput');
     if (!fileIdInput) {
@@ -38,13 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Page loaded');
 });
 
-// Make sure your HTML iframe has these attributes:
-// <iframe id="estimatePreviewFrame" 
-//         width="100%" 
-//         height="600px" 
-//         style="border: none; display: block;" 
-//         allowfullscreen>
-// </iframe>
 // Function to show review section and set up the iframe
 function showReviewSection() {
     const reviewSection = document.getElementById('review-section');
