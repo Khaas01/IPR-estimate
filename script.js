@@ -5,7 +5,7 @@ let gisInited = false;
 let sectionHistory = []; // Initialize sectionHistory
 
 // API configuration constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTT0sztIHLMHCxH5-RifWwV1o4S2wFryJrk7knKSXV-sCQG3cqICvSIH9m08kUAmBrBw/exec';
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8gpHzgzB8taqbFQ5hozGwdd_HufsBeGzIiHt70eTF-FnkDZ4VhxHcAkKLMxsqwjHzgw/exec';
 const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
 const CLIENT_ID = '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com';
 const REDIRECT_URI = 'https://khaas01.github.io'; 
