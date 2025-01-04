@@ -49,12 +49,19 @@ function showError() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // First check if we already have an ID in the URL
     const urlParams = new URLSearchParams(window.location.search);
     const pdfId = urlParams.get('id');
     
     if (pdfId) {
+        // If we have an ID, display the PDF
         const previewFrame = document.getElementById('estimatePreviewFrame');
-        previewFrame.src = `https://drive.google.com/file/${pdfId}/preview`;
+        if (previewFrame) {
+            previewFrame.src = `https://drive.google.com/file/${pdfId}/preview`;
+        }
+    } else {
+        // If we don't have an ID, redirect to the Apps Script
+        window.location.href = 'https://script.google.com/macros/s/AKfycbyL6ioIoHwW9ydFNN8fD-Dfmospk11aWB-U8kgsKRpli_sdQ-AYt6gMBQsvquden91JsQ/exec';
     }
 });
 // Function to get latest PDF ID and display it
