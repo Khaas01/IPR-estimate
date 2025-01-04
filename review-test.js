@@ -1,39 +1,19 @@
 // Configuration
-// Add this constant at the top with your other configuration constants
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7X5KQvZe_M3i30mHZLNOsZX87r_mcqAio48Ik1kztAa7UA6HEKOM9dnIppOiyCF5uWQ/exec';
-const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
-const CLIENT_ID = '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.c';
-const SCOPES = [
-    'https://www.googleapis.com/auth/drive',
-    'https://www.googleapis.com/auth/spreadsheets'
-].join(' ');
 
 // Initialize Google APIs
 async function initializeGoogleAPIs() {
     try {
-        // Wait for the Google API client library to load
-        await new Promise((resolve) => gapi.load('client', resolve));
-
-        // Initialize GAPI client with only API key
-        await gapi.client.init({
-            apiKey: API_KEY,
-            discoveryDocs: [
-                'https://sheets.googleapis.com/$discovery/rest?version=v4',
-                'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-            ]
-        });
-
+        // No need for OAuth since we're using service account
         console.log('APIs initialized successfully');
-        
-        // For testing: Generate a sample preview
-        generatePreview();
+        // We'll call generatePreview only when needed, not automatically
     } catch (error) {
         console.error('API initialization error:', error);
         handleApiError(error);
     }
 }
 
-// Generate preview (test function)
+// Generate preview
 function generatePreview() {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (!previewFrame) {
@@ -41,28 +21,28 @@ function generatePreview() {
         return;
     }
 
-    // Show loading state
     showLoading();
 
-    // Make request to your Google Apps Script endpoint
-    fetch(GOOGLE_APPS_SCRIPT_URL, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.pdfUrl) {
-            displayPDFPreview(data.pdfUrl);
+    // Use JSONP to handle the cross-origin request
+    const script = document.createElement('script');
+    const callbackName = 'handlePreviewResponse_' + Date.now();
+
+    // Define the callback function
+    window[callbackName] = function(response) {
+        if (response.success && response.pdfUrl) {
+            displayPDFPreview(response.pdfUrl);
         } else {
-            throw new Error('No PDF URL received');
+            console.error('Failed to get PDF URL:', response.message);
+            showError();
         }
-    })
-    .catch(error => {
-        console.error('Preview generation error:', error);
-        showError();
-    });
+        // Clean up
+        document.body.removeChild(script);
+        delete window[callbackName];
+    };
+
+    // Construct URL with callback
+    script.src = `${GOOGLE_APPS_SCRIPT_URL}?callback=${callbackName}`;
+    document.body.appendChild(script);
 }
 
 // Display PDF preview
@@ -75,19 +55,10 @@ function displayPDFPreview(pdfUrl) {
 
     console.log('Setting preview URL:', pdfUrl);
     
-    // Show loading state
-    showLoading();
+    previewFrame.onload = hideLoading;
+    previewFrame.onerror = showError;
     
-    previewFrame.onload = function() {
-        hideLoading();
-        console.log('Preview loaded successfully');
-    };
-    
-    previewFrame.onerror = function(error) {
-        console.error('Preview failed to load:', error);
-        showError();
-    };
-    
+    // Set the src to the Google Drive preview URL
     previewFrame.src = pdfUrl;
 }
 
@@ -100,7 +71,6 @@ function showLoading() {
             <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
                 <div style="text-align: center;">
                     <div style="margin-bottom: 20px;">Loading preview...</div>
-                    <div class="spinner"></div>
                 </div>
             </body>
             </html>
@@ -125,7 +95,7 @@ function showError() {
             <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
                 <div style="color: red; text-align: center;">
                     Error loading preview. Please try again.<br>
-                    <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px;">Retry</button>
+                    <button onclick="window.parent.location.reload()" style="margin-top: 20px; padding: 10px 20px;">Retry</button>
                 </div>
             </body>
             </html>
@@ -133,11 +103,11 @@ function showError() {
     }
 }
 
-// Share estimate function
-function shareEstimate() {
-    // Implement sharing functionality
-    alert('Share functionality will be implemented here');
-}
-
 // Initialize when the page loads
 document.addEventListener('DOMContentLoaded', initializeGoogleAPIs);
+
+// Add this function to be called when showing the review section
+function showReviewSection() {
+    document.getElementById('review-section').style.display = 'block';
+    generatePreview();
+}
