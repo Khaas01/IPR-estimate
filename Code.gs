@@ -320,7 +320,23 @@ function onFormSubmit(e) {
     var fileId = pdfFile.getId();
     var viewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
     console.log('Generated PDF URL:', viewUrl); // Debug log
-
+ // Return success response with file ID
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      fileId: documentId,
+      message: 'Document created successfully'
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    // Return error response
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+  }
+}
 return {
     success: true,
     message: 'Form submitted successfully',
