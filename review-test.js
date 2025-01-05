@@ -26,24 +26,37 @@ async function getLatestPdfId() {
 }
 
 // Function to display the PDF
+// Function to display the PDF
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
-        // Make sure to properly format the Google Drive preview URL
-        const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
-        console.log('Setting preview URL:', previewUrl);
-        previewFrame.src = previewUrl;
+        // Clean up the PDF ID by removing any extra characters
+        const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
+        const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
         
-        // Add load event listener to verify iframe loads correctly
+        console.log('Clean PDF ID:', cleanPdfId);
+        console.log('Setting preview URL:', previewUrl);
+        
+        // Set the source and add error handling
+        previewFrame.onerror = () => {
+            console.error('Failed to load preview frame');
+            showError();
+        };
+        
         previewFrame.onload = () => {
             console.log('Preview frame loaded successfully');
+            // Remove loading message if present
+            previewFrame.srcdoc = '';
         };
+
+        previewFrame.src = previewUrl;
     } else {
         console.error('Preview frame not found or invalid PDF ID');
         showError();
     }
 }
 
+// Rest of your code remains the same...
 // Function to show loading state
 function showLoading() {
     const previewFrame = document.getElementById('estimatePreviewFrame');
