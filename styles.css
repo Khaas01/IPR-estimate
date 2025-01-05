@@ -2,6 +2,16 @@
 * {
     box-sizing: border-box;
 }
+#estimatePreviewFrame {
+    width: 100%;
+    height: 1000px;
+    max-height: calc(100vh - 200px); /* Adjusts height based on viewport, leaving space for headers/buttons */
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    display: block;
+    margin: 0 auto;
+}
 
 /* Add these styles to your styles.css */
 #review-section {
