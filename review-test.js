@@ -30,6 +30,21 @@ function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
         const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
+        
+        // Add error handling for iframe load
+        previewFrame.onerror = () => {
+            console.error('Failed to load preview');
+        };
+        
+        previewFrame.onload = () => {
+            console.log('Preview loaded successfully');
+            // Adjust container height if needed
+            const container = previewFrame.parentElement;
+            if (container) {
+                container.style.height = `${previewFrame.contentWindow.document.body.scrollHeight}px`;
+            }
+        };
+
         previewFrame.src = previewUrl;
     }
 }
