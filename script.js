@@ -131,7 +131,92 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Google APIs are not loaded correctly');
         handleApiError(new Error('Google APIs failed to load'));
     }
+async function getLatestPdfId() {
+    try {
+        const response = await fetch(`${API_ENDPOINT}?key=${API_KEY}`);
+        const data = await response.json();
+        
+        if (data.values && data.values.length > 0) {
+            const headers = data.values[0];
+            const pdfIdColumnIndex = headers.indexOf('PDF_ID');
+            
+            if (pdfIdColumnIndex !== -1) {
+                const lastRow = data.values[data.values.length - 1];
+                return lastRow[pdfIdColumnIndex];
+            }
+        }
+        throw new Error('PDF ID not found in spreadsheet');
+    } catch (error) {
+        console.error('Error fetching PDF ID:', error);
+        return null;
+    }
+}
 
+function displayPDF(pdfId) {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame && pdfId) {
+        // Clean up the PDF ID by removing any extra characters
+        const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
+        const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
+        
+        console.log('Clean PDF ID:', cleanPdfId);
+        console.log('Setting preview URL:', previewUrl);
+
+        // Set necessary attributes for Google Drive embedding
+        previewFrame.setAttribute('allowfullscreen', 'true');
+        previewFrame.setAttribute('allow', 'autoplay');
+        
+        // Remove any previous content and listeners
+        previewFrame.onload = null;
+        previewFrame.onerror = null;
+        
+        // Set new event listeners
+        previewFrame.onerror = () => {
+            console.error('Failed to load preview frame');
+            showError();
+        };
+        
+        previewFrame.onload = () => {
+            console.log('Preview frame loaded successfully');
+            // Don't clear srcdoc here as it might cause the frame to reload
+        };
+
+        // Set the source
+        if (previewFrame.src !== previewUrl) {
+            previewFrame.src = previewUrl;
+        }
+    } else {
+        console.error('Preview frame not found or invalid PDF ID');
+        showError();
+    }
+}
+
+function handlePreviewError() {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'preview-error';
+    errorMessage.innerHTML = `
+        <p>Unable to load preview. Please try:</p>
+        <ul>
+            <li>Refreshing the page</li>
+            <li>Checking your internet connection</li>
+            <li>Ensuring you have access to this document</li>
+        </ul>
+    `;
+    previewFrame.parentNode.insertBefore(errorMessage, previewFrame);
+}
+
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        const pdfId = await getLatestPdfId();
+        if (pdfId) {
+            displayPDF(pdfId);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
     // Initialize form sections
     hideAllSections();
     showSection(sectionHistory[0]);
@@ -761,8 +846,19 @@ function navigateFromAdditionalCharges() {
 // Navigate from Solar section
 function nextFromSolar() {
     submitForm()
-        .then(() => {
-            showReviewSection(); // Change this to call showReviewSection instead of showSection
+        .then(async () => {
+            try {
+                const pdfId = await getLatestPdfId();
+                if (pdfId) {
+                    showSection('review-section');
+                    displayPDF(pdfId);
+                } else {
+                    throw new Error('Could not get PDF ID');
+                }
+            } catch (error) {
+                console.error('Error showing review:', error);
+                alert('There was an error displaying the preview. Please try again.');
+            }
         })
         .catch(error => {
             console.error('Error submitting form:', error);
