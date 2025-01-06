@@ -4,15 +4,17 @@ let gapiInited = false;
 let gisInited = false;
 let sectionHistory = []; // Initialize sectionHistory
 
-// API configuration constants
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLGhLt_NP4a3jYi-SxErs2-e6IqWdA_Jz-6hQQBSEwx_ahm4zuPaxdv148sHmpmfl98A/exec';
-const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
-const CLIENT_ID = '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com';
-const REDIRECT_URI = 'https://khaas01.github.io';
-const SCOPES = [
-    'https://www.googleapis.com/auth/drive',
-    'https://www.googleapis.com/auth/spreadsheets'
-].join(' ');
+// Centralized API configuration
+const API_CONFIG = {
+    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzLGhLt_NP4a3jYi-SxErs2-e6IqWdA_Jz-6hQQBSEwx_ahm4zuPaxdv148sHmpmfl98A/exec',
+    API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
+    CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
+    REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
+    SCOPES: [
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/spreadsheets'
+    ].join(' ')
+};
 
 // Function to fetch and decode the Base64-encoded service account content
 async function getDecodedServiceAccountCredentials() {
@@ -32,17 +34,14 @@ async function getDecodedServiceAccountCredentials() {
 
 async function initializeGoogleAPIs() {
     try {
-        // First check if required objects exist
         if (typeof gapi === 'undefined') {
             throw new Error('Google API client library not loaded');
         }
 
-        // Load the required Google API client library parts
         await new Promise((resolve) => {
             gapi.load('client:auth2', resolve);
         });
 
-        // Initialize the client with your credentials
         await gapi.client.init({
             apiKey: API_CONFIG.API_KEY,
             clientId: API_CONFIG.CLIENT_ID,
@@ -53,12 +52,44 @@ async function initializeGoogleAPIs() {
             scope: API_CONFIG.SCOPES
         });
 
-        // Rest of your initialization code...
+        // Initialize GIS
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: API_CONFIG.CLIENT_ID,
+            scope: API_CONFIG.SCOPES,
+            callback: handleAuthResponse,
+            prompt: 'consent',
+            error_callback: (err) => {
+                console.error('TokenClient Error:', err);
+                handleApiError(err);
+            }
+        });
+
+        gapiInited = true;
+        gisInited = true;
+        console.log('APIs initialized successfully');
+
+        return true;
     } catch (error) {
-        console.error('Detailed API initialization error:', error);
+        console.error('API initialization error:', error);
         handleApiError(error);
         return false;
     }
+}
+
+// Update handleApiError to be more informative
+function handleApiError(error) {
+    console.error('API Error:', error);
+    let errorMessage = 'An error occurred. ';
+    
+    if (error.error === 'popup_blocked_by_browser') {
+        errorMessage += 'Please allow popups for this site and try again.';
+    } else if (error.error === 'redirect_uri_mismatch') {
+        errorMessage += 'Authentication configuration error. Please contact support.';
+    } else {
+        errorMessage += 'Please try again later.';
+    }
+    
+    alert(errorMessage);
 }
 
 function handleAuthClick() {
@@ -551,7 +582,7 @@ function submitForm() {
 
                 console.log('Sending structured form data:', formData);
 
-                return fetch(GOOGLE_APPS_SCRIPT_URL, {
+               return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
     method: 'POST',
     mode: 'no-cors',
     credentials: 'omit',
