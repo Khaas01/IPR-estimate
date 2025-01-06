@@ -32,20 +32,29 @@ async function getLatestPdfId() {
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
-        // Direct preview URL that doesn't require authentication
-        const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
+        // Add sandbox attributes to prevent additional resource loading
+        previewFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-presentation allow-top-navigation');
         
-        // Set minimal required attributes
-        previewFrame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
-        previewFrame.setAttribute('allowfullscreen', 'true');
+        // Remove any existing event listeners
+        previewFrame.onload = null;
+        previewFrame.onerror = null;
         
-        // Set the source
-        previewFrame.src = previewUrl;
+        // Clear any existing content
+        previewFrame.src = 'about:blank';
         
-        // Simple load monitoring
-        previewFrame.onload = () => {
-            console.log('Preview frame loaded successfully');
-        };
+        // Set up minimal attributes
+        previewFrame.setAttribute('loading', 'lazy');
+        previewFrame.setAttribute('referrerpolicy', 'no-referrer');
+        
+        // Small delay before setting the actual URL to ensure clean state
+        setTimeout(() => {
+            const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
+            previewFrame.src = previewUrl;
+            
+            previewFrame.onload = () => {
+                console.log('Preview loaded successfully');
+            };
+        }, 100);
     }
 }
 
