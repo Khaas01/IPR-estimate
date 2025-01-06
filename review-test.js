@@ -28,10 +28,16 @@ async function getLatestPdfId() {
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
-        const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
+        // Add timestamp to prevent caching
+        const timestamp = new Date().getTime();
+        const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview?t=${timestamp}`;
+        
+        previewFrame.setAttribute('loading', 'lazy');
+        previewFrame.setAttribute('importance', 'high');
+        previewFrame.setAttribute('referrerpolicy', 'no-referrer');
+        
         previewFrame.src = previewUrl;
         
-        // Simple load handler
         previewFrame.onload = () => {
             console.log('Preview loaded successfully');
         };
