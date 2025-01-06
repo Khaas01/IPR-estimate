@@ -32,38 +32,29 @@ async function getLatestPdfId() {
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
-        // Add sandbox attributes to prevent additional resource loading
-        previewFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms');
+        // Clean up the PDF ID by removing any extra characters
+        const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
+        const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
         
-        // Remove any existing event listeners
-        previewFrame.onload = null;
-        previewFrame.onerror = null;
+        console.log('Clean PDF ID:', cleanPdfId);
+        console.log('Setting preview URL:', previewUrl);
         
-        // Clear any existing content
-        previewFrame.src = 'about:blank';
+        // Set the source and add error handling
+        previewFrame.onerror = () => {
+            console.error('Failed to load preview frame');
+            showError();
+        };
         
-        // Set up minimal attributes
-        previewFrame.setAttribute('loading', 'lazy');
-        previewFrame.setAttribute('referrerpolicy', 'no-referrer');
-        
-        // Small delay before setting the actual URL to ensure clean state
-        setTimeout(() => {
-            const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
-            previewFrame.src = previewUrl;
-            
-            previewFrame.onload = () => {
-                console.log('Preview loaded successfully');
-                // Remove any Google-specific scripts that might have been injected
-                try {
-                    const frame = previewFrame.contentWindow;
-                    if (frame) {
-                        frame.stop(); // Stop any pending resource loads
-                    }
-                } catch (e) {
-                    // Ignore cross-origin errors
-                }
-            };
-        }, 100);
+        previewFrame.onload = () => {
+            console.log('Preview frame loaded successfully');
+            // Remove loading message if present
+            previewFrame.srcdoc = '';
+        };
+
+        previewFrame.src = previewUrl;
+    } else {
+        console.error('Preview frame not found or invalid PDF ID');
+        showError();
     }
 }
 
