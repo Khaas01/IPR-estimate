@@ -27,40 +27,53 @@ async function getLatestPdfId() {
 
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame && pdfId) {
-        // Add sandbox attributes to prevent additional resource loading
-        previewFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms');
-        
-        // Remove any existing event listeners
-        previewFrame.onload = null;
-        previewFrame.onerror = null;
-        
-        // Clear any existing content
-        previewFrame.src = 'about:blank';
-        
-        // Set up minimal attributes
+    if (!previewFrame) {
+        console.error('Preview frame not found');
+        return;
+    }
+
+    try {
+        // Set up the frame with necessary attributes
+        previewFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-presentation allow-top-navigation');
         previewFrame.setAttribute('loading', 'lazy');
         previewFrame.setAttribute('referrerpolicy', 'no-referrer');
         
-        // Small delay before setting the actual URL to ensure clean state
-        setTimeout(() => {
-            const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
-            previewFrame.src = previewUrl;
-            
-            previewFrame.onload = () => {
-                console.log('Preview loaded successfully');
-                // Remove any Google-specific scripts that might have been injected
-                try {
-                    const frame = previewFrame.contentWindow;
-                    if (frame) {
-                        frame.stop(); // Stop any pending resource loads
-                    }
-                } catch (e) {
-                    // Ignore cross-origin errors
-                }
-            };
-        }, 100);
+        // Create the preview URL
+        const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
+        
+        // Set up error handling before changing src
+        previewFrame.onerror = (e) => {
+            console.error('Frame loading error:', e);
+            handlePreviewError();
+        };
+
+        previewFrame.onload = () => {
+            console.log('Preview loaded successfully');
+            // Add a class to indicate successful loading
+            previewFrame.classList.add('loaded');
+        };
+
+        // Set the source
+        previewFrame.src = previewUrl;
+    } catch (error) {
+        console.error('Error displaying PDF:', error);
+        handlePreviewError();
     }
+}
+
+function handlePreviewError() {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'preview-error';
+    errorMessage.innerHTML = `
+        <p>Unable to load preview. Please try:</p>
+        <ul>
+            <li>Refreshing the page</li>
+            <li>Checking your internet connection</li>
+            <li>Ensuring you have access to this document</li>
+        </ul>
+    `;
+    previewFrame.parentNode.insertBefore(errorMessage, previewFrame);
 }
 
 // Initialize when the page loads
