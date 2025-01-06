@@ -1,9 +1,9 @@
+// Simplified JavaScript that works
 const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
 const SHEET_NAME = "Form Responses";
 const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
 const API_ENDPOINT = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}`;
 
-// Function to get the PDF ID directly from Google Sheets
 async function getLatestPdfId() {
     try {
         const response = await fetch(`${API_ENDPOINT}?key=${API_KEY}`);
@@ -25,27 +25,16 @@ async function getLatestPdfId() {
     }
 }
 
-// Function to display the PDF - simplified to just use the ID as is
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
         const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
+        previewFrame.src = previewUrl;
         
-        // Add error handling for iframe load
-        previewFrame.onerror = () => {
-            console.error('Failed to load preview');
-        };
-        
+        // Simple load handler
         previewFrame.onload = () => {
             console.log('Preview loaded successfully');
-            // Adjust container height if needed
-            const container = previewFrame.parentElement;
-            if (container) {
-                container.style.height = `${previewFrame.contentWindow.document.body.scrollHeight}px`;
-            }
         };
-
-        previewFrame.src = previewUrl;
     }
 }
 
