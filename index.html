@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
-    <meta http-equiv="Cross-Origin-Embedder-Policy" content="same-origin">
     <title>Iron Peak Roofing - Estimate Form</title>
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://accounts.google.com/gsi/client"></script>
     <script src="review-test.js" defer></script>
     <link rel="stylesheet" href="styles.css">
-  
 </head>
     <!--
     <script>
@@ -667,14 +664,22 @@
     <div class="review-instructions">
         <p>Please review your estimate below.</p>
     </div>
-<div class="estimate-preview-container">
-    <iframe 
-        id="estimatePreviewFrame"
-        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-        loading="lazy"
-        referrerpolicy="no-referrer"
-        style="width: 100%; height: 1000px; border: none;"
-    ></iframe>
+<div id="review-section">
+    <h2>Review Your Estimate</h2>
+    <div class="review-instructions">
+        <p>Please review your estimate below.</p>
+    </div>
+    <div class="estimate-preview-container">
+        <iframe 
+            id="estimatePreviewFrame"
+            loading="lazy"
+            style="width: 100%; height: 1000px; border: none;"
+        ></iframe>
+    </div>
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="submitForm()">Submit</button>
+    </div>
 </div>
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
