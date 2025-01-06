@@ -34,8 +34,16 @@ function displayPDF(pdfId) {
         
         console.log('Clean PDF ID:', cleanPdfId);
         console.log('Setting preview URL:', previewUrl);
+
+        // Set necessary attributes for Google Drive embedding
+        previewFrame.setAttribute('allowfullscreen', 'true');
+        previewFrame.setAttribute('allow', 'autoplay');
         
-        // Set the source and add error handling
+        // Remove any previous content and listeners
+        previewFrame.onload = null;
+        previewFrame.onerror = null;
+        
+        // Set new event listeners
         previewFrame.onerror = () => {
             console.error('Failed to load preview frame');
             showError();
@@ -43,11 +51,13 @@ function displayPDF(pdfId) {
         
         previewFrame.onload = () => {
             console.log('Preview frame loaded successfully');
-            // Remove loading message if present
-            previewFrame.srcdoc = '';
+            // Don't clear srcdoc here as it might cause the frame to reload
         };
 
-        previewFrame.src = previewUrl;
+        // Set the source
+        if (previewFrame.src !== previewUrl) {
+            previewFrame.src = previewUrl;
+        }
     } else {
         console.error('Preview frame not found or invalid PDF ID');
         showError();
