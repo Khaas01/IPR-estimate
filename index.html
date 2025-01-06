@@ -667,14 +667,14 @@
     <div class="review-instructions">
         <p>Please review your estimate below.</p>
     </div>
-    <div class="estimate-preview-container">
-        <iframe 
-            id="estimatePreviewFrame"
-            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-            allow="autoplay"
-            allowfullscreen
-        ></iframe>
-    </div>
+   <!-- In your HTML -->
+<div class="estimate-preview-container">
+    <iframe 
+        id="estimatePreviewFrame"
+        allowfullscreen
+        loading="lazy"
+    ></iframe>
+</div>
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="submitForm()">Submit</button>
