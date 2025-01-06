@@ -180,7 +180,21 @@ async function getLatestPdfId() {
         return null;
     }
 }
-
+function showError() {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame) {
+        previewFrame.srcdoc = `
+            <html>
+            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                <div style="color: red; text-align: center;">
+                    <p>Error loading PDF preview.</p>
+                    <p>Please try refreshing the page or contact support if the issue persists.</p>
+                </div>
+            </body>
+            </html>
+        `;
+    }
+}
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
@@ -273,26 +287,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 });
   
-    const solarRadios = document.querySelectorAll('input[name="solar"]');
-    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
-    
-    solarRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (navigationButtons) {
-                if (this.value === 'no') {
-                    navigationButtons.innerHTML = `
-                        <button type="button" onclick="goBack()">Back</button>
-                        <button type="button" onclick="nextFromSolar()" class="submit-button">Submit</button>
-                    `;
-                } else {
-                    navigationButtons.innerHTML = `
-                        <button type="button" onclick="goBack()">Back</button>
-                        <button type="button" onclick="nextFromSolar()" class="next-button">Next</button>
-                    `;
-                }
-            }
-        });
-    });
 
 // Event listener for receiving messages (PDF URL) from Google Apps Script
 window.addEventListener('message', function(event) {
