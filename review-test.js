@@ -6,26 +6,22 @@ const API_ENDPOINT = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/
 
 async function getLatestPdfId() {
     try {
-        const options = {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            mode: 'cors'
-        };
-
-        const response = await fetch(`${API_ENDPOINT}?key=${API_KEY}`, options);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        const response = await fetch(`${API_ENDPOINT}?key=${API_KEY}`);
         const data = await response.json();
-        // ... rest of your existing code
+        
+        if (data.values && data.values.length > 0) {
+            const headers = data.values[0];
+            const pdfIdColumnIndex = headers.indexOf('PDF_ID');
+            
+            if (pdfIdColumnIndex !== -1) {
+                const lastRow = data.values[data.values.length - 1];
+                return lastRow[pdfIdColumnIndex];
+            }
+        }
+        throw new Error('PDF ID not found in spreadsheet');
     } catch (error) {
         console.error('Error fetching PDF ID:', error);
-        throw error;
+        return null;
     }
 }
 
