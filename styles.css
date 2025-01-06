@@ -2,38 +2,43 @@
 * {
     box-sizing: border-box;
 }
+.estimate-preview-container {
+    width: 100%;
+    max-width: 1000px; /* Controls overall width */
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 1000px;
+    position: relative;
+}
+
 #estimatePreviewFrame {
     width: 100%;
     height: 1000px;
-    max-height: calc(100vh - 200px); /* Adjusts height based on viewport, leaving space for headers/buttons */
     border: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    display: block;
-    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
 }
 
-/* Add these styles to your styles.css */
 #review-section {
-    margin: 20px auto;
-    max-width: 800px; /* Wider than the form for better PDF viewing */
-    padding: 20px;
-}
-
-#estimatePreviewFrame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
-    height: 600px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin: 20px 0;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .review-instructions {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
+    text-align: center;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 body {
@@ -124,7 +129,17 @@ input[type="date"].uniform-input {
     background-color: #fff;
     font-size: 16px;
 }
+#navigationButtons {
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+    padding: 20px 0;
+}
 
+#navigationButtons button {
+    margin: 0 10px;
+    padding: 10px 20px;
+}
 /* Button Styles */
 button {
     display: inline-block;
@@ -147,14 +162,6 @@ button:hover {
 
 button:active {
     transform: translateY(0);
-}
-
-/* Navigation Buttons */
-#navigationButtons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    gap: 10px;
 }
 
 #backButton {
