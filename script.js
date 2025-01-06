@@ -8,7 +8,8 @@ let sectionHistory = []; // Initialize sectionHistory
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLGhLt_NP4a3jYi-SxErs2-e6IqWdA_Jz-6hQQBSEwx_ahm4zuPaxdv148sHmpmfl98A/exec';
 const API_KEY = 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254';
 const CLIENT_ID = '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com';
-const REDIRECT_URI = 'https://khaas01.github.io'; 
+const REDIRECT_URI = 'https://khaas01.github.io'
+const REDIRECT_URI = 'https://khaas01.github.io/IPR-estimate/';; 
 const SCOPES = [
     'https://www.googleapis.com/auth/drive',
     'https://www.googleapis.com/auth/spreadsheets'
@@ -32,61 +33,69 @@ async function getDecodedServiceAccountCredentials() {
 
 async function initializeGoogleAPIs() {
     try {
-        const credentials = await getDecodedServiceAccountCredentials();
+        // First check if required objects exist
+        if (typeof gapi === 'undefined') {
+            throw new Error('Google API client library not loaded');
+        }
 
-        // Wait for the Google API client library to load
-        await new Promise((resolve) => gapi.load('client', resolve));
+        // Load the required Google API client library parts
+        await new Promise((resolve) => {
+            gapi.load('client:auth2', resolve);
+        });
 
-        // Initialize GAPI client
+        // Initialize the client with your credentials
         await gapi.client.init({
             apiKey: API_KEY,
+            clientId: CLIENT_ID,
             discoveryDocs: [
                 'https://sheets.googleapis.com/$discovery/rest?version=v4',
                 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-            ]
+            ],
+            scope: SCOPES
         });
 
-        // Initialize GIS
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: credentials.client_id,
-            scope: SCOPES,
-            callback: handleAuthResponse
-        });
+        // Initialize sign-in state listeners
+        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSignInStatus);
+        
+        // Handle initial sign-in state
+        updateSignInStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
 
         gapiInited = true;
         gisInited = true;
         console.log('APIs initialized successfully');
 
-        // Attempt authentication
-        handleAuthClick();
         return true;
     } catch (error) {
-        console.error('API initialization error:', error);
+        console.error('Detailed API initialization error:', error);
         handleApiError(error);
         return false;
     }
 }
 
-function handleApiError(error) {
-    console.error('An error occurred:', error);
-    alert('An error occurred. Please try again later.');
-}
-
 function handleAuthClick() {
-    if (gapi.client.getToken() === null) {
-        try {
-            tokenClient.requestAccessToken({ prompt: 'consent' });
-        } catch (error) {
-            console.error('Popup window blocked:', error);
-            alert('Popup window blocked. Please allow popups for this site to proceed with authentication.');
-        }
-    } else {
-        try {
-            tokenClient.requestAccessToken({ prompt: '' });
-        } catch (error) {
-            console.error('Popup window blocked:', error);
-            alert('Popup window blocked. Please allow popups for this site to proceed with authentication.');
-        }
+    if (!gapi.auth2) {
+        console.error('Auth2 not initialized');
+        return;
+    }
+    
+    try {
+        gapi.auth2.getAuthInstance().signIn({
+            prompt: 'select_account consent',
+            ux_mode: 'popup'
+        }).then(
+            function(response) {
+                console.log('Sign-in successful');
+                updateSignInStatus(true);
+            },
+            function(error) {
+                console.error('Sign-in error:', error);
+                if (error.error === 'popup_blocked_by_browser') {
+                    alert('Please allow popups for this site to sign in with Google');
+                }
+            }
+        );
+    } catch (error) {
+        console.error('Auth click error:', error);
     }
 }
 
