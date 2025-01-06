@@ -667,12 +667,13 @@
     <div class="review-instructions">
         <p>Please review your estimate below.</p>
     </div>
-   <!-- In your HTML -->
 <div class="estimate-preview-container">
     <iframe 
         id="estimatePreviewFrame"
-        allowfullscreen
+        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
         loading="lazy"
+        referrerpolicy="no-referrer"
+        style="width: 100%; height: 1000px; border: none;"
     ></iframe>
 </div>
     <div id="navigationButtons">
