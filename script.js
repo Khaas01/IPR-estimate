@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 async function getLatestPdfId() {
     try {
-        const response = await fetch(`${API_ENDPOINT}?key=${API_KEY}`);
+        const response = await fetch(`${API_CONFIG.GOOGLE_APPS_SCRIPT_URL}?key=${API_CONFIG.API_KEY}`);
         const data = await response.json();
         
         if (data.values && data.values.length > 0) {
