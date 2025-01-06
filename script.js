@@ -6,7 +6,7 @@ let sectionHistory = []; // Initialize sectionHistory
 
 // Centralized API configuration
 const API_CONFIG = {
-    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzLGhLt_NP4a3jYi-SxErs2-e6IqWdA_Jz-6hQQBSEwx_ahm4zuPaxdv148sHmpmfl98A/exec',
+    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyL6ioIoHwW9ydFNN8fD-Dfmospk11aWB-U8kgsKRpli_sdQ-AYt6gMBQsvquden91JsQ/exec',
     API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
     CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
     REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
