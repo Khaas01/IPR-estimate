@@ -28,19 +28,38 @@ async function getLatestPdfId() {
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
-        // Add timestamp to prevent caching
-        const timestamp = new Date().getTime();
-        const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview?t=${timestamp}`;
+        // Add sandbox attributes to prevent additional resource loading
+        previewFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms');
         
+        // Remove any existing event listeners
+        previewFrame.onload = null;
+        previewFrame.onerror = null;
+        
+        // Clear any existing content
+        previewFrame.src = 'about:blank';
+        
+        // Set up minimal attributes
         previewFrame.setAttribute('loading', 'lazy');
-        previewFrame.setAttribute('importance', 'high');
         previewFrame.setAttribute('referrerpolicy', 'no-referrer');
         
-        previewFrame.src = previewUrl;
-        
-        previewFrame.onload = () => {
-            console.log('Preview loaded successfully');
-        };
+        // Small delay before setting the actual URL to ensure clean state
+        setTimeout(() => {
+            const previewUrl = `https://drive.google.com/file/d/${pdfId}/preview`;
+            previewFrame.src = previewUrl;
+            
+            previewFrame.onload = () => {
+                console.log('Preview loaded successfully');
+                // Remove any Google-specific scripts that might have been injected
+                try {
+                    const frame = previewFrame.contentWindow;
+                    if (frame) {
+                        frame.stop(); // Stop any pending resource loads
+                    }
+                } catch (e) {
+                    // Ignore cross-origin errors
+                }
+            };
+        }, 100);
     }
 }
 
