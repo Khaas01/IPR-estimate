@@ -13,35 +13,37 @@
     position: relative;
 }
 
+/* First, let's create a container for the preview that maintains aspect ratio */
 #review-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
-    max-width: 800px; /* Add max-width */
-    margin: 0 auto; /* Center the section */
+    max-width: 800px;
+    margin: 0 auto;
 }
 
+.review-instructions {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+/* Adjust the iframe to fit the content properly */
 #estimatePreviewFrame {
     width: 100%;
-    aspect-ratio: 8.5/11; /* Set aspect ratio for letter size */
+    height: calc(100vh - 200px); /* Subtract header + margins + buttons height */
     border: none;
     margin: 20px 0;
-    height: auto; /* Let height be determined by aspect ratio */
-    min-height: 500px; /* Minimum height */
-    max-height: 80vh; /* Maximum height relative to viewport */
-    position: relative; /* Remove absolute positioning */
-    transform: none; /* Remove transform */
+    display: block;
 }
 
-/* Add responsive adjustments */
+/* Responsive adjustments */
 @media (max-width: 768px) {
     #estimatePreviewFrame {
-        min-height: 400px;
-        max-height: 70vh;
+        height: calc(100vh - 150px); /* Slightly less padding on mobile */
     }
     
     #review-section {
