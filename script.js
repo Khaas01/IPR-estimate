@@ -44,26 +44,16 @@ async function initializeGoogleAPIs() {
 
         // Initialize the client with your credentials
         await gapi.client.init({
-            apiKey: API_KEY,
-            clientId: CLIENT_ID,
+            apiKey: API_CONFIG.API_KEY,
+            clientId: API_CONFIG.CLIENT_ID,
             discoveryDocs: [
                 'https://sheets.googleapis.com/$discovery/rest?version=v4',
                 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
             ],
-            scope: SCOPES
+            scope: API_CONFIG.SCOPES
         });
 
-        // Initialize sign-in state listeners
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSignInStatus);
-        
-        // Handle initial sign-in state
-        updateSignInStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-
-        gapiInited = true;
-        gisInited = true;
-        console.log('APIs initialized successfully');
-
-        return true;
+        // Rest of your initialization code...
     } catch (error) {
         console.error('Detailed API initialization error:', error);
         handleApiError(error);
