@@ -102,12 +102,12 @@ solarRadios.forEach(radio => {
             if (this.value === 'no') {
                 navigationButtons.innerHTML = `
                     <button type="button" onclick="goBack()">Back</button>
-                    <button type="button" onclick="nextFromSolar()" class="submit-button">Submit</button>
+                    <button type="button" onclick="showSection('review-section'); displayReview();" class="submit-button">Submit</button>
                 `;
             } else {
                 navigationButtons.innerHTML = `
                     <button type="button" onclick="goBack()">Back</button>
-                    <button type="button" onclick="nextFromSolar()" class="next-button">Next</button>
+                    <button type="button" onclick="showSection('solar-detach-reset-section')" class="next-button">Next</button>
                 `;
             }
         }
