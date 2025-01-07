@@ -1,8 +1,5 @@
 // Global variables
 let isSubmitting = false;
-let tokenClient;
-let gapiInited = false;
-let gisInited = false;
 let sectionHistory = []; // Initialize sectionHistory
 
 // Centralized API configuration
@@ -24,35 +21,19 @@ async function initializeGoogleAPIs() {
         }
 
         await new Promise((resolve) => {
-            gapi.load('client:auth2', resolve);
+            gapi.load('client', resolve);  // Removed ':auth2' since we don't need authentication
         });
 
         await gapi.client.init({
             apiKey: API_CONFIG.API_KEY,
-            clientId: API_CONFIG.CLIENT_ID,
             discoveryDocs: [
                 'https://sheets.googleapis.com/$discovery/rest?version=v4',
                 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-            ],
-            scope: API_CONFIG.SCOPES
+            ]
+            // Removed clientId and scope since we're using service account
         });
 
-        // Initialize GIS
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: API_CONFIG.CLIENT_ID,
-            scope: API_CONFIG.SCOPES,
-            callback: handleAuthResponse,
-            prompt: 'consent',
-            error_callback: (err) => {
-                console.error('TokenClient Error:', err);
-                handleApiError(err);
-            }
-        });
-
-        gapiInited = true;
-        gisInited = true;
         console.log('APIs initialized successfully');
-
         return true;
     } catch (error) {
         console.error('API initialization error:', error);
@@ -60,79 +41,16 @@ async function initializeGoogleAPIs() {
         return false;
     }
 }
-function checkAuthBeforeSubmit() {
-    if (!gapi.auth2?.getAuthInstance()?.isSignedIn.get()) {
-        return gapi.auth2.getAuthInstance().signIn().then(() => {
-            return true;
-        }).catch((error) => {
-            console.error('Authentication failed:', error);
-            throw new Error('Authentication failed. Please try again.');
-        });
-    }
-    return Promise.resolve(true);
-}
-function handleAuthClick() {
-    if (!gapi.auth2) {
-        console.error('Auth2 not initialized');
-        return;
-    }
-    
-    try {
-        gapi.auth2.getAuthInstance().signIn({
-            prompt: 'select_account consent',
-            ux_mode: 'popup'
-        }).then(
-            function(response) {
-                console.log('Sign-in successful');
-                updateSignInStatus(true);
-            },
-            function(error) {
-                console.error('Sign-in error:', error);
-                if (error.error === 'popup_blocked_by_browser') {
-                    alert('Please allow popups for this site to sign in with Google');
-                }
-            }
-        );
-    } catch (error) {
-        console.error('Auth click error:', error);
-    }
-}
-function handleAuthResponse(response) {
-    if (response.error !== undefined) {
-        console.error('Auth error:', response.error);
-        alert('Authentication failed. Please try again.');
-        return;
-    }
-    console.log('Successfully authenticated');
-    updateSignInStatus(true);
-}
-function updateSignInStatus(isSignedIn) {
-    if (isSignedIn) {
-        console.log('User is signed in');
-        // Add your post-authentication logic here
-    } else {
-        console.log('User is not signed in');
-    }
-}
+
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize section history
     sectionHistory.push('salesRepSection');
 
-    // Initialize Google APIs
-    if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
+    // Initialize Google APIs with simpler check
+    if (typeof gapi !== 'undefined') {
         initializeGoogleAPIs();
     } else {
-        console.error('Google APIs are not loaded correctly');
-    }
-
-    // Get and display PDF if available
-    try {
-        const pdfId = await getLatestPdfId();
-        if (pdfId) {
-            displayPDF(pdfId);
-        }
-    } catch (error) {
-        console.error('Error:', error);
+        console.error('Google API client library not loaded');
     }
 
     // Initialize form sections
