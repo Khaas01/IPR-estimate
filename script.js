@@ -94,27 +94,27 @@ window.addEventListener('message', function(event) {
     }
 });
 
-    const solarRadios = document.querySelectorAll('input[name="solar"]');
-    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
-    
-    solarRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (navigationButtons) {
-                if (this.value === 'no') {
-                    navigationButtons.innerHTML = `
-                        <button type="button" onclick="goBack()">Back</button>
-                        <button type="button" onclick="nextFromSolar()" class="submit-button">Submit</button>
-                    `;
-                } else {
-                    navigationButtons.innerHTML = `
-                        <button type="button" onclick="goBack()">Back</button>
-                        <button type="button" onclick="nextFromSolar()" class="next-button">Next</button>
-                    `;
-                }
-            }
-        });
-    });
+   // Original working version for solar section radio buttons
+const solarRadios = document.querySelectorAll('input[name="solar"]');
+const navigationButtons = document.querySelector('#solar-section #navigationButtons');
 
+solarRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+        if (navigationButtons) {
+            if (this.value === 'no') {
+                navigationButtons.innerHTML = `
+                    <button type="button" onclick="goBack()">Back</button>
+                    <button type="button" onclick="nextFromSolar()" class="submit-button">Submit</button>
+                `;
+            } else {
+                navigationButtons.innerHTML = `
+                    <button type="button" onclick="goBack()">Back</button>
+                    <button type="button" onclick="nextFromSolar()" class="next-button">Next</button>
+                `;
+            }
+        }
+    });
+});
  function hideAllSections() {
     document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
         section.style.display = 'none';
