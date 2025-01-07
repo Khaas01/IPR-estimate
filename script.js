@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 window.addEventListener('message', function(event) {
     try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        console.log('Received message data:', data); // Add this line to see what data we're receiving
 
         if (data.success) {
             hideLoading();
@@ -72,25 +73,22 @@ window.addEventListener('message', function(event) {
                 const previewFrame = document.getElementById('estimatePreviewFrame');
                 if (previewFrame) {
                     showLoading('Loading preview...');
-                    previewFrame.src = data.pdfUrl;  // Direct URL assignment
+                    previewFrame.src = data.pdfUrl;
                     previewFrame.onload = function() {
                         hideLoading();
                         console.log('Preview loaded successfully');
                     };
                 }
             } else {
-                console.error('No PDF URL in response');
-                // Removed alert, using console.error instead
+                console.log('Response successful but no PDF URL provided:', data); // Changed to console.log
             }
         } else {
             hideLoading();
-            console.error('Error:', (data.message || 'Unknown error'));
-            // Removed alert, using console.error instead
+            console.log('Response indicated failure. Full response:', data); // Changed to help debug
         }
     } catch (error) {
         hideLoading();
-        console.error('Error processing message:', error);
-        // Removed alert, using console.error instead
+        console.log('Error processing message. Event data:', event.data); // Changed to help debug
     }
 });
 
