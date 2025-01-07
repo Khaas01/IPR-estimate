@@ -17,11 +17,12 @@ const API_CONFIG = {
 async function initializeGoogleAPIs() {
     try {
         if (typeof gapi === 'undefined') {
-            throw new Error('Google API client library not loaded');
+            console.error('Google API client library not loaded');
+            return false;
         }
 
         await new Promise((resolve) => {
-            gapi.load('client', resolve);  // Removed ':auth2' since we don't need authentication
+            gapi.load('client', resolve);
         });
 
         await gapi.client.init({
@@ -30,14 +31,14 @@ async function initializeGoogleAPIs() {
                 'https://sheets.googleapis.com/$discovery/rest?version=v4',
                 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
             ]
-            // Removed clientId and scope since we're using service account
         });
 
         console.log('APIs initialized successfully');
         return true;
     } catch (error) {
         console.error('API initialization error:', error);
-        handleApiError(error);
+        // Don't call handleApiError, just log the error
+        console.error('Failed to initialize Google APIs:', error);
         return false;
     }
 }
@@ -773,17 +774,18 @@ function nextFromSolar() {
 }
 function handleApiError(error) {
     console.error('API Error:', error);
-    let errorMessage = 'An error occurred. ';
     
-    if (error.error === 'popup_blocked_by_browser') {
-        errorMessage += 'Please allow popups for this site and try again.';
-    } else if (error.error === 'redirect_uri_mismatch') {
-        errorMessage += 'Authentication configuration error. Please contact support.';
+    // Don't show alert, just log to console
+    if (error && error.details) {
+        console.error('Error details:', error.details);
+    } else if (error && error.message) {
+        console.error('Error message:', error.message);
     } else {
-        errorMessage += 'Please try again later.';
+        console.error('Unknown error occurred during API initialization');
     }
     
-    alert(errorMessage);
+    // Return false instead of showing alert
+    return false;
 }
 async function getDecodedServiceAccountCredentials() {
     try {
