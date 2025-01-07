@@ -128,14 +128,30 @@ solarRadios.forEach(radio => {
 
 // Show a specific section
 function showSection(sectionId) {
-    if (!sectionId) return;
     hideAllSections();
     const targetSection = document.getElementById(sectionId);
-    if (!targetSection) {
-        console.error(`Section ${sectionId} not found`);
-        return;
+    if (targetSection) {
+        targetSection.style.display = 'block';
+        
+        // Add this block for the review section
+        if (sectionId === 'review-section') {
+            console.log('Review section shown, getting PDF ID...');
+            getLatestPdfId()
+                .then(pdfId => {
+                    if (pdfId) {
+                        console.log('Got PDF ID, displaying...');
+                        displayPDF(pdfId);
+                    } else {
+                        console.error('No PDF ID returned');
+                        showError();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error getting PDF ID:', error);
+                    showError();
+                });
+        }
     }
-    targetSection.style.display = 'block';
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId);
     }
@@ -387,6 +403,7 @@ function submitForm() {
 }
 async function getLatestPdfId() {
     try {
+        console.log('Fetching from:', `${API_CONFIG.API_ENDPOINT}?key=${API_CONFIG.API_KEY}`);
         const response = await fetch(`${API_CONFIG.API_ENDPOINT}?key=${API_CONFIG.API_KEY}`);
         const data = await response.json();
         
@@ -396,6 +413,7 @@ async function getLatestPdfId() {
             
             if (pdfIdColumnIndex !== -1) {
                 const lastRow = data.values[data.values.length - 1];
+                console.log('Found PDF ID:', lastRow[pdfIdColumnIndex]); // Add this log
                 return lastRow[pdfIdColumnIndex];
             }
         }
@@ -410,30 +428,20 @@ async function getLatestPdfId() {
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
-        // Clean up the PDF ID
+        console.log('Attempting to display PDF with ID:', pdfId);
         const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
         const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
         
-        console.log('Clean PDF ID:', cleanPdfId);
-        console.log('Setting preview URL:', previewUrl);
-
-        // Set iframe attributes
-        previewFrame.setAttribute('allowfullscreen', 'true');
-        previewFrame.setAttribute('allow', 'autoplay');
+        console.log('Preview URL:', previewUrl);
         
-        // Set event listeners
-        previewFrame.onload = () => {
-            console.log('Preview loaded successfully');
-            hideLoading();
-        };
+        // Set the source directly
+        previewFrame.src = previewUrl;
         
+        // Basic error handling
         previewFrame.onerror = () => {
-            console.error('Failed to load preview frame');
+            console.error('Failed to load preview');
             showError();
         };
-
-        // Set the source
-        previewFrame.src = previewUrl;
     } else {
         console.error('Preview frame not found or invalid PDF ID');
         showError();
