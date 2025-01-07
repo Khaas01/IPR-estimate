@@ -99,7 +99,6 @@ window.addEventListener('message', function(event) {
     }
 });
 
-   // Original working version for solar section radio buttons
 const solarRadios = document.querySelectorAll('input[name="solar"]');
 const navigationButtons = document.querySelector('#solar-section #navigationButtons');
 
@@ -109,7 +108,7 @@ solarRadios.forEach(radio => {
             if (this.value === 'no') {
                 navigationButtons.innerHTML = `
                     <button type="button" onclick="goBack()">Back</button>
-                    <button type="button" onclick="showSection('review-section'); displayReview();" class="submit-button">Submit</button>
+                    <button type="button" onclick="nextFromSolar()" class="submit-button">Submit</button>
                 `;
             } else {
                 navigationButtons.innerHTML = `
