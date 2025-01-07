@@ -3,13 +3,17 @@ let isSubmitting = false;
 let sectionHistory = []; // Initialize sectionHistory
 
 // Centralized API configuration
+
+const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
+const SHEET_NAME = "Form Responses";
+
 const API_CONFIG = {
     GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyL6ioIoHwW9ydFNN8fD-Dfmospk11aWB-U8kgsKRpli_sdQ-AYt6gMBQsvquden91JsQ/exec',
     API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
     CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
     REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
-    SHEET_ID: "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw",
-    SHEET_NAME: "Form Responses",
+    SHEET_ID: SHEET_ID,
+    SHEET_NAME: SHEET_NAME,
     API_ENDPOINT: `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}`,
     SCOPES: [
         'https://www.googleapis.com/auth/drive',
