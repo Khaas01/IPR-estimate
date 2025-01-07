@@ -304,9 +304,10 @@ function submitForm() {
         showLoading('Submitting form...');
         
         try {
-            const rawFormData = collectFormData();
+            const formData = collectFormData();
+            
                 
-                // Structured form data matching the Form Responses sheet headers
+        // Structured form data matching the Form Responses sheet headers
                 const formData = {
                     data: {
                         "Timestamp": rawFormData.timestamp,
@@ -368,7 +369,6 @@ function submitForm() {
                 method: 'POST',
                 mode: 'no-cors',
                 credentials: 'omit',
-                redirect: 'follow',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -380,10 +380,6 @@ function submitForm() {
             })
             .then(response => {
                 hideLoading();
-                if (response.success) {
-                    // Redirect to review page with file ID
-                    window.location.href = `review-test.html?id=${response.fileId}`;
-                }
                 resolve(response);
             })
             .catch(error => {
@@ -393,7 +389,6 @@ function submitForm() {
             })
             .finally(() => {
                 isSubmitting = false;
-                hideLoading();
             });
 
         } catch (error) {
@@ -428,41 +423,36 @@ async function getLatestPdfId() {
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
-        // Clean up the PDF ID by removing any extra characters
+        // Clean up the PDF ID
         const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
         const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
         
         console.log('Clean PDF ID:', cleanPdfId);
         console.log('Setting preview URL:', previewUrl);
 
-        // Set necessary attributes for Google Drive embedding
+        // Set iframe attributes
         previewFrame.setAttribute('allowfullscreen', 'true');
         previewFrame.setAttribute('allow', 'autoplay');
         
-        // Remove any previous content and listeners
-        previewFrame.onload = null;
-        previewFrame.onerror = null;
+        // Set event listeners
+        previewFrame.onload = () => {
+            console.log('Preview loaded successfully');
+            hideLoading();
+        };
         
-        // Set new event listeners
         previewFrame.onerror = () => {
             console.error('Failed to load preview frame');
             showError();
         };
-        
-        previewFrame.onload = () => {
-            console.log('Preview frame loaded successfully');
-            hideLoading();
-        };
 
         // Set the source
-        if (previewFrame.src !== previewUrl) {
-            previewFrame.src = previewUrl;
-        }
+        previewFrame.src = previewUrl;
     } else {
         console.error('Preview frame not found or invalid PDF ID');
         showError();
     }
 }
+
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (!previewFrame) {
@@ -753,24 +743,35 @@ function navigateFromAdditionalCharges() {
     }
 }
 function nextFromSolar() {
-    submitForm()
-        .then(() => {
-            // Add a small delay to allow the form data to be processed
-            return new Promise(resolve => setTimeout(resolve, 2000))
-                .then(() => getLatestPdfId());
-        })
-        .then(pdfId => {
-            if (pdfId) {
-                showSection('review-section');
-                displayPDF(pdfId);
-            } else {
-                throw new Error('Could not get PDF ID');
-            }
-        })
-        .catch(error => {
-            console.error('Error in nextFromSolar:', error);
-            showError();
-        });
+    const solarValue = document.querySelector('input[name="solar"]:checked')?.value;
+    if (!solarValue) {
+        alert("Please select Yes or No.");
+        return;
+    }
+
+    if (solarValue === 'yes') {
+        showSection('solar-detach-reset-section');
+    } else {
+        submitForm()
+            .then(() => {
+                showLoading('Generating PDF preview...');
+                // Add delay to allow form processing
+                return new Promise(resolve => setTimeout(resolve, 2000))
+                    .then(() => getLatestPdfId());
+            })
+            .then(pdfId => {
+                if (pdfId) {
+                    showSection('review-section');
+                    displayPDF(pdfId);
+                } else {
+                    throw new Error('Could not get PDF ID');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError();
+            });
+    }
 }
 function handleApiError(error) {
     console.error('API Error:', error);
