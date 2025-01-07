@@ -398,7 +398,7 @@ function submitForm() {
 }
 async function getLatestPdfId() {
     try {
-        const response = await fetch(`${API_CONFIG.GOOGLE_APPS_SCRIPT_URL}?key=${API_CONFIG.API_KEY}`);
+        const response = await fetch(`${API_ENDPOINT}?key=${API_KEY}`);
         const data = await response.json();
         
         if (data.values && data.values.length > 0) {
@@ -416,6 +416,8 @@ async function getLatestPdfId() {
         return null;
     }
 }
+
+// Update the displayPDF function
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
@@ -442,7 +444,7 @@ function displayPDF(pdfId) {
         
         previewFrame.onload = () => {
             console.log('Preview frame loaded successfully');
-            // Don't clear srcdoc here as it might cause the frame to reload
+            hideLoading();
         };
 
         // Set the source
@@ -745,23 +747,22 @@ function navigateFromAdditionalCharges() {
 }
 function nextFromSolar() {
     submitForm()
-        .then(async () => {
-            try {
-                const pdfId = await getLatestPdfId();
-                if (pdfId) {
-                    showSection('review-section');
-                    displayPDF(pdfId);
-                } else {
-                    throw new Error('Could not get PDF ID');
-                }
-            } catch (error) {
-                console.error('Error showing review:', error);
-                alert('There was an error displaying the preview. Please try again.');
+        .then(() => {
+            // Add a small delay to allow the form data to be processed
+            return new Promise(resolve => setTimeout(resolve, 2000))
+                .then(() => getLatestPdfId());
+        })
+        .then(pdfId => {
+            if (pdfId) {
+                showSection('review-section');
+                displayPDF(pdfId);
+            } else {
+                throw new Error('Could not get PDF ID');
             }
         })
         .catch(error => {
-            console.error('Error submitting form:', error);
-            alert('There was an error submitting the form. Please try again.');
+            console.error('Error in nextFromSolar:', error);
+            showError();
         });
 }
 function handleApiError(error) {
