@@ -16,22 +16,6 @@ const API_CONFIG = {
     ].join(' ')
 };
 
-// Function to fetch and decode the Base64-encoded service account content
-async function getDecodedServiceAccountCredentials() {
-    try {
-        const response = await fetch('service-account-base64.txt'); // Path to the file
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const base64Content = await response.text();
-        const jsonContent = atob(base64Content);
-        return JSON.parse(jsonContent);
-    } catch (error) {
-        console.error('Error fetching or decoding service account credentials:', error);
-        throw error;
-    }
-}
-
 async function initializeGoogleAPIs() {
     try {
         if (typeof gapi === 'undefined') {
@@ -75,23 +59,17 @@ async function initializeGoogleAPIs() {
         return false;
     }
 }
-
-// Update handleApiError to be more informative
-function handleApiError(error) {
-    console.error('API Error:', error);
-    let errorMessage = 'An error occurred. ';
-    
-    if (error.error === 'popup_blocked_by_browser') {
-        errorMessage += 'Please allow popups for this site and try again.';
-    } else if (error.error === 'redirect_uri_mismatch') {
-        errorMessage += 'Authentication configuration error. Please contact support.';
-    } else {
-        errorMessage += 'Please try again later.';
+function checkAuthBeforeSubmit() {
+    if (!gapi.auth2?.getAuthInstance()?.isSignedIn.get()) {
+        return gapi.auth2.getAuthInstance().signIn().then(() => {
+            return true;
+        }).catch((error) => {
+            console.error('Authentication failed:', error);
+            throw new Error('Authentication failed. Please try again.');
+        });
     }
-    
-    alert(errorMessage);
+    return Promise.resolve(true);
 }
-
 function handleAuthClick() {
     if (!gapi.auth2) {
         console.error('Auth2 not initialized');
@@ -118,7 +96,6 @@ function handleAuthClick() {
         console.error('Auth click error:', error);
     }
 }
-
 function handleAuthResponse(response) {
     if (response.error !== undefined) {
         console.error('Auth error:', response.error);
@@ -128,18 +105,6 @@ function handleAuthResponse(response) {
     console.log('Successfully authenticated');
     updateSignInStatus(true);
 }
-
-function updateSignInStatus(isSignedIn) {
-    if (isSignedIn) {
-        console.log('User is signed in');
-        // Add your post-authentication logic here
-    } else {
-        console.log('User is not signed in');
-    }
-}
-
-
-// Update UI based on sign-in status
 function updateSignInStatus(isSignedIn) {
     if (isSignedIn) {
         console.log('User is signed in');
@@ -160,135 +125,10 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Google APIs are not loaded correctly');
         handleApiError(new Error('Google APIs failed to load'));
     }
-async function getLatestPdfId() {
-    try {
-        const response = await fetch(`${API_CONFIG.GOOGLE_APPS_SCRIPT_URL}?key=${API_CONFIG.API_KEY}`);
-        const data = await response.json();
-        
-        if (data.values && data.values.length > 0) {
-            const headers = data.values[0];
-            const pdfIdColumnIndex = headers.indexOf('PDF_ID');
-            
-            if (pdfIdColumnIndex !== -1) {
-                const lastRow = data.values[data.values.length - 1];
-                return lastRow[pdfIdColumnIndex];
-            }
-        }
-        throw new Error('PDF ID not found in spreadsheet');
-    } catch (error) {
-        console.error('Error fetching PDF ID:', error);
-        return null;
-    }
-}
-function showError() {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame) {
-        previewFrame.srcdoc = `
-            <html>
-            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
-                <div style="color: red; text-align: center;">
-                    <p>Error loading PDF preview.</p>
-                    <p>Please try refreshing the page or contact support if the issue persists.</p>
-                </div>
-            </body>
-            </html>
-        `;
-    }
-}
-function displayPDF(pdfId) {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame && pdfId) {
-        // Clean up the PDF ID by removing any extra characters
-        const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
-        const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
-        
-        console.log('Clean PDF ID:', cleanPdfId);
-        console.log('Setting preview URL:', previewUrl);
+        hideAllSections();
+        showSection(sectionHistory[0]);
 
-        // Set necessary attributes for Google Drive embedding
-        previewFrame.setAttribute('allowfullscreen', 'true');
-        previewFrame.setAttribute('allow', 'autoplay');
-        
-        // Remove any previous content and listeners
-        previewFrame.onload = null;
-        previewFrame.onerror = null;
-        
-        // Set new event listeners
-        previewFrame.onerror = () => {
-            console.error('Failed to load preview frame');
-            showError();
-        };
-        
-        previewFrame.onload = () => {
-            console.log('Preview frame loaded successfully');
-            // Don't clear srcdoc here as it might cause the frame to reload
-        };
 
-        // Set the source
-        if (previewFrame.src !== previewUrl) {
-            previewFrame.src = previewUrl;
-        }
-    } else {
-        console.error('Preview frame not found or invalid PDF ID');
-        showError();
-    }
-}
-
-function handlePreviewError() {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    const errorMessage = document.createElement('div');
-    errorMessage.className = 'preview-error';
-    errorMessage.innerHTML = `
-        <p>Unable to load preview. Please try:</p>
-        <ul>
-            <li>Refreshing the page</li>
-            <li>Checking your internet connection</li>
-            <li>Ensuring you have access to this document</li>
-        </ul>
-    `;
-    previewFrame.parentNode.insertBefore(errorMessage, previewFrame);
-}
-
-// Initialize when the page loads
-document.addEventListener('DOMContentLoaded', async function() {
-    try {
-        const pdfId = await getLatestPdfId();
-        if (pdfId) {
-            displayPDF(pdfId);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-});
-    // Initialize form sections
-    hideAllSections();
-    showSection(sectionHistory[0]);
-
-    // Setup solar section radio buttons
-    const solarRadios = document.querySelectorAll('input[name="solar"]');
-    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
-    
-    solarRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (navigationButtons) {
-                if (this.value === 'no') {
-                    navigationButtons.innerHTML = `
-                        <button type="button" onclick="goBack()">Back</button>
-                        <button type="button" onclick="nextFromSolar()" class="submit-button">Submit</button>
-                    `;
-                } else {
-                    navigationButtons.innerHTML = `
-                        <button type="button" onclick="goBack()">Back</button>
-                        <button type="button" onclick="nextFromSolar()" class="next-button">Next</button>
-                    `;
-                }
-            }
-        });
-    });
-});
-  
-
-// Event listener for receiving messages (PDF URL) from Google Apps Script
 window.addEventListener('message', function(event) {
     try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
@@ -322,8 +162,29 @@ window.addEventListener('message', function(event) {
         alert('Error processing response. Please try again.');
     }
 });
-// Hide all sections
-function hideAllSections() {
+
+    const solarRadios = document.querySelectorAll('input[name="solar"]');
+    const navigationButtons = document.querySelector('#solar-section #navigationButtons');
+    
+    solarRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (navigationButtons) {
+                if (this.value === 'no') {
+                    navigationButtons.innerHTML = `
+                        <button type="button" onclick="goBack()">Back</button>
+                        <button type="button" onclick="nextFromSolar()" class="submit-button">Submit</button>
+                    `;
+                } else {
+                    navigationButtons.innerHTML = `
+                        <button type="button" onclick="goBack()">Back</button>
+                        <button type="button" onclick="nextFromSolar()" class="next-button">Next</button>
+                    `;
+                }
+            }
+        });
+    });
+});
+ function hideAllSections() {
     document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
         section.style.display = 'none';
     });
@@ -356,7 +217,6 @@ function goBack() {
         }
     }
 }
-// Collect form data from all input fields
 function collectFormData() {
     const formData = {
         // Sales Rep Information
@@ -428,8 +288,6 @@ function collectFormData() {
     
     return formData;
 }
-
-// Validate the collected form data
 function validateForm(formData) {
     // Required fields validation
     const requiredFields = [
@@ -502,11 +360,6 @@ function validateForm(formData) {
 
     return true;
 }
-
-// Global submission state
-let isSubmitting = false;
-
-// Handle form submission
 function submitForm() {
     if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
     
@@ -620,8 +473,64 @@ function submitForm() {
             return Promise.reject(error);
         });
 }
+async function getLatestPdfId() {
+    try {
+        const response = await fetch(`${API_CONFIG.GOOGLE_APPS_SCRIPT_URL}?key=${API_CONFIG.API_KEY}`);
+        const data = await response.json();
+        
+        if (data.values && data.values.length > 0) {
+            const headers = data.values[0];
+            const pdfIdColumnIndex = headers.indexOf('PDF_ID');
+            
+            if (pdfIdColumnIndex !== -1) {
+                const lastRow = data.values[data.values.length - 1];
+                return lastRow[pdfIdColumnIndex];
+            }
+        }
+        throw new Error('PDF ID not found in spreadsheet');
+    } catch (error) {
+        console.error('Error fetching PDF ID:', error);
+        return null;
+    }
+}
+function displayPDF(pdfId) {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame && pdfId) {
+        // Clean up the PDF ID by removing any extra characters
+        const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
+        const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
+        
+        console.log('Clean PDF ID:', cleanPdfId);
+        console.log('Setting preview URL:', previewUrl);
 
-// Display PDF preview in the iframe
+        // Set necessary attributes for Google Drive embedding
+        previewFrame.setAttribute('allowfullscreen', 'true');
+        previewFrame.setAttribute('allow', 'autoplay');
+        
+        // Remove any previous content and listeners
+        previewFrame.onload = null;
+        previewFrame.onerror = null;
+        
+        // Set new event listeners
+        previewFrame.onerror = () => {
+            console.error('Failed to load preview frame');
+            showError();
+        };
+        
+        previewFrame.onload = () => {
+            console.log('Preview frame loaded successfully');
+            // Don't clear srcdoc here as it might cause the frame to reload
+        };
+
+        // Set the source
+        if (previewFrame.src !== previewUrl) {
+            previewFrame.src = previewUrl;
+        }
+    } else {
+        console.error('Preview frame not found or invalid PDF ID');
+        showError();
+    }
+}
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (!previewFrame) {
@@ -656,239 +565,36 @@ function displayPDFPreview(pdfUrl) {
     
     previewFrame.src = pdfUrl;
 }
-// Navigate from Project Type section
-function nextProjectTypeSection() {
-    const selectedProjectType = document.querySelector('input[name="projectType"]:checked');
-    if (!selectedProjectType) {
-        alert("Please select a project type.");
-        return;
-    }
-    
-    switch(selectedProjectType.value) {
-        case 'Cash':
-        case 'Finance':
-            showSection('measureRoofSection');
-            break;
-        case 'Insurance':
-            showSection('insuranceInfoSection');
-            break;
-        default:
-            console.error("Unknown project type selected");
-    }
+function handlePreviewError() {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'preview-error';
+    errorMessage.innerHTML = `
+        <p>Unable to load preview. Please try:</p>
+        <ul>
+            <li>Refreshing the page</li>
+            <li>Checking your internet connection</li>
+            <li>Ensuring you have access to this document</li>
+        </ul>
+    `;
+    previewFrame.parentNode.insertBefore(errorMessage, previewFrame);
 }
 
-// Navigate from Roofing Type section
-function navigateFromRoofingType() {
-    const selectedRoofingType = document.querySelector('input[name="roofingType"]:checked');
-    
-    if (!selectedRoofingType) {
-        alert("Please select a roofing type.");
-        return;
-    }
-
-    switch(selectedRoofingType.value) {
-        case 'Asphalt Shingles':
-            showSection('asphalt-shingle-section');
-            break;
-        case 'Tile':
-            showSection('tile-roofing-section');
-            break;
-        case 'Modified Bitumen (Flat roof rolled roofing)':
-            showSection('modified-bitumen-section');
-            break;
-        case 'Flat Roof Coating':
-            showSection('coating-section');
-            break;
-        default:
-            console.error("Unknown roofing type selected");
+function showError() {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame) {
+        previewFrame.srcdoc = `
+            <html>
+            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                <div style="color: red; text-align: center;">
+                    <p>Error loading PDF preview.</p>
+                    <p>Please try refreshing the page or contact support if the issue persists.</p>
+                </div>
+            </body>
+            </html>
+        `;
     }
 }
-
-// Navigate from Shingle Type section
-function navigateFromShingleType() {
-    const selectedShingleType = document.querySelector('input[name="shingleType"]:checked');
-    
-    if (!selectedShingleType) {
-        alert("Please select a shingle roof type.");
-        return;
-    }
-
-    switch(selectedShingleType.value) {
-        case 'Shingle Roof Repair':
-            showSection('shingle-repair-section');
-            break;
-        case 'Shingle Roof Replacement':
-            showSection('shingle-replacement-section');
-            break;
-        default:
-            console.error("Unknown shingle type selected");
-    }
-}
-
-// Navigate from Tile Roofing Type section
-function navigateFromTileRoofingType() {
-    const selectedTileType = document.querySelector('input[name="tile-roofing-type"]:checked');
-    
-    if (!selectedTileType) {
-        alert("Please select a tile roofing type.");
-        return;
-    }
-
-    switch(selectedTileType.value) {
-        case 'Repair/Partial Roof':
-            showSection('tile-repair-section');
-            break;
-        case 'Underlayment Replacement':
-            showSection('tile-underlayment-section');
-            break;
-        case 'Remove and Replace':
-            showSection('tile-remove-replace-section');
-            break;
-        default:
-            console.error("Unknown tile roofing type selected");
-    }
-}
-
-// Navigate from Secondary Roof section
-function navigateFromSecondaryRoof() {
-    const selectedOption = document.querySelector('input[name="secondary-roof"]:checked');
-    
-    if (!selectedOption) {
-        alert("Please select Yes or No.");
-        return;
-    }
-
-    switch(selectedOption.value) {
-        case 'Yes':
-            showSection('secondary-roofing-type-section');
-            break;
-        case 'No':
-            showSection('additional-charges-section');
-            break;
-        default:
-            console.error("Unknown selection for secondary roof");
-    }
-}
-
-// Navigate from Secondary Roofing Type section
-function navigateFromSecondaryRoofingType() {
-    const selectedRoofingType = document.querySelector('input[name="secondary-roofing-type"]:checked');
-    
-    if (!selectedRoofingType) {
-        alert("Please select a roofing type.");
-        return;
-    }
-
-    switch(selectedRoofingType.value) {
-        case 'Shingles':
-            showSection('secondary-roof-type-shingles-section');
-            break;
-        case 'Tiles':
-            showSection('secondary-roof-type-tile-section');
-            break;
-        case 'Modified Bitumen':
-            showSection('secondary-roof-type-modified-bitumen-section');
-            break;
-        case 'Coating':
-            showSection('secondary-roof-type-coating-section');
-            break;
-        default:
-            console.error("Unknown secondary roofing type selected");
-    }
-}
-
-// Navigate from Third Roof section
-function navigateFromThirdRoof() {
-    const selectedOption = document.querySelector('input[name="third-roof"]:checked');
-    
-    if (!selectedOption) {
-        alert("Please select Yes or No.");
-        return;
-    }
-
-    switch(selectedOption.value) {
-        case 'Yes':
-            showSection('third-roof-type-style-section');
-            break;
-        case 'No':
-            showSection('additional-charges-section');
-            break;
-        default:
-            console.error("Unknown selection for third roof");
-    }
-}
-
-// Navigate from Third Roof Style section
-function navigateFromThirdRoofStyle() {
-    const selectedRoofingType = document.querySelector('input[name="third-roof-style"]:checked');
-    
-    if (!selectedRoofingType) {
-        alert("Please select a roofing type.");
-        return;
-    }
-
-    switch(selectedRoofingType.value) {
-        case 'Shingles':
-            showSection('third-roof-type-shingles-section');
-            break;
-        case 'Tile':
-            showSection('third-roof-type-tiles-section');
-            break;
-        case 'Modified':
-            showSection('third-roof-type-modified-section');
-            break;
-        case 'Coating':
-            showSection('third-roof-type-coatings-section');
-            break;
-        default:
-            console.error("Unknown third roof style selected");
-    }
-}
-
-// Navigate from Additional Charges section
-function navigateFromAdditionalCharges() {
-    const selectedOption = document.querySelector('input[name="additional-charges"]:checked');
-    
-    if (!selectedOption) {
-        alert("Please select Yes or No.");
-        return;
-    }
-
-    switch(selectedOption.value) {
-        case 'Yes':
-            showSection('additional-charges-description-section');
-            break;
-        case 'No':
-            showSection('solar-section');
-            break;
-        default:
-            console.error("Unknown selection for additional charges");
-    }
-}
-
-// Navigate from Solar section
-function nextFromSolar() {
-    submitForm()
-        .then(async () => {
-            try {
-                const pdfId = await getLatestPdfId();
-                if (pdfId) {
-                    showSection('review-section');
-                    displayPDF(pdfId);
-                } else {
-                    throw new Error('Could not get PDF ID');
-                }
-            } catch (error) {
-                console.error('Error showing review:', error);
-                alert('There was an error displaying the preview. Please try again.');
-            }
-        })
-        .catch(error => {
-            console.error('Error submitting form:', error);
-            alert('There was an error submitting the form. Please try again.');
-        });
-}
-// Show loading indicator
 function showLoading(message = 'Processing your estimate...') {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
@@ -922,16 +628,282 @@ function hideLoading() {
         previewFrame.srcdoc = '';
     }
 }
-
-// Check authentication before form submission
-function checkAuthBeforeSubmit() {
-    if (!gapi.auth2?.getAuthInstance()?.isSignedIn.get()) {
-        return gapi.auth2.getAuthInstance().signIn().then(() => {
-            return true;
-        }).catch((error) => {
-            console.error('Authentication failed:', error);
-            throw new Error('Authentication failed. Please try again.');
-        });
+function nextProjectTypeSection() {
+    const selectedProjectType = document.querySelector('input[name="projectType"]:checked');
+    if (!selectedProjectType) {
+        alert("Please select a project type.");
+        return;
     }
-    return Promise.resolve(true);
+    
+    switch(selectedProjectType.value) {
+        case 'Cash':
+        case 'Finance':
+            showSection('measureRoofSection');
+            break;
+        case 'Insurance':
+            showSection('insuranceInfoSection');
+            break;
+        default:
+            console.error("Unknown project type selected");
+    }
 }
+function navigateFromRoofingType() {
+    const selectedRoofingType = document.querySelector('input[name="roofingType"]:checked');
+    
+    if (!selectedRoofingType) {
+        alert("Please select a roofing type.");
+        return;
+    }
+
+    switch(selectedRoofingType.value) {
+        case 'Asphalt Shingles':
+            showSection('asphalt-shingle-section');
+            break;
+        case 'Tile':
+            showSection('tile-roofing-section');
+            break;
+        case 'Modified Bitumen (Flat roof rolled roofing)':
+            showSection('modified-bitumen-section');
+            break;
+        case 'Flat Roof Coating':
+            showSection('coating-section');
+            break;
+        default:
+            console.error("Unknown roofing type selected");
+    }
+}
+function navigateFromShingleType() {
+    const selectedShingleType = document.querySelector('input[name="shingleType"]:checked');
+    
+    if (!selectedShingleType) {
+        alert("Please select a shingle roof type.");
+        return;
+    }
+
+    switch(selectedShingleType.value) {
+        case 'Shingle Roof Repair':
+            showSection('shingle-repair-section');
+            break;
+        case 'Shingle Roof Replacement':
+            showSection('shingle-replacement-section');
+            break;
+        default:
+            console.error("Unknown shingle type selected");
+    }
+}
+function navigateFromTileRoofingType() {
+    const selectedTileType = document.querySelector('input[name="tile-roofing-type"]:checked');
+    
+    if (!selectedTileType) {
+        alert("Please select a tile roofing type.");
+        return;
+    }
+
+    switch(selectedTileType.value) {
+        case 'Repair/Partial Roof':
+            showSection('tile-repair-section');
+            break;
+        case 'Underlayment Replacement':
+            showSection('tile-underlayment-section');
+            break;
+        case 'Remove and Replace':
+            showSection('tile-remove-replace-section');
+            break;
+        default:
+            console.error("Unknown tile roofing type selected");
+    }
+}
+function navigateFromSecondaryRoof() {
+    const selectedOption = document.querySelector('input[name="secondary-roof"]:checked');
+    
+    if (!selectedOption) {
+        alert("Please select Yes or No.");
+        return;
+    }
+
+    switch(selectedOption.value) {
+        case 'Yes':
+            showSection('secondary-roofing-type-section');
+            break;
+        case 'No':
+            showSection('additional-charges-section');
+            break;
+        default:
+            console.error("Unknown selection for secondary roof");
+    }
+}
+function navigateFromSecondaryRoofingType() {
+    const selectedRoofingType = document.querySelector('input[name="secondary-roofing-type"]:checked');
+    
+    if (!selectedRoofingType) {
+        alert("Please select a roofing type.");
+        return;
+    }
+
+    switch(selectedRoofingType.value) {
+        case 'Shingles':
+            showSection('secondary-roof-type-shingles-section');
+            break;
+        case 'Tiles':
+            showSection('secondary-roof-type-tile-section');
+            break;
+        case 'Modified Bitumen':
+            showSection('secondary-roof-type-modified-bitumen-section');
+            break;
+        case 'Coating':
+            showSection('secondary-roof-type-coating-section');
+            break;
+        default:
+            console.error("Unknown secondary roofing type selected");
+    }
+}
+function navigateFromThirdRoof() {
+    const selectedOption = document.querySelector('input[name="third-roof"]:checked');
+    
+    if (!selectedOption) {
+        alert("Please select Yes or No.");
+        return;
+    }
+
+    switch(selectedOption.value) {
+        case 'Yes':
+            showSection('third-roof-type-style-section');
+            break;
+        case 'No':
+            showSection('additional-charges-section');
+            break;
+        default:
+            console.error("Unknown selection for third roof");
+    }
+}
+function navigateFromThirdRoofStyle() {
+    const selectedRoofingType = document.querySelector('input[name="third-roof-style"]:checked');
+    
+    if (!selectedRoofingType) {
+        alert("Please select a roofing type.");
+        return;
+    }
+
+    switch(selectedRoofingType.value) {
+        case 'Shingles':
+            showSection('third-roof-type-shingles-section');
+            break;
+        case 'Tile':
+            showSection('third-roof-type-tiles-section');
+            break;
+        case 'Modified':
+            showSection('third-roof-type-modified-section');
+            break;
+        case 'Coating':
+            showSection('third-roof-type-coatings-section');
+            break;
+        default:
+            console.error("Unknown third roof style selected");
+    }
+}
+function navigateFromAdditionalCharges() {
+    const selectedOption = document.querySelector('input[name="additional-charges"]:checked');
+    
+    if (!selectedOption) {
+        alert("Please select Yes or No.");
+        return;
+    }
+
+    switch(selectedOption.value) {
+        case 'Yes':
+            showSection('additional-charges-description-section');
+            break;
+        case 'No':
+            showSection('solar-section');
+            break;
+        default:
+            console.error("Unknown selection for additional charges");
+    }
+}
+function nextFromSolar() {
+    submitForm()
+        .then(async () => {
+            try {
+                const pdfId = await getLatestPdfId();
+                if (pdfId) {
+                    showSection('review-section');
+                    displayPDF(pdfId);
+                } else {
+                    throw new Error('Could not get PDF ID');
+                }
+            } catch (error) {
+                console.error('Error showing review:', error);
+                alert('There was an error displaying the preview. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting form:', error);
+            alert('There was an error submitting the form. Please try again.');
+        });
+}
+function handleApiError(error) {
+    console.error('API Error:', error);
+    let errorMessage = 'An error occurred. ';
+    
+    if (error.error === 'popup_blocked_by_browser') {
+        errorMessage += 'Please allow popups for this site and try again.';
+    } else if (error.error === 'redirect_uri_mismatch') {
+        errorMessage += 'Authentication configuration error. Please contact support.';
+    } else {
+        errorMessage += 'Please try again later.';
+    }
+    
+    alert(errorMessage);
+}
+async function getDecodedServiceAccountCredentials() {
+    try {
+        // Fetch the encoded credentials file
+        const response = await fetch('service-account-base64.txt');
+        if (!response.ok) {
+            throw new Error(`Failed to fetch credentials: ${response.status} ${response.statusText}`);
+        }
+
+        // Decode the content
+        const base64Content = await response.text();
+        const jsonContent = atob(base64Content);
+        
+        // Parse and return the credentials
+        return JSON.parse(jsonContent);
+    } catch (error) {
+        console.error('Service account credentials error:', error);
+        throw new Error('Failed to initialize service account credentials');
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// Show loading indicator
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        const pdfId = await getLatestPdfId();
+        if (pdfId) {
+            displayPDF(pdfId);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+    // Initialize form sections
+    hideAllSections();
+    showSection(sectionHistory[0]);
+
+
+
+
+
+
+
+ let isSubmitting = false;
