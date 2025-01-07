@@ -184,10 +184,6 @@ button:active {
     transform: translateY(0);
 }
 
-#backButton {
-    display: none;
-    width: 48%;
-}
 
 /* Radio Button Styles */
 input[type="radio"] {
