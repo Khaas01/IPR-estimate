@@ -150,16 +150,17 @@ window.addEventListener('message', function(event) {
                 }
             } else {
                 console.error('No PDF URL in response');
-                alert('Error: No PDF URL received');
+                // Removed alert, using console.error instead
             }
         } else {
             hideLoading();
-            alert('Error: ' + (data.message || 'Unknown error'));
+            console.error('Error:', (data.message || 'Unknown error'));
+            // Removed alert, using console.error instead
         }
     } catch (error) {
         hideLoading();
         console.error('Error processing message:', error);
-        alert('Error processing response. Please try again.');
+        // Removed alert, using console.error instead
     }
 });
 
