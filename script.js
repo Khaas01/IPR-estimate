@@ -1,4 +1,5 @@
 // Global variables
+let isSubmitting = false;
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
@@ -113,21 +114,31 @@ function updateSignInStatus(isSignedIn) {
         console.log('User is not signed in');
     }
 }
-// Event listener for DOMContentLoaded to initialize the form and Google APIs
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the section history with the actual first section ID
-    sectionHistory.push('salesRepSection'); // Corrected section ID
+document.addEventListener('DOMContentLoaded', async function() {
+    // Initialize section history
+    sectionHistory.push('salesRepSection');
 
     // Initialize Google APIs
     if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
         initializeGoogleAPIs();
     } else {
         console.error('Google APIs are not loaded correctly');
-        handleApiError(new Error('Google APIs failed to load'));
     }
-        hideAllSections();
-        showSection(sectionHistory[0]);
 
+    // Get and display PDF if available
+    try {
+        const pdfId = await getLatestPdfId();
+        if (pdfId) {
+            displayPDF(pdfId);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+    // Initialize form sections
+    hideAllSections();
+    showSection(sectionHistory[0]);
+});
 
 window.addEventListener('message', function(event) {
     try {
@@ -875,36 +886,3 @@ async function getDecodedServiceAccountCredentials() {
         throw new Error('Failed to initialize service account credentials');
     }
 }
-
-
-
-
-
-
-
-
-
-
-// Show loading indicator
-// Initialize when the page loads
-document.addEventListener('DOMContentLoaded', async function() {
-    try {
-        const pdfId = await getLatestPdfId();
-        if (pdfId) {
-            displayPDF(pdfId);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-});
-    // Initialize form sections
-    hideAllSections();
-    showSection(sectionHistory[0]);
-
-
-
-
-
-
-
- let isSubmitting = false;
