@@ -195,7 +195,7 @@ window.addEventListener('message', function(event) {
             }
         });
     });
-});
+
  function hideAllSections() {
     document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
         section.style.display = 'none';
