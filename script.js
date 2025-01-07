@@ -292,13 +292,12 @@ function validateForm(formData) {
 function submitForm() {
     if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
     
-    return checkAuthBeforeSubmit()
-        .then(() => {
-            isSubmitting = true;
-            showLoading('Submitting form...');
-            
-            try {
-                const rawFormData = collectFormData();
+    return new Promise((resolve, reject) => {
+        isSubmitting = true;
+        showLoading('Submitting form...');
+        
+        try {
+            const rawFormData = collectFormData();
                 
                 // Structured form data matching the Form Responses sheet headers
                 const formData = {
@@ -356,51 +355,46 @@ function submitForm() {
                     }
                 };
 
-                console.log('Sending structured form data:', formData);
+               console.log('Sending structured form data:', formData);
 
-               return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    credentials: 'omit',
-    redirect: 'follow',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        timestamp: new Date().toISOString(),
-        user: 'Khaas01',
-        data: formData
-    })
-}) // <-- Add closing parenthesis here
-.then(response => {
-    hideLoading();
-    if (response.success) {
-        // Redirect to review page with file ID
-        window.location.href = `review-test.html?id=${response.fileId}`;
-    }
-    return response;
-})
-.catch(error => {
-    console.error('Error:', error);
-    hideLoading();
-    throw error;
-})
-.finally(() => {
-    isSubmitting = false;
-    hideLoading();
-});
-
-            } catch (error) {
+            fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                credentials: 'omit',
+                redirect: 'follow',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    timestamp: new Date().toISOString(),
+                    user: 'Khaas01',
+                    data: formData
+                })
+            })
+            .then(response => {
+                hideLoading();
+                if (response.success) {
+                    // Redirect to review page with file ID
+                    window.location.href = `review-test.html?id=${response.fileId}`;
+                }
+                resolve(response);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                hideLoading();
+                reject(error);
+            })
+            .finally(() => {
                 isSubmitting = false;
                 hideLoading();
-                return Promise.reject(error);
-            }
-        })
-        .catch(error => {
+            });
+
+        } catch (error) {
+            isSubmitting = false;
             hideLoading();
-            alert(error.message);
-            return Promise.reject(error);
-        });
+            reject(error);
+        }
+    });
 }
 async function getLatestPdfId() {
     try {
