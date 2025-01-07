@@ -305,10 +305,7 @@ function submitForm() {
         
         try {
             const formData = collectFormData();
-            
-                
-        // Structured form data matching the Form Responses sheet headers
-                const formData = {
+        
                     data: {
                         "Timestamp": rawFormData.timestamp,
                         "User Login": "Khaas01",
