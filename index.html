@@ -12,62 +12,10 @@
     <link rel="stylesheet" href="styles.css">
 </head>
     
-    
-   <!-- <script>
-        document.getElementById('estimate-form').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent the default form submission
-
-            // Capture form data
-            const formData = {
-                data: {
-                    "Owner Name": document.getElementById('owner-name').value,
-                    // Add other form fields as needed
-                }
-            };
-
-            // Call the function to submit form data and display PDF
-            await submitFormAndDisplayPDF(formData);
-        });
-
-        async function submitFormAndDisplayPDF(formData) {
-            try {
-                const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_ENDPOINT', { // Replace with your actual Google Apps Script endpoint
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                if (data.success) {
-                    displayPDF(data.pdfUrl);
-                } else {
-                    console.error('Error in form submission:', data.message);
-                }
-            } catch (error) {
-                console.error('Error submitting form:', error);
-            }
-        }
-
-        function displayPDF(pdfUrl) {
-            const container = document.getElementById('pdf-previews');
-            const iframe = document.createElement('iframe');
-            iframe.src = pdfUrl;
-            iframe.width = '600px';
-            iframe.height = '400px';
-            container.appendChild(iframe);
-        }
-    </script>
-    -->
-
-</head>
 <body>
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
-    <h1>Roofing Estimate Form Version 61</h1>
+    <h1>Roofing Estimate Form Version 62</h1>
 
 
 </header>
