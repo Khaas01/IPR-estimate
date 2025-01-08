@@ -8,7 +8,7 @@ const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
 const SHEET_NAME = "Form Responses";
 
 const API_CONFIG = {
-    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyL6ioIoHwW9ydFNN8fD-Dfmospk11aWB-U8kgsKRpli_sdQ-AYt6gMBQsvquden91JsQ/exec',
+    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwOCAIWr3ohEsDE91BGXMP4tHz9wagzaILi6Z_qeIZ_bJixP_SG7YHQjxugyojXTuQ5Uw/exec',
     API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
     CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
     REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
@@ -355,24 +355,30 @@ function submitForm() {
 
         console.log('Sending structured form data:', formData);
 
-          return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            redirect: 'follow',
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8',
-            },
-            body: JSON.stringify({ data: submissionData })
-        })
-        .then(response => {
-            console.log('Form submitted successfully');
+         return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    redirect: 'follow',
+    headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
+    },
+    body: JSON.stringify(submissionData)
+})
+.then(response => {
+    // With no-cors, we can't read the response
+    // Instead, we'll wait a moment to allow the server to process
+    return new Promise(resolve => {
+        setTimeout(() => {
             showSection('review-section');
-            return { success: true };
-        })
-        .catch(error => {
-            console.error('Form submission error:', error);
-            throw error;
-        })
+            resolve({ success: true });
+        }, 2000); // Wait 2 seconds for server processing
+    });
+})
+.catch(error => {
+    console.error('Form submission error:', error);
+    throw error;
+})
+    
         .finally(() => {
             isSubmitting = false;
             hideLoading();
