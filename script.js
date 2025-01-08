@@ -54,16 +54,31 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Initialize section history
     sectionHistory.push('review-section');
 
-    // Initialize Google APIs with simpler check
-    if (typeof gapi !== 'undefined') {
-        initializeGoogleAPIs();
-    } else {
-        console.error('Google API client library not loaded');
-    }
-
-    // Initialize form sections
-    hideAllSections();
-    showSection(sectionHistory[0]);
+    // Show review section and loading indicator immediately
+    showSection('review-section');
+    showLoading('Loading latest estimate...');
+    
+    // Add a delay before fetching the PDF ID
+    setTimeout(async () => {
+        try {
+            const pdfId = await getLatestPdfId();
+            console.log('Initial PDF ID fetch:', pdfId);
+            
+            if (pdfId) {
+                displayPDF(pdfId);
+            } else {
+                console.error('No PDF ID found on initial load');
+                showError();
+            }
+        } catch (error) {
+            console.error('Error during initial PDF load:', error);
+            showError();
+        } finally {
+            if (!document.getElementById('estimatePreviewFrame').src) {
+                hideLoading();
+            }
+        }
+    }, 2000); // 2 second delay before fetching
 });
 
 window.addEventListener('message', function(event) {
@@ -516,14 +531,14 @@ function showError() {
         `;
     }
 }
-function showLoading(message = 'Processing your estimate...') {
+function showLoading(message = 'Loading latest estimate...') {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
         previewFrame.srcdoc = `
             <html>
             <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif; background-color: white;">
                 <div style="text-align: center;">
-                    <div style="margin-bottom: 20px; font-size: 16px;">${message}</div>
+                    <div style="margin-bottom: 20px; font-size: 18px; color: #333;">${message}</div>
                     <div class="spinner" style="border: 5px solid #f3f3f3; border-radius: 50%; border-top: 5px solid #3498db; width: 50px; height: 50px; margin: 0 auto;">
                         <style>
                             @keyframes spin {
