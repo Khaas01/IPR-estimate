@@ -52,7 +52,7 @@ async function initializeGoogleAPIs() {
 
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize section history
-    sectionHistory.push('salesRepSection');
+    sectionHistory.push('review-section');
 
     // Initialize Google APIs with simpler check
     if (typeof gapi !== 'undefined') {
