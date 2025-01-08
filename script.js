@@ -314,112 +314,94 @@ function validateForm(formData) {
 function submitForm() {
     if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
     
-    return new Promise((resolve, reject) => {
-        isSubmitting = true;
-        showLoading('Submitting form...');
+    isSubmitting = true;
+    showLoading('Submitting form...');
+    
+    try {
+        const rawFormData = collectFormData(); // Changed FormData to rawFormData to match usage
         
-        try {
-            const rawFormData = collectFormData();
-            
-            // Create the properly formatted data object
-            const formData = {
-                timestamp: new Date().toISOString(),
-                user: 'Khaas01',
-                data: {
-                    Timestamp: rawFormData.timestamp,
-                    "User Login": "Khaas01",
-                    "Sales Rep Name": rawFormData.salesRepName,
-                    "Sales Rep Email": rawFormData.salesRepEmail,
-                    "Sales Rep Phone": rawFormData.salesRepPhone,
-                    "Company Name": rawFormData.companyName,
-                    "Owner Name": rawFormData.ownerName,
-                    "Owner Address": rawFormData.ownerAddress,
-                    "Owner City": rawFormData.ownerCity,
-                    "Owner State": rawFormData.ownerState,
-                    "Owner ZIP": rawFormData.ownerZip,
-                    "Owner Phone": rawFormData.ownerPhone,
-                    "Owner Email": rawFormData.ownerEmail,
-                    "Project Type": rawFormData.projectType,
-                    "Insurance Company": rawFormData.insuranceCompany,
-                    "Insurance Phone": rawFormData.insurancePhone,
-                    "Claim Number": rawFormData.claimNumber,
-                    "Policy Number": rawFormData.policyNumber,
-                    "Date of Loss": rawFormData.dateOfLoss,
-                    "Roofing Type": rawFormData.roofingType,
-                    "Shingle Type": rawFormData.shingleType,
-                    "Shingles Repaired": rawFormData.shinglesRepaired,
-                    "Additional Repairs": rawFormData.additionalRepairs,
-                    "Shingle Replacement Squares": rawFormData.shingleReplacement,
-                    "Tile Roofing Type": rawFormData.tileRoofingType,
-                    "Tile Repair Squares": rawFormData.tileRepairSq,
-                    "Tile Underlayment Squares": rawFormData.tileUnderlaymentSq,
-                    "Tile Type": rawFormData.tileType,
-                    "Tile Remove/Replace Squares": rawFormData.tileRoofRR,
-                    "Modified Bitumen Squares": rawFormData.modifiedBitumenSq,
-                    "Coating Squares": rawFormData.coatingSquares,
-                    "Has Secondary Roof": rawFormData.secondaryRoof,
-                    "Secondary Roofing Type": rawFormData.secondaryRoofingType,
-                    "Has Third Roof": rawFormData.thirdRoof,
-                    "Third Roof Style": rawFormData.thirdRoofStyle,
-                    "Has Additional Charges": rawFormData.additionalCharges,
-                    "Additional Charges Description": rawFormData.additionalChargesDescription,
-                    "Additional Charges Price": rawFormData.additionalChargesPrice,
-                    "Has Solar Panels": rawFormData.solar,
-                    "Solar Detach/Reset Cost": rawFormData.solarDetachReset,
-                    "Amount Collected": "",
-                    "Unforseen Additions": ""
-                }
-            };
+        // Create the properly formatted data object
+        const formData = {
+            timestamp: new Date().toISOString(),
+            data: {
+                Timestamp: new Date().toISOString(), // Changed from rawFormData.timestamp
+                "User Login": "Khaas01",
+                "Sales Rep Name": rawFormData.salesRepName,
+                "Sales Rep Email": rawFormData.salesRepEmail,
+                "Sales Rep Phone": rawFormData.salesRepPhone,
+                "Company Name": rawFormData.companyName,
+                "Owner Name": rawFormData.ownerName,
+                "Owner Address": rawFormData.ownerAddress,
+                "Owner City": rawFormData.ownerCity,
+                "Owner State": rawFormData.ownerState,
+                "Owner ZIP": rawFormData.ownerZip,
+                "Owner Phone": rawFormData.ownerPhone,
+                "Owner Email": rawFormData.ownerEmail,
+                "Project Type": rawFormData.projectType,
+                "Insurance Company": rawFormData.insuranceCompany,
+                "Insurance Phone": rawFormData.insurancePhone,
+                "Claim Number": rawFormData.claimNumber,
+                "Policy Number": rawFormData.policyNumber,
+                "Date of Loss": rawFormData.dateOfLoss,
+                "Roofing Type": rawFormData.roofingType,
+                "Shingle Type": rawFormData.shingleType,
+                "Shingles Repaired": rawFormData.shinglesRepaired,
+                "Additional Repairs": rawFormData.additionalRepairs,
+                "Shingle Replacement Squares": rawFormData.shingleReplacement,
+                "Tile Roofing Type": rawFormData.tileRoofingType,
+                "Tile Repair Squares": rawFormData.tileRepairSq,
+                "Tile Underlayment Squares": rawFormData.tileUnderlaymentSq,
+                "Tile Type": rawFormData.tileType,
+                "Tile Remove/Replace Squares": rawFormData.tileRoofRR,
+                "Modified Bitumen Squares": rawFormData.modifiedBitumenSq,
+                "Coating Squares": rawFormData.coatingSquares,
+                "Has Secondary Roof": rawFormData.secondaryRoof,
+                "Secondary Roofing Type": rawFormData.secondaryRoofingType,
+                "Has Third Roof": rawFormData.thirdRoof,
+                "Third Roof Style": rawFormData.thirdRoofStyle,
+                "Has Additional Charges": rawFormData.additionalCharges,
+                "Additional Charges Description": rawFormData.additionalChargesDescription,
+                "Additional Charges Price": rawFormData.additionalChargesPrice,
+                "Has Solar Panels": rawFormData.solar,
+                "Solar Detach/Reset Cost": rawFormData.solarDetachReset,
+                "Amount Collected": "",
+                "Unforseen Additions": ""
+            }
+        };
 
-            fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
+        return gapi.client.init({
+            apiKey: API_CONFIG.API_KEY,
+            clientId: API_CONFIG.CLIENT_ID,
+            scope: API_CONFIG.SCOPES
+        }).then(() => {
+            return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                credentials: 'omit',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(formData.data)
-            })
-            .then(response => {
-                hideLoading();
-                resolve(response);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                hideLoading();
-                reject(error);
-            })
-            .finally(() => {
-                isSubmitting = false;
+                body: JSON.stringify(formData.data) // Changed to send just formData.data
             });
-
-        } catch (error) {
+        }).then(() => {
+            return new Promise(resolve => setTimeout(resolve, 2000));
+        }).then(() => {
+            return getLatestPdfId();
+        }).then(pdfId => {
+            if (pdfId) {
+                showSection('review-section');
+                displayPDF(pdfId);
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+            showError();
+        }).finally(() => {
             isSubmitting = false;
             hideLoading();
-            reject(error);
-        }
-    });
-}
-async function getLatestPdfId() {
-    try {
-        console.log('Fetching from:', `${API_CONFIG.API_ENDPOINT}?key=${API_CONFIG.API_KEY}`);
-        const response = await fetch(`${API_CONFIG.API_ENDPOINT}?key=${API_CONFIG.API_KEY}`);
-        const data = await response.json();
-        
-        if (data.values && data.values.length > 0) {
-            const headers = data.values[0];
-            const pdfIdColumnIndex = headers.indexOf('PDF_ID');
-            
-            if (pdfIdColumnIndex !== -1) {
-                const lastRow = data.values[data.values.length - 1];
-                console.log('Found PDF ID:', lastRow[pdfIdColumnIndex]); // Add this log
-                return lastRow[pdfIdColumnIndex];
-            }
-        }
-        throw new Error('PDF ID not found in spreadsheet');
+        });
     } catch (error) {
-        console.error('Error fetching PDF ID:', error);
-        return null;
+        isSubmitting = false;
+        hideLoading();
+        return Promise.reject(error);
     }
 }
 
