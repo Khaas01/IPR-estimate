@@ -372,11 +372,17 @@ function submitForm() {
 })
 .then(response => {
     // With no-cors, we can't read the response
-    // Instead, we'll wait a moment to allow the server to process
+    // Instead, we'll get the PDF ID from the spreadsheet
     return new Promise(resolve => {
-        setTimeout(() => {
-            showSection('review-section');
-            resolve({ success: true });
+        setTimeout(async () => {
+            const pdfId = await getLatestPdfId();
+            if (pdfId) {
+                showSection('review-section');
+                displayPDF(pdfId);
+                resolve({ success: true });
+            } else {
+                throw new Error('Could not retrieve PDF ID');
+            }
         }, 2000); // Wait 2 seconds for server processing
     });
 })
@@ -756,6 +762,26 @@ function handleApiError(error) {
     
     // Return false instead of showing alert
     return false;
+}
+async function getLatestPdfId() {
+    try {
+        const response = await fetch(`${API_CONFIG.API_ENDPOINT}?key=${API_CONFIG.API_KEY}`);
+        const data = await response.json();
+        
+        if (data.values && data.values.length > 0) {
+            const headers = data.values[0];
+            const pdfIdColumnIndex = headers.indexOf('PDF_ID');
+            
+            if (pdfIdColumnIndex !== -1) {
+                const lastRow = data.values[data.values.length - 1];
+                return lastRow[pdfIdColumnIndex];
+            }
+        }
+        throw new Error('PDF ID not found in spreadsheet');
+    } catch (error) {
+        console.error('Error fetching PDF ID:', error);
+        return null;
+    }
 }
 async function getDecodedServiceAccountCredentials() {
     try {
