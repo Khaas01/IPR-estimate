@@ -71,18 +71,27 @@ window.addEventListener('message', function(event) {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         console.log('Received message data:', data);
 
+        // Ignore Google API initialization messages
+        if (data.f && data.f.startsWith('apiproxy')) {
+            return;
+        }
+
         if (data.success) {
             hideLoading();
             showSection('review-section');
-        } else {
+        } else if (data.type === 'form_submission') {
+            // Only handle actual form submission responses
             hideLoading();
             console.error('Form submission failed:', data);
             showError();
         }
     } catch (error) {
-        hideLoading();
-        console.error('Error processing message:', error);
-        showError();
+        // Only show error if it's not a Google API message
+        if (!event.data.f) {
+            hideLoading();
+            console.error('Error processing message:', error);
+            showError();
+        }
     }
 });
 
