@@ -76,17 +76,23 @@ window.addEventListener('message', function(event) {
             return;
         }
 
-        if (data.success) {
+        if (data.success && data.pdfUrl) {
             hideLoading();
             showSection('review-section');
+            // Extract file ID from Google Drive URL
+            const fileId = data.fileId || data.pdfUrl.match(/\/d\/(.+?)\/|id=(.+?)(&|$)/)?.[1];
+            if (fileId) {
+                displayPDF(fileId);
+            } else {
+                console.error('Could not extract file ID from URL:', data.pdfUrl);
+                showError();
+            }
         } else if (data.type === 'form_submission') {
-            // Only handle actual form submission responses
             hideLoading();
             console.error('Form submission failed:', data);
             showError();
         }
     } catch (error) {
-        // Only show error if it's not a Google API message
         if (!event.data.f) {
             hideLoading();
             console.error('Error processing message:', error);
@@ -390,29 +396,40 @@ function submitForm() {
     }
 }
 
-// Update the displayPDF function
-function displayPDF(pdfId) {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame && pdfId) {
-        console.log('Attempting to display PDF with ID:', pdfId);
-        const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
-        const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
-        
-        console.log('Preview URL:', previewUrl);
-        
-        // Set the source directly
-        previewFrame.src = previewUrl;
-        
-        // Basic error handling
-        previewFrame.onerror = () => {
-            console.error('Failed to load preview');
+window.addEventListener('message', function(event) {
+    try {
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        console.log('Received message data:', data);
+
+        // Ignore Google API initialization messages
+        if (data.f && data.f.startsWith('apiproxy')) {
+            return;
+        }
+
+        if (data.success && data.pdfUrl) {
+            hideLoading();
+            showSection('review-section');
+            // Extract file ID from Google Drive URL
+            const fileId = data.fileId || data.pdfUrl.match(/\/d\/(.+?)\/|id=(.+?)(&|$)/)?.[1];
+            if (fileId) {
+                displayPDF(fileId);
+            } else {
+                console.error('Could not extract file ID from URL:', data.pdfUrl);
+                showError();
+            }
+        } else if (data.type === 'form_submission') {
+            hideLoading();
+            console.error('Form submission failed:', data);
             showError();
-        };
-    } else {
-        console.error('Preview frame not found or invalid PDF ID');
-        showError();
+        }
+    } catch (error) {
+        if (!event.data.f) {
+            hideLoading();
+            console.error('Error processing message:', error);
+            showError();
+        }
     }
-}
+});
 
 function displayPDFPreview(pdfUrl) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
