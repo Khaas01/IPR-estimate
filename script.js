@@ -353,7 +353,7 @@ function submitForm() {
             "Unforseen Additions": ""
         };
 
-        return fetch(GOOGLE_APPS_SCRIPT_URL, {
+       return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: {
