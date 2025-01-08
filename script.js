@@ -740,11 +740,12 @@ function nextFromSolar() {
     if (solarValue === 'yes') {
         showSection('solar-detach-reset-section');
     } else {
+        // Show review section first
+        showSection('review-section');
+        // Show loading indicator
+        showLoading('Submitting form...');
+        
         submitForm()
-            .then(() => {
-                showSection('review-section');
-                hideLoading();
-            })
             .catch(error => {
                 console.error('Error:', error);
                 hideLoading();
