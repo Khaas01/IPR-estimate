@@ -320,81 +320,90 @@ function submitForm() {
     try {
         const rawFormData = collectFormData();
         
-        // Create the properly formatted data object
+        // Matching EXACTLY with the Form Responses sheet headers
         const formData = {
-            Timestamp: new Date().toISOString(),
-            "User Login": "Khaas01",
-            "Sales Rep Name": rawFormData.salesRepName,
-            "Sales Rep Email": rawFormData.salesRepEmail,
-            "Sales Rep Phone": rawFormData.salesRepPhone,
-            "Company Name": rawFormData.companyName,
-            "Owner Name": rawFormData.ownerName,
-            "Owner Address": rawFormData.ownerAddress,
-            "Owner City": rawFormData.ownerCity,
-            "Owner State": rawFormData.ownerState,
-            "Owner ZIP": rawFormData.ownerZip,
-            "Owner Phone": rawFormData.ownerPhone,
-            "Owner Email": rawFormData.ownerEmail,
-            "Project Type": rawFormData.projectType,
-            "Insurance Company": rawFormData.insuranceCompany,
-            "Insurance Phone": rawFormData.insurancePhone,
-            "Claim Number": rawFormData.claimNumber,
-            "Policy Number": rawFormData.policyNumber,
-            "Date of Loss": rawFormData.dateOfLoss,
-            "Roofing Type": rawFormData.roofingType,
-            "Shingle Type": rawFormData.shingleType,
-            "Shingles Repaired": rawFormData.shinglesRepaired,
-            "Additional Repairs": rawFormData.additionalRepairs,
-            "Shingle Replacement Squares": rawFormData.shingleReplacement,
-            "Tile Roofing Type": rawFormData.tileRoofingType,
-            "Tile Repair Squares": rawFormData.tileRepairSq,
-            "Tile Underlayment Squares": rawFormData.tileUnderlaymentSq,
-            "Tile Type": rawFormData.tileType,
-            "Tile Remove/Replace Squares": rawFormData.tileRoofRR,
-            "Modified Bitumen Squares": rawFormData.modifiedBitumenSq,
-            "Coating Squares": rawFormData.coatingSquares,
-            "Has Secondary Roof": rawFormData.secondaryRoof,
-            "Secondary Roofing Type": rawFormData.secondaryRoofingType,
-            "Has Third Roof": rawFormData.thirdRoof,
-            "Third Roof Style": rawFormData.thirdRoofStyle,
-            "Has Additional Charges": rawFormData.additionalCharges,
-            "Additional Charges Description": rawFormData.additionalChargesDescription,
-            "Additional Charges Price": rawFormData.additionalChargesPrice,
-            "Has Solar Panels": rawFormData.solar,
-            "Solar Detach/Reset Cost": rawFormData.solarDetachReset,
-            "Amount Collected": "",
-            "Unforseen Additions": ""
+            data: {
+                "Timestamp": new Date().toISOString(),
+                "User Login": "Khaas01",
+                "Sales Rep Name": rawFormData.salesRepName,
+                "Sales Rep Email": rawFormData.salesRepEmail,
+                "Sales Rep Phone": rawFormData.salesRepPhone,
+                "Company Name": rawFormData.companyName,
+                "Owner Name": rawFormData.ownerName,
+                "Owner Address": rawFormData.ownerAddress,
+                "Owner City": rawFormData.ownerCity,
+                "Owner State": rawFormData.ownerState,
+                "Owner ZIP": rawFormData.ownerZip,
+                "Owner Phone": rawFormData.ownerPhone,
+                "Owner Email": rawFormData.ownerEmail,
+                "Project Type": rawFormData.projectType,
+                "Insurance Company": rawFormData.insuranceCompany,
+                "Insurance Phone": rawFormData.insurancePhone,
+                "Claim Number": rawFormData.claimNumber,
+                "Policy Number": rawFormData.policyNumber,
+                "Date of Loss": rawFormData.dateOfLoss,
+                "Roofing Type": rawFormData.roofingType,
+                "Shingle Type": rawFormData.shingleType,
+                "Shingles Repaired": rawFormData.shinglesRepaired,
+                "Additional Repairs": rawFormData.additionalRepairs,
+                "Shingle Replacement Squares": rawFormData.shingleReplacement,
+                "Tile Roofing Type": rawFormData.tileRoofingType,
+                "Tile Repair Squares": rawFormData.tileRepairSq,
+                "Tile Underlayment Squares": rawFormData.tileUnderlaymentSq,
+                "Tile Type": rawFormData.tileType,
+                "Tile Remove/Replace Squares": rawFormData.tileRoofRR,
+                "Modified Bitumen Squares": rawFormData.modifiedBitumenSq,
+                "Coating Squares": rawFormData.coatingSquares,
+                "Has Secondary Roof": rawFormData.secondaryRoof,
+                "Secondary Roofing Type": rawFormData.secondaryRoofingType,
+                "Secondary Shingles Squares": rawFormData.secondaryShingleSquares,
+                "Secondary Tile Underlayment Squares": rawFormData.secondaryTileSquares,
+                "Secondary Modified Bitumen Squares": rawFormData.secondaryModifiedBitumenSq,
+                "Secondary Coating Squares": rawFormData.secondaryCoatingSquares,
+                "Has Third Roof": rawFormData.thirdRoof,
+                "Third Roof Style": rawFormData.thirdRoofStyle,
+                "Third Shingles Squares": rawFormData.thirdShingleSquares,
+                "Third Tiles Squares": rawFormData.thirdTileSquares,
+                "Third Modified Squares": rawFormData.thirdModifiedSquares,
+                "Third Coating Squares": rawFormData.thirdCoatingSquares,
+                "Has Additional Charges": rawFormData.additionalCharges,
+                "Additional Charges Description": rawFormData.additionalChargesDescription,
+                "Additional Charges Price": rawFormData.additionalChargesPrice,
+                "Has Solar Panels": rawFormData.solar,
+                "Solar Detach/Reset Cost": rawFormData.solarDetachReset,
+                "Amount Collected": "",
+                "Unforseen Additions": ""
+            }
         };
+
+        console.log('Sending structured form data:', formData);
 
         return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'text/plain;charset=utf-8',
             },
-            body: JSON.stringify(formData)
+            body: JSON.stringify(formData.data)
         })
-        .then(() => {
-            // Since mode is 'no-cors', we need to wait a bit for the form to process
-            return new Promise(resolve => setTimeout(resolve, 2000));
-        })
-        .then(() => {
-            return getLatestPdfId();
-        })
-        .then(pdfId => {
-            if (pdfId) {
-                showSection('review-section');
-                displayPDF(pdfId);
+        .then(response => {
+            if (response.type === 'opaque') {
+                return { success: true };
             }
+            return response.json();
+        })
+        .then(() => {
+            showSection('review-section');
         })
         .catch(error => {
-            console.error('Error:', error);
-            showError();
+            console.error('Fetch error:', error);
+            throw error;
         })
         .finally(() => {
             isSubmitting = false;
             hideLoading();
         });
+
     } catch (error) {
         isSubmitting = false;
         hideLoading();
