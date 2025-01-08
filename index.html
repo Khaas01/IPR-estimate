@@ -597,10 +597,10 @@
    
 <div id="navigationButtons">
     <button type="button" onclick="goBack()">Back</button>
-    <button type="button" onclick="showSection('review-section'); displayReview();">Next</button>
+    <button type="button" onclick="submitForm().then(() => showSection('review-section'))">Next</button>
 </div>
 </div>
-<div id="review-section">
+<div id="review-section" style="display:none;">
     <h2>Review Your Estimate</h2>
     <div class="review-instructions">
         <p>Please review your estimate below.</p>
