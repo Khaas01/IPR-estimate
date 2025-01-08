@@ -69,33 +69,20 @@ document.addEventListener('DOMContentLoaded', async function() {
 window.addEventListener('message', function(event) {
     try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-        console.log('Received message data:', data); // Add this line to see what data we're receiving
+        console.log('Received message data:', data);
 
         if (data.success) {
             hideLoading();
-            
-            if (data.pdfUrl) {
-                console.log('Received PDF URL:', data.pdfUrl);
-                showSection('review-section');
-                const previewFrame = document.getElementById('estimatePreviewFrame');
-                if (previewFrame) {
-                    showLoading('Loading preview...');
-                    previewFrame.src = data.pdfUrl;
-                    previewFrame.onload = function() {
-                        hideLoading();
-                        console.log('Preview loaded successfully');
-                    };
-                }
-            } else {
-                console.log('Response successful but no PDF URL provided:', data); // Changed to console.log
-            }
+            showSection('review-section');
         } else {
             hideLoading();
-            console.log('Response indicated failure. Full response:', data); // Changed to help debug
+            console.error('Form submission failed:', data);
+            showError();
         }
     } catch (error) {
         hideLoading();
-        console.log('Error processing message. Event data:', event.data); // Changed to help debug
+        console.error('Error processing message:', error);
+        showError();
     }
 });
 
@@ -299,7 +286,7 @@ function submitForm() {
         isSubmitting = true;
         showLoading('Submitting form...');
 
-        const rawFormData = collectFormData();
+        const formData = collectFormData();
         
         // Matching EXACTLY with the Form Responses sheet headers
         const formData = {
@@ -359,30 +346,28 @@ function submitForm() {
 
         console.log('Sending structured form data:', formData);
 
-        return fetch(GOOGLE_APPS_SCRIPT_URL, {
+          return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             redirect: 'follow',
             headers: {
                 'Content-Type': 'text/plain;charset=utf-8',
             },
-            body: JSON.stringify(formData)
+            body: JSON.stringify({ data: formData })
         })
         .then(response => {
-            if (response.type === 'opaque') {
-                return { success: true };
-            }
-            return response.json();
+            console.log('Form submitted successfully');
+            showSection('review-section');
+            return { success: true };
         })
         .catch(error => {
-            console.error('Fetch error:', error);
+            console.error('Form submission error:', error);
             throw error;
         })
         .finally(() => {
             isSubmitting = false;
             hideLoading();
         });
-
     } catch (error) {
         isSubmitting = false;
         hideLoading();
@@ -713,11 +698,9 @@ function nextFromSolar() {
     if (solarValue === 'yes') {
         showSection('solar-detach-reset-section');
     } else {
-        // Modified this part to remove getLatestPdfId and simplify the flow
         submitForm()
             .then(() => {
                 showSection('review-section');
-                // No need for PDF preview for now
                 hideLoading();
             })
             .catch(error => {
