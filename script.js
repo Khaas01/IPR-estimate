@@ -131,25 +131,6 @@ function showSection(sectionId) {
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
         targetSection.style.display = 'block';
-        
-        // Add this block for the review section
-        if (sectionId === 'review-section') {
-            console.log('Review section shown, getting PDF ID...');
-            getLatestPdfId()
-                .then(pdfId => {
-                    if (pdfId) {
-                        console.log('Got PDF ID, displaying...');
-                        displayPDF(pdfId);
-                    } else {
-                        console.error('No PDF ID returned');
-                        showError();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error getting PDF ID:', error);
-                    showError();
-                });
-        }
     }
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId);
@@ -312,15 +293,13 @@ function validateForm(formData) {
     return true;
 }
 function submitForm() {
-    if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
-    
+    if (isSubmitting) return;
     isSubmitting = true;
     showLoading('Submitting form...');
     
     try {
         const rawFormData = collectFormData();
         
-        // IMPORTANT: Send just the data object, not wrapped in another object
         const formData = {
             "Timestamp": new Date().toISOString(),
             "User Login": "Khaas01",
@@ -374,29 +353,31 @@ function submitForm() {
             "Unforseen Additions": ""
         };
 
-        return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
+        return fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: {
                 'Content-Type': 'text/plain;charset=utf-8',
             },
-            body: JSON.stringify(formData)  // Send formData directly, not wrapped in data object
+            body: JSON.stringify(formData)
         })
         .then(() => {
             showSection('review-section');
+            isSubmitting = false;
+            hideLoading();
         })
         .catch(error => {
             console.error('Error:', error);
-        })
-        .finally(() => {
             isSubmitting = false;
             hideLoading();
+            throw error;
         });
 
     } catch (error) {
+        console.error('Error:', error);
         isSubmitting = false;
         hideLoading();
-        return Promise.reject(error);
+        throw error;
     }
 }
 
