@@ -396,45 +396,59 @@ function submitForm() {
             }
         };
 
-        console.log('Sending structured form data:', formData);
+            console.log('Sending structured form data:', formData);
 
-         return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    redirect: 'follow',
-    headers: {
-        'Content-Type': 'text/plain;charset=utf-8',
-    },
-    body: JSON.stringify(submissionData)
-})
-.then(response => {
-    // With no-cors, we can't read the response
-    // Instead, we'll get the PDF ID from the spreadsheet with retries
-    return new Promise((resolve, reject) => {
-        let attempts = 0;
-        const maxAttempts = 3;
-        const delay = 3000; // 3 seconds between attempts
+        return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            redirect: 'follow',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
+            },
+            body: JSON.stringify(submissionData)
+        })
+        .then(response => {
+            // With no-cors, we can't read the response
+            // Instead, we'll get the PDF ID from the spreadsheet with retries
+            return new Promise((resolve, reject) => {
+                let attempts = 0;
+                const maxAttempts = 3;
+                const delay = 3000; // 3 seconds between attempts
 
-        const tryGetPdfId = async () => {
-            attempts++;
-            const pdfId = await getLatestPdfId();
-            
-            if (pdfId) {
-                showSection('review-section');
-                displayPDF(pdfId);
-                resolve({ success: true });
-            } else if (attempts < maxAttempts) {
-                console.log(`Attempt ${attempts} failed, retrying in ${delay/1000} seconds...`);
-                setTimeout(tryGetPdfId, delay);
-            } else {
-                reject(new Error('Could not retrieve PDF ID after multiple attempts'));
-            }
-        };
+                const tryGetPdfId = async () => {
+                    attempts++;
+                    const pdfId = await getLatestPdfId();
+                    
+                    if (pdfId) {
+                        showSection('review-section');
+                        displayPDF(pdfId);
+                        resolve({ success: true });
+                    } else if (attempts < maxAttempts) {
+                        console.log(`Attempt ${attempts} failed, retrying in ${delay/1000} seconds...`);
+                        setTimeout(tryGetPdfId, delay);
+                    } else {
+                        reject(new Error('Could not retrieve PDF ID after multiple attempts'));
+                    }
+                };
 
-        // Start the first attempt
-        tryGetPdfId();
-    });
-})
+                // Start the first attempt
+                tryGetPdfId();
+            });
+        })
+        .catch(error => {
+            console.error('Form submission error:', error);
+            throw error;
+        })
+        .finally(() => {
+            isSubmitting = false;
+            hideLoading();
+        });
+    } catch (error) {
+        isSubmitting = false;
+        hideLoading();
+        return Promise.reject(error);
+    }
+}
 
 window.addEventListener('message', function(event) {
     try {
