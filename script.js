@@ -409,35 +409,32 @@ function submitForm() {
 })
 .then(response => {
     // With no-cors, we can't read the response
-    // Instead, we'll get the PDF ID from the spreadsheet
-    return new Promise(resolve => {
-        setTimeout(async () => {
+    // Instead, we'll get the PDF ID from the spreadsheet with retries
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const maxAttempts = 3;
+        const delay = 3000; // 3 seconds between attempts
+
+        const tryGetPdfId = async () => {
+            attempts++;
             const pdfId = await getLatestPdfId();
+            
             if (pdfId) {
                 showSection('review-section');
                 displayPDF(pdfId);
                 resolve({ success: true });
+            } else if (attempts < maxAttempts) {
+                console.log(`Attempt ${attempts} failed, retrying in ${delay/1000} seconds...`);
+                setTimeout(tryGetPdfId, delay);
             } else {
-                throw new Error('Could not retrieve PDF ID');
+                reject(new Error('Could not retrieve PDF ID after multiple attempts'));
             }
-        }, 2000); // Wait 2 seconds for server processing
+        };
+
+        // Start the first attempt
+        tryGetPdfId();
     });
 })
-.catch(error => {
-    console.error('Form submission error:', error);
-    throw error;
-})
-    
-        .finally(() => {
-            isSubmitting = false;
-            hideLoading();
-        });
-    } catch (error) {
-        isSubmitting = false;
-        hideLoading();
-        return Promise.reject(error);
-    }
-}
 
 window.addEventListener('message', function(event) {
     try {
