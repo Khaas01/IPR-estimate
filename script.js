@@ -318,83 +318,80 @@ function submitForm() {
     showLoading('Submitting form...');
     
     try {
-        const rawFormData = collectFormData(); // Changed FormData to rawFormData to match usage
+        const rawFormData = collectFormData();
         
         // Create the properly formatted data object
         const formData = {
-            timestamp: new Date().toISOString(),
-            data: {
-                Timestamp: new Date().toISOString(), // Changed from rawFormData.timestamp
-                "User Login": "Khaas01",
-                "Sales Rep Name": rawFormData.salesRepName,
-                "Sales Rep Email": rawFormData.salesRepEmail,
-                "Sales Rep Phone": rawFormData.salesRepPhone,
-                "Company Name": rawFormData.companyName,
-                "Owner Name": rawFormData.ownerName,
-                "Owner Address": rawFormData.ownerAddress,
-                "Owner City": rawFormData.ownerCity,
-                "Owner State": rawFormData.ownerState,
-                "Owner ZIP": rawFormData.ownerZip,
-                "Owner Phone": rawFormData.ownerPhone,
-                "Owner Email": rawFormData.ownerEmail,
-                "Project Type": rawFormData.projectType,
-                "Insurance Company": rawFormData.insuranceCompany,
-                "Insurance Phone": rawFormData.insurancePhone,
-                "Claim Number": rawFormData.claimNumber,
-                "Policy Number": rawFormData.policyNumber,
-                "Date of Loss": rawFormData.dateOfLoss,
-                "Roofing Type": rawFormData.roofingType,
-                "Shingle Type": rawFormData.shingleType,
-                "Shingles Repaired": rawFormData.shinglesRepaired,
-                "Additional Repairs": rawFormData.additionalRepairs,
-                "Shingle Replacement Squares": rawFormData.shingleReplacement,
-                "Tile Roofing Type": rawFormData.tileRoofingType,
-                "Tile Repair Squares": rawFormData.tileRepairSq,
-                "Tile Underlayment Squares": rawFormData.tileUnderlaymentSq,
-                "Tile Type": rawFormData.tileType,
-                "Tile Remove/Replace Squares": rawFormData.tileRoofRR,
-                "Modified Bitumen Squares": rawFormData.modifiedBitumenSq,
-                "Coating Squares": rawFormData.coatingSquares,
-                "Has Secondary Roof": rawFormData.secondaryRoof,
-                "Secondary Roofing Type": rawFormData.secondaryRoofingType,
-                "Has Third Roof": rawFormData.thirdRoof,
-                "Third Roof Style": rawFormData.thirdRoofStyle,
-                "Has Additional Charges": rawFormData.additionalCharges,
-                "Additional Charges Description": rawFormData.additionalChargesDescription,
-                "Additional Charges Price": rawFormData.additionalChargesPrice,
-                "Has Solar Panels": rawFormData.solar,
-                "Solar Detach/Reset Cost": rawFormData.solarDetachReset,
-                "Amount Collected": "",
-                "Unforseen Additions": ""
-            }
+            Timestamp: new Date().toISOString(),
+            "User Login": "Khaas01",
+            "Sales Rep Name": rawFormData.salesRepName,
+            "Sales Rep Email": rawFormData.salesRepEmail,
+            "Sales Rep Phone": rawFormData.salesRepPhone,
+            "Company Name": rawFormData.companyName,
+            "Owner Name": rawFormData.ownerName,
+            "Owner Address": rawFormData.ownerAddress,
+            "Owner City": rawFormData.ownerCity,
+            "Owner State": rawFormData.ownerState,
+            "Owner ZIP": rawFormData.ownerZip,
+            "Owner Phone": rawFormData.ownerPhone,
+            "Owner Email": rawFormData.ownerEmail,
+            "Project Type": rawFormData.projectType,
+            "Insurance Company": rawFormData.insuranceCompany,
+            "Insurance Phone": rawFormData.insurancePhone,
+            "Claim Number": rawFormData.claimNumber,
+            "Policy Number": rawFormData.policyNumber,
+            "Date of Loss": rawFormData.dateOfLoss,
+            "Roofing Type": rawFormData.roofingType,
+            "Shingle Type": rawFormData.shingleType,
+            "Shingles Repaired": rawFormData.shinglesRepaired,
+            "Additional Repairs": rawFormData.additionalRepairs,
+            "Shingle Replacement Squares": rawFormData.shingleReplacement,
+            "Tile Roofing Type": rawFormData.tileRoofingType,
+            "Tile Repair Squares": rawFormData.tileRepairSq,
+            "Tile Underlayment Squares": rawFormData.tileUnderlaymentSq,
+            "Tile Type": rawFormData.tileType,
+            "Tile Remove/Replace Squares": rawFormData.tileRoofRR,
+            "Modified Bitumen Squares": rawFormData.modifiedBitumenSq,
+            "Coating Squares": rawFormData.coatingSquares,
+            "Has Secondary Roof": rawFormData.secondaryRoof,
+            "Secondary Roofing Type": rawFormData.secondaryRoofingType,
+            "Has Third Roof": rawFormData.thirdRoof,
+            "Third Roof Style": rawFormData.thirdRoofStyle,
+            "Has Additional Charges": rawFormData.additionalCharges,
+            "Additional Charges Description": rawFormData.additionalChargesDescription,
+            "Additional Charges Price": rawFormData.additionalChargesPrice,
+            "Has Solar Panels": rawFormData.solar,
+            "Solar Detach/Reset Cost": rawFormData.solarDetachReset,
+            "Amount Collected": "",
+            "Unforseen Additions": ""
         };
 
-        return gapi.client.init({
-            apiKey: API_CONFIG.API_KEY,
-            clientId: API_CONFIG.CLIENT_ID,
-            scope: API_CONFIG.SCOPES
-        }).then(() => {
-            return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData.data) // Changed to send just formData.data
-            });
-        }).then(() => {
+        return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(() => {
+            // Since mode is 'no-cors', we need to wait a bit for the form to process
             return new Promise(resolve => setTimeout(resolve, 2000));
-        }).then(() => {
+        })
+        .then(() => {
             return getLatestPdfId();
-        }).then(pdfId => {
+        })
+        .then(pdfId => {
             if (pdfId) {
                 showSection('review-section');
                 displayPDF(pdfId);
             }
-        }).catch(error => {
+        })
+        .catch(error => {
             console.error('Error:', error);
             showError();
-        }).finally(() => {
+        })
+        .finally(() => {
             isSubmitting = false;
             hideLoading();
         });
