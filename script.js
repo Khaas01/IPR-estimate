@@ -704,23 +704,16 @@ function nextFromSolar() {
     if (solarValue === 'yes') {
         showSection('solar-detach-reset-section');
     } else {
+        // Modified this part to remove getLatestPdfId and simplify the flow
         submitForm()
             .then(() => {
-                showLoading('Generating PDF preview...');
-                // Add delay to allow form processing
-                return new Promise(resolve => setTimeout(resolve, 2000))
-                    .then(() => getLatestPdfId());
-            })
-            .then(pdfId => {
-                if (pdfId) {
-                    showSection('review-section');
-                    displayPDF(pdfId);
-                } else {
-                    throw new Error('Could not get PDF ID');
-                }
+                showSection('review-section');
+                // No need for PDF preview for now
+                hideLoading();
             })
             .catch(error => {
                 console.error('Error:', error);
+                hideLoading();
                 showError();
             });
     }
