@@ -289,7 +289,7 @@ function submitForm() {
         const formData = collectFormData();
         
         // Matching EXACTLY with the Form Responses sheet headers
-        const formData = {
+        const submissionData = {
             data: {
                 "Timestamp": rawFormData.timestamp,
                 "User Login": "Khaas01",
