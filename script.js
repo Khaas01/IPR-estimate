@@ -294,6 +294,43 @@ function validateForm(formData) {
 
     return true;
 }
+function displayPDF(pdfId) {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame && pdfId) {
+        // Clean up the PDF ID by removing any extra characters
+        const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
+        const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
+        
+        console.log('Clean PDF ID:', cleanPdfId);
+        console.log('Setting preview URL:', previewUrl);
+
+        // Set necessary attributes for Google Drive embedding
+        previewFrame.setAttribute('allowfullscreen', 'true');
+        previewFrame.setAttribute('allow', 'autoplay');
+        
+        // Remove any previous content and listeners
+        previewFrame.onload = null;
+        previewFrame.onerror = null;
+        
+        // Set new event listeners
+        previewFrame.onerror = () => {
+            console.error('Failed to load preview frame');
+            showError();
+        };
+        
+        previewFrame.onload = () => {
+            console.log('Preview frame loaded successfully');
+        };
+
+        // Set the source
+        if (previewFrame.src !== previewUrl) {
+            previewFrame.src = previewUrl;
+        }
+    } else {
+        console.error('Preview frame not found or invalid PDF ID');
+        showError();
+    }
+}
 function submitForm() {
     if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
     
@@ -437,40 +474,7 @@ window.addEventListener('message', function(event) {
     }
 });
 
-function displayPDFPreview(pdfUrl) {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (!previewFrame) {
-        console.error('Preview frame not found');
-        return;
-    }
 
-    console.log('Setting preview URL:', pdfUrl);
-    
-    // Show loading state while PDF loads
-    showLoading('Loading preview...');
-    
-    previewFrame.onload = function() {
-        // Hide loading only after PDF is loaded
-        hideLoading();
-        console.log('Preview loaded successfully');
-    };
-    
-    previewFrame.onerror = function(error) {
-        console.error('Preview failed to load:', error);
-        previewFrame.srcdoc = `
-            <html>
-            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
-                <div style="color: red; text-align: center;">
-                    Error loading preview. Please try again.<br>
-                    <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px;">Try Again</button>
-                </div>
-            </body>
-            </html>
-        `;
-    };
-    
-    previewFrame.src = pdfUrl;
-}
 function handlePreviewError() {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     const errorMessage = document.createElement('div');
