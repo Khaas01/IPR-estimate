@@ -310,14 +310,12 @@ function validateForm(formData) {
     return true;
 }
 function displayPDF(pdfId) {
-    const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
-    if (estimatePreviewFrame && pdfId) {
-        const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
-        // Use Google Docs Viewer URL
-        const viewerUrl = `https://docs.google.com/viewer?url=https://drive.google.com/uc?export=download%26id=${cleanPdfId}&embedded=true`;
-        
-            console.log('Setting viewer URL:', viewerUrl);
-            estimatePreviewFrame.src = viewerUrl;
+    try {
+        const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
+        if (estimatePreviewFrame && pdfId) {
+            const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
+            const embedUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
+            
             console.log('Clean PDF ID:', cleanPdfId);
             console.log('Setting embed URL:', embedUrl);
 
@@ -325,7 +323,7 @@ function displayPDF(pdfId) {
             estimatePreviewFrame.removeAttribute('srcdoc');
             
             // Set more restrictive sandbox permissions
-            estimatePreviewFrame.setAttribute('sandbox', 'allow-scripts allow-popups allow-forms allow-downloads allow-presentation');
+            estimatePreviewFrame.setAttribute('sandbox', 'allow-scripts allow-popups allow-forms allow-downloads allow-same-origin');
             
             // Add additional security attributes
             estimatePreviewFrame.setAttribute('allow', 'autoplay; encrypted-media');
@@ -334,14 +332,12 @@ function displayPDF(pdfId) {
             
             // Set the source
             estimatePreviewFrame.src = embedUrl;
-
-        } catch (error) {
-            console.error('Error in displayPDF:', error);
-            handlePdfError();
         }
+    } catch (error) {
+        console.error('Error in displayPDF:', error);
+        handlePdfError();
     }
 }
-
 // Updated error handler
 function handlePdfError() {
     const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
