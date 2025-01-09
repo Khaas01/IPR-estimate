@@ -312,13 +312,12 @@ function validateForm(formData) {
 function displayPDF(pdfId) {
     const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
     if (estimatePreviewFrame && pdfId) {
-        try {
-            // Clean the PDF ID
-            const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
-            
-            // Use the embedded viewer URL format with additional parameters
-            const embedUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview?usp=sharing&embedded=true`;
-            
+        const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
+        // Use Google Docs Viewer URL
+        const viewerUrl = `https://docs.google.com/viewer?url=https://drive.google.com/uc?export=download%26id=${cleanPdfId}&embedded=true`;
+        
+            console.log('Setting viewer URL:', viewerUrl);
+            estimatePreviewFrame.src = viewerUrl;
             console.log('Clean PDF ID:', cleanPdfId);
             console.log('Setting embed URL:', embedUrl);
 
