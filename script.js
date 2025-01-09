@@ -310,21 +310,23 @@ function validateForm(formData) {
     return true;
 }
 function displayPDF(pdfId) {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame && pdfId) {
-        // Debug logging
-        console.log('Raw PDF ID:', JSON.stringify(pdfId));
-        
-        // Keep the hyphen in the ID by removing only quotes and whitespace
+    const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
+    if (estimatePreviewFrame && pdfId) {
+        // Clean the PDF ID
         const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
         const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
         
-        // Debug logging
         console.log('Clean PDF ID:', cleanPdfId);
         console.log('Setting preview URL:', previewUrl);
 
-        // Simply set the src attribute
-        previewFrame.src = previewUrl;
+        // Add an event listener to make sure we hide the loading overlay
+        estimatePreviewFrame.onload = () => {
+            console.log('PDF preview loaded');
+            hideLoading(); // Make sure loading overlay is hidden
+        };
+
+        // Set the src to load the PDF
+        estimatePreviewFrame.src = previewUrl;
     }
 }
 function submitForm() {
