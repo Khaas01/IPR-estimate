@@ -314,50 +314,14 @@ function displayPDF(pdfId) {
     if (previewFrame && pdfId) {
         // Debug logging
         console.log('Raw PDF ID:', JSON.stringify(pdfId));
-        console.log('PDF ID Type:', typeof pdfId);
-        console.log('PDF ID Length:', pdfId.length);
         
         const cleanPdfId = pdfId.replace(/["\s–—-]+/g, '').trim();
         const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
         
         // Debug logging
-        console.log('Final URL:', JSON.stringify(previewUrl));
-        console.log('URL Length:', previewUrl.length);
+        console.log('Setting preview URL:', previewUrl);
         
-        // Remove any existing content
-        previewFrame.srcdoc = '';
-        
-        // Ensure iframe is visible with important flags
-        previewFrame.style.cssText = `
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            width: calc(100% - 20px);
-            height: 600px;
-            border: none;
-            padding: 10px;
-            margin: 0 auto;
-        `;
-        
-        // Set up the preview frame
-        previewFrame.onload = () => {
-            console.log('Frame loaded with URL:', previewFrame.src);
-            // Log visibility state after load
-            console.log('Frame visibility state:', {
-                display: previewFrame.style.display,
-                visibility: previewFrame.style.visibility,
-                opacity: previewFrame.style.opacity,
-                offsetHeight: previewFrame.offsetHeight,
-                clientHeight: previewFrame.clientHeight
-            });
-        };
-
-        previewFrame.onerror = (error) => {
-            console.error('Frame loading error:', error);
-        };
-
-        // Set the source
-        console.log('Setting iframe src to:', previewUrl);
+        // Simply update the src
         previewFrame.src = previewUrl;
     }
 }
