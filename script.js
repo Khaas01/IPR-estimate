@@ -83,6 +83,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 window.addEventListener('message', function(event) {
     try {
+        // Ignore messages that start with '!' as they are internal Google Drive messages
+        if (typeof event.data === 'string' && event.data.startsWith('!')) {
+            return;
+        }
+
+        // Only try to parse JSON if it's a string and doesn't start with '!'
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         console.log('Received message data:', data);
 
@@ -108,14 +114,14 @@ window.addEventListener('message', function(event) {
             showError();
         }
     } catch (error) {
-        if (!event.data.f) {
-            hideLoading();
+        // Only log errors for non-Google Drive internal messages
+        if (typeof event.data === 'string' && !event.data.startsWith('!')) {
             console.error('Error processing message:', error);
+            hideLoading();
             showError();
         }
     }
 });
-
 const solarRadios = document.querySelectorAll('input[name="solar"]');
 const navigationButtons = document.querySelector('#solar-section #navigationButtons');
 
@@ -513,6 +519,12 @@ function submitForm() {
 
 window.addEventListener('message', function(event) {
     try {
+        // Ignore messages that start with '!' as they are internal Google Drive messages
+        if (typeof event.data === 'string' && event.data.startsWith('!')) {
+            return;
+        }
+
+        // Only try to parse JSON if it's a string and doesn't start with '!'
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         console.log('Received message data:', data);
 
@@ -538,9 +550,10 @@ window.addEventListener('message', function(event) {
             showError();
         }
     } catch (error) {
-        if (!event.data.f) {
-            hideLoading();
+        // Only log errors for non-Google Drive internal messages
+        if (typeof event.data === 'string' && !event.data.startsWith('!')) {
             console.error('Error processing message:', error);
+            hideLoading();
             showError();
         }
     }
