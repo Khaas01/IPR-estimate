@@ -52,10 +52,10 @@ async function initializeGoogleAPIs() {
 
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize section history
-    sectionHistory.push('review-section');
+    sectionHistory.push('salesRepSection');
 
     // Show review section and loading indicator immediately
-    showSection('review-section');
+    showSection('salesRepSection');
     showLoading('Loading latest estimate...');
     
     // Add a delay before fetching the PDF ID
