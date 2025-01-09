@@ -313,23 +313,32 @@ function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
         // Debug logging
-        console.log('Raw PDF ID:', JSON.stringify(pdfId)); // This will show any hidden characters
+        console.log('Raw PDF ID:', JSON.stringify(pdfId));
         console.log('PDF ID Type:', typeof pdfId);
         console.log('PDF ID Length:', pdfId.length);
         
         const cleanPdfId = pdfId.replace(/["\s–—-]+/g, '').trim();
         const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
         
-        // Debug the final URL
-        console.log('Final URL:', JSON.stringify(previewUrl)); // This will show if quotes are included
+        // Debug logging
+        console.log('Final URL:', JSON.stringify(previewUrl));
         console.log('URL Length:', previewUrl.length);
         
-        // Log the iframe's current state
-        console.log('Iframe current src:', previewFrame.src);
+        // Remove any existing content
+        previewFrame.srcdoc = '';
         
-        // Set the source and log the result
+        // Set up the preview frame
+        previewFrame.onload = () => {
+            console.log('Frame loaded with URL:', previewFrame.src);
+        };
+
+        previewFrame.onerror = (error) => {
+            console.error('Frame loading error:', error);
+        };
+
+        // Set the source
+        console.log('Setting iframe src to:', previewUrl);
         previewFrame.src = previewUrl;
-        console.log('Iframe new src:', previewFrame.src);
     }
 }
 function submitForm() {
