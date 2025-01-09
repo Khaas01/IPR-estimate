@@ -312,38 +312,24 @@ function validateForm(formData) {
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
-        // Clean up the PDF ID by removing any extra characters
-        const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
+        // Debug logging
+        console.log('Raw PDF ID:', JSON.stringify(pdfId)); // This will show any hidden characters
+        console.log('PDF ID Type:', typeof pdfId);
+        console.log('PDF ID Length:', pdfId.length);
+        
+        const cleanPdfId = pdfId.replace(/["\s–—-]+/g, '').trim();
         const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
         
-        console.log('Clean PDF ID:', cleanPdfId);
-        console.log('Setting preview URL:', previewUrl);
-
-        // Set necessary attributes for Google Drive embedding
-        previewFrame.setAttribute('allowfullscreen', 'true');
-        previewFrame.setAttribute('allow', 'autoplay');
+        // Debug the final URL
+        console.log('Final URL:', JSON.stringify(previewUrl)); // This will show if quotes are included
+        console.log('URL Length:', previewUrl.length);
         
-        // Remove any previous content and listeners
-        previewFrame.onload = null;
-        previewFrame.onerror = null;
+        // Log the iframe's current state
+        console.log('Iframe current src:', previewFrame.src);
         
-        // Set new event listeners
-        previewFrame.onerror = () => {
-            console.error('Failed to load preview frame');
-            showError();
-        };
-        
-        previewFrame.onload = () => {
-            console.log('Preview frame loaded successfully');
-        };
-
-        // Set the source
-        if (previewFrame.src !== previewUrl) {
-            previewFrame.src = previewUrl;
-        }
-    } else {
-        console.error('Preview frame not found or invalid PDF ID');
-        showError();
+        // Set the source and log the result
+        previewFrame.src = previewUrl;
+        console.log('Iframe new src:', previewFrame.src);
     }
 }
 function submitForm() {
