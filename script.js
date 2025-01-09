@@ -312,20 +312,15 @@ function validateForm(formData) {
 function displayPDF(pdfId) {
     const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
     if (estimatePreviewFrame && pdfId) {
-        // Clean the PDF ID
         const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
         const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
         
-        console.log('Clean PDF ID:', cleanPdfId);
         console.log('Setting preview URL:', previewUrl);
-
-        // Add an event listener to make sure we hide the loading overlay
-        estimatePreviewFrame.onload = () => {
-            console.log('PDF preview loaded');
-            hideLoading(); // Make sure loading overlay is hidden
-        };
-
-        // Set the src to load the PDF
+        
+        // Remove any existing srcdoc
+        estimatePreviewFrame.removeAttribute('srcdoc');
+        
+        // Set the source URL
         estimatePreviewFrame.src = previewUrl;
     }
 }
