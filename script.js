@@ -154,6 +154,15 @@ function showSection(sectionId) {
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
         targetSection.style.display = 'block';
+        
+        // Clear iframe content when showing review section
+        if (sectionId === 'review-section') {
+            const previewFrame = document.getElementById('estimatePreviewFrame');
+            if (previewFrame) {
+                previewFrame.src = 'about:blank';
+                showLoading();
+            }
+        }
     }
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId);
