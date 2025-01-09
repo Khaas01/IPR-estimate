@@ -334,6 +334,14 @@ function displayPDF(pdfId) {
             console.log('Clean PDF ID:', cleanPdfId);
             console.log('Setting embed URL:', embedUrl);
 
+            // Show loading state while PDF is loading
+            showLoading();
+
+            // Set up load event listener before changing src
+            estimatePreviewFrame.onload = () => {
+                hideLoading();
+            };
+
             // Remove any existing srcdoc and sandbox attribute
             estimatePreviewFrame.removeAttribute('srcdoc');
             
