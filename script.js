@@ -315,13 +315,14 @@ function displayPDF(pdfId) {
         // Debug logging
         console.log('Raw PDF ID:', JSON.stringify(pdfId));
         
-        const cleanPdfId = pdfId.replace(/["\s–—-]+/g, '').trim();
+        // Modified cleanup to preserve hyphens in the middle of the ID
+        const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
+        // Log the cleaned ID to verify hyphen is preserved
+        console.log('Cleaned ID (should have hyphen):', cleanPdfId);
+        
         const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
         
-        // Debug logging
         console.log('Setting preview URL:', previewUrl);
-        
-        // Simply update the src
         previewFrame.src = previewUrl;
     }
 }
