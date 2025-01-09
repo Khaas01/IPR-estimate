@@ -312,16 +312,43 @@ function validateForm(formData) {
 function displayPDF(pdfId) {
     const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
     if (estimatePreviewFrame && pdfId) {
-        const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
-        const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
-        
-        console.log('Setting preview URL:', previewUrl);
-        
-        // Remove any existing srcdoc
-        estimatePreviewFrame.removeAttribute('srcdoc');
-        
-        // Set the source URL
-        estimatePreviewFrame.src = previewUrl;
+        try {
+            // Clean the PDF ID
+            const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
+            
+            // Use the embedded viewer URL format
+            const embedUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
+            
+            console.log('Clean PDF ID:', cleanPdfId);
+            console.log('Setting embed URL:', embedUrl);
+
+            // Remove any existing srcdoc
+            estimatePreviewFrame.removeAttribute('srcdoc');
+            
+            // Set up error handling
+            estimatePreviewFrame.onerror = () => {
+                console.error('Failed to load PDF preview');
+                showError();
+            };
+
+            // Set the source
+            estimatePreviewFrame.src = embedUrl;
+
+        } catch (error) {
+            console.error('Error in displayPDF:', error);
+            showError();
+        }
+    }
+}
+
+// Simplified error handling
+function showError() {
+    const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
+    if (estimatePreviewFrame) {
+        estimatePreviewFrame.src = 'about:blank';
+        const errorDiv = document.createElement('div');
+        errorDiv.innerHTML = 'Error loading PDF. Please try again.';
+        estimatePreviewFrame.parentNode.insertBefore(errorDiv, estimatePreviewFrame);
     }
 }
 function submitForm() {
