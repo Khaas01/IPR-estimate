@@ -327,9 +327,29 @@ function displayPDF(pdfId) {
         // Remove any existing content
         previewFrame.srcdoc = '';
         
+        // Ensure iframe is visible with important flags
+        previewFrame.style.cssText = `
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            width: calc(100% - 20px);
+            height: 600px;
+            border: none;
+            padding: 10px;
+            margin: 0 auto;
+        `;
+        
         // Set up the preview frame
         previewFrame.onload = () => {
             console.log('Frame loaded with URL:', previewFrame.src);
+            // Log visibility state after load
+            console.log('Frame visibility state:', {
+                display: previewFrame.style.display,
+                visibility: previewFrame.style.visibility,
+                opacity: previewFrame.style.opacity,
+                offsetHeight: previewFrame.offsetHeight,
+                clientHeight: previewFrame.clientHeight
+            });
         };
 
         previewFrame.onerror = (error) => {
