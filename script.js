@@ -316,30 +316,76 @@ function displayPDF(pdfId) {
             // Clean the PDF ID
             const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
             
-            // Use the embedded viewer URL format
-            const embedUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
+            // Use the embedded viewer URL format with additional parameters
+            const embedUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview?usp=sharing&embedded=true`;
             
             console.log('Clean PDF ID:', cleanPdfId);
             console.log('Setting embed URL:', embedUrl);
 
-            // Remove any existing srcdoc
+            // Remove any existing srcdoc and sandbox attribute
             estimatePreviewFrame.removeAttribute('srcdoc');
             
-            // Set up error handling
-            estimatePreviewFrame.onerror = () => {
-                console.error('Failed to load PDF preview');
-                showError();
-            };
-
+            // Set more restrictive sandbox permissions
+            estimatePreviewFrame.setAttribute('sandbox', 'allow-scripts allow-popups allow-forms allow-downloads allow-presentation');
+            
+            // Add additional security attributes
+            estimatePreviewFrame.setAttribute('allow', 'autoplay; encrypted-media');
+            estimatePreviewFrame.setAttribute('allowfullscreen', 'true');
+            estimatePreviewFrame.setAttribute('crossorigin', 'anonymous');
+            
             // Set the source
             estimatePreviewFrame.src = embedUrl;
 
         } catch (error) {
             console.error('Error in displayPDF:', error);
-            showError();
+            handlePdfError();
         }
     }
 }
+
+// Updated error handler
+function handlePdfError() {
+    const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
+    if (estimatePreviewFrame) {
+        const errorMessage = document.createElement('div');
+        errorMessage.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            z-index: 1000;
+        `;
+        errorMessage.innerHTML = 'Unable to load PDF preview. Please try refreshing the page.';
+        estimatePreviewFrame.parentNode.appendChild(errorMessage);
+    }
+}
+
+// Updated message handler
+window.addEventListener('message', function(event) {
+    try {
+        // Only process messages from Google Drive domain
+        if (!event.origin.includes('drive.google.com')) {
+            return;
+        }
+
+        const data = event.data;
+        // Check if data is a string before parsing
+        if (typeof data === 'string' && !data.startsWith('!_')) {
+            const parsedData = JSON.parse(data);
+            // Handle the parsed data
+            console.log('Received valid message:', parsedData);
+        }
+    } catch (error) {
+        // Don't log parsing errors for Google Drive internal messages
+        if (!error.message.includes('Unexpected token')) {
+            console.error('Error processing message:', error);
+        }
+    }
+});
 
 // Simplified error handling
 function showError() {
