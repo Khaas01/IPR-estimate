@@ -502,7 +502,7 @@ function submitForm() {
     headers: {
         'Content-Type': 'application/json',
     },
-    body: JSON.stringify({data: submissionData})
+   body: JSON.stringify({values: [Object.values(submissionData)]})
 })
         .then(response => {
             // With no-cors, we can't read the response
