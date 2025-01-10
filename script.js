@@ -441,7 +441,6 @@ function submitForm() {
         
         // Matching EXACTLY with the Form Responses sheet headers
         const submissionData = {
-            data: {
                 "Timestamp": formData.timestamp,
                 "User Login": "Khaas01",
                 "Sales Rep Name": formData.salesRepName,
@@ -492,20 +491,19 @@ function submitForm() {
                 "Solar Detach/Reset Cost": formData.solarDetachReset,
                 "Amount Collected": "",  // Optional field
                 "Unforseen Additions": ""  // Optional field
-            }
         };
 
             console.log('Sending structured form data:', formData);
 
         return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            redirect: 'follow',
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8',
-            },
-            body: JSON.stringify(submissionData)
-        })
+    method: 'POST',
+    mode: 'no-cors',
+    redirect: 'follow',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({data: submissionData})
+})
         .then(response => {
             // With no-cors, we can't read the response
             // Instead, we'll get the PDF ID from the spreadsheet with retries
