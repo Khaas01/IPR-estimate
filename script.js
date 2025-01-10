@@ -184,71 +184,86 @@ function goBack() {
 function collectFormData() {
     const formData = {
         // Sales Rep Information
-        salesRepName: document.getElementById('salesRepName')?.value || '',
-        salesRepEmail: document.getElementById('salesRepEmail')?.value || '',
-        salesRepPhone: document.getElementById('salesRepPhone')?.value || '',
+        "Sales Rep Name": document.getElementById('salesRepName')?.value || '',
+        "Sales Rep Email": document.getElementById('salesRepEmail')?.value || '',
+        "Sales Rep Phone": document.getElementById('salesRepPhone')?.value || '',
         
         // Company Information
-        companyName: document.getElementById('companyName')?.value || '',
+        "Company Name": document.getElementById('companyName')?.value || '',
         
         // Property Owner Information
-        ownerName: document.getElementById('ownerName')?.value || '',
-        ownerAddress: document.getElementById('ownerAddress')?.value || '',
-        ownerCity: document.getElementById('ownerCity')?.value || '',
-        ownerState: document.getElementById('ownerState')?.value || '',
-        ownerZip: document.getElementById('ownerZip')?.value || '',
-        ownerPhone: document.getElementById('ownerPhone')?.value || '',
-        ownerEmail: document.getElementById('ownerEmail')?.value || '',
+        "Owner Name": document.getElementById('ownerName')?.value || '',
+        "Owner Address": document.getElementById('ownerAddress')?.value || '',
+        "Owner City": document.getElementById('ownerCity')?.value || '',
+        "Owner State": document.getElementById('ownerState')?.value || '',
+        "Owner ZIP": document.getElementById('ownerZip')?.value || '',
+        "Owner Phone": document.getElementById('ownerPhone')?.value || '',
+        "Owner Email": document.getElementById('ownerEmail')?.value || '',
         
         // Project Type
-        projectType: document.querySelector('input[name="projectType"]:checked')?.value || '',
+        "Project Type": document.querySelector('input[name="projectType"]:checked')?.value || '',
         
         // Insurance Information
-        insuranceCompany: document.getElementById('insuranceCompany')?.value || '',
-        insurancePhone: document.getElementById('insurancePhone')?.value || '',
-        claimNumber: document.getElementById('claimNumber')?.value || '',
-        policyNumber: document.getElementById('policyNumber')?.value || '',
-        dateOfLoss: document.getElementById('dateOfLoss')?.value || '',
+        "Insurance Company": document.getElementById('insuranceCompany')?.value || '',
+        "Insurance Phone": document.getElementById('insurancePhone')?.value || '',
+        "Claim Number": document.getElementById('claimNumber')?.value || '',
+        "Policy Number": document.getElementById('policyNumber')?.value || '',
+        "Date of Loss": document.getElementById('dateOfLoss')?.value || '',
         
         // Roofing Details
-        roofingType: document.querySelector('input[name="roofingType"]:checked')?.value || '',
-        shingleType: document.querySelector('input[name="shingleType"]:checked')?.value || '',
-        shinglesRepaired: document.getElementById('shingles-repaired')?.value || '',
-        shingleReplacement: document.getElementById('shingle-replacement')?.value || '',
+        "Roofing Type": document.querySelector('input[name="roofingType"]:checked')?.value || '',
+        "Shingle Type": document.querySelector('input[name="shingleType"]:checked')?.value || '',
+        "Shingles Repaired": document.getElementById('shingles-repaired')?.value || '',
+        "Additional Repairs": document.getElementById('repair-anything-else')?.value || '',
+        "Shingle Replacement Squares": document.getElementById('shingle-replacement')?.value || '',
         
         // Tile Details
-        tileRoofingType: document.querySelector('input[name="tile-roofing-type"]:checked')?.value || '',
-        tileRepairSq: document.getElementById('tile-repair-sq')?.value || '',
-        tileUnderlaymentSq: document.getElementById('tile-underlayment-sq')?.value || '',
-        tileType: document.querySelector('input[name="tile-type"]:checked')?.value || '',
-        tileRoofRR: document.getElementById('tile-roof-rr')?.value || '',
+        "Tile Roofing Type": document.querySelector('input[name="tile-roofing-type"]:checked')?.value || '',
+        "Tile Repair Squares": document.getElementById('tile-repair-sq')?.value || '',
+        "Tile Underlayment Squares": document.getElementById('tile-underlayment-sq')?.value || '',
+        "Tile Type": document.querySelector('input[name="tile-type"]:checked')?.value || '',
+        "Tile Remove/Replace Squares": document.getElementById('tile-roof-rr')?.value || '',
         
         // Modified Bitumen
-        modifiedBitumenSq: document.getElementById('modified-bitumen-sq')?.value || '',
+        "Modified Bitumen Squares": document.getElementById('modified-bitumen-sq')?.value || '',
         
         // Coating
-        coatingSquares: document.getElementById('coating-squares')?.value || '',
+        "Coating Squares": document.getElementById('coating-squares')?.value || '',
         
         // Secondary Roof
-        secondaryRoof: document.querySelector('input[name="secondary-roof"]:checked')?.value || '',
-        secondaryRoofingType: document.querySelector('input[name="secondary-roofing-type"]:checked')?.value || '',
+        "Has Secondary Roof": document.querySelector('input[name="secondary-roof"]:checked')?.value || '',
+        "Secondary Roofing Type": document.querySelector('input[name="secondary-roofing-type"]:checked')?.value || '',
+        "Secondary Shingles Squares": document.getElementById('shingles-squares')?.value || '',
+        "Secondary Tile Underlayment Squares": document.getElementById('tile-underlayment-squares')?.value || '',
+        "Secondary Modified Bitumen Squares": document.getElementById('modified-bitumen-squares')?.value || '',
+        "Secondary Coating Squares": document.getElementById('coating-squares')?.value || '',
         
         // Third Roof
-        thirdRoof: document.querySelector('input[name="third-roof"]:checked')?.value || '',
-        thirdRoofStyle: document.querySelector('input[name="third-roof-style"]:checked')?.value || '',
+        "Has Third Roof": document.querySelector('input[name="third-roof"]:checked')?.value || '',
+        "Third Roof Style": document.querySelector('input[name="third-roof-style"]:checked')?.value || '',
+        "Third Shingles Squares": document.getElementById('shingles-squares')?.value || '',
+        "Third Tiles Squares": document.getElementById('tiles-squares')?.value || '',
+        "Third Modified Squares": document.getElementById('modified-squares')?.value || '',
+        "Third Coating Squares": document.getElementById('coatings-squares')?.value || '',
         
         // Additional Charges
-        additionalCharges: document.querySelector('input[name="additional-charges"]:checked')?.value || '',
-        additionalChargesDescription: document.getElementById('additional-charges-description')?.value || '',
-        additionalChargesPrice: document.getElementById('additional-charges-price')?.value || '',
+        "Has Additional Charges": document.querySelector('input[name="additional-charges"]:checked')?.value || '',
+        "Additional Charges Description": document.getElementById('additional-charges-description')?.value || '',
+        "Additional Charges Price": document.getElementById('additional-charges-price')?.value || '',
         
         // Solar Panels
-        solar: document.querySelector('input[name="solar"]:checked')?.value || '',
-        solarDetachReset: document.getElementById('solar-detach-reset')?.value || ''
+        "Has Solar Panels": document.querySelector('input[name="solar"]:checked')?.value || '',
+        "Solar Detach/Reset Cost": document.getElementById('solar-detach-reset')?.value || '',
+        
+        // Misc
+        "Amount Collected": '',  // Optional field
+        "Unforseen Additions": '',  // Optional field
+        "PDF_ID": ''  // Optional field
     };
     
-    // Add timestamp
-    formData.timestamp = new Date().toISOString();
+    // Add timestamp and user login
+    formData["Timestamp"] = new Date().toISOString();
+    formData["User Login"] = Session.getActiveUser().getEmail() || '';
     
     return formData;
 }
