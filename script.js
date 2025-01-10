@@ -263,7 +263,7 @@ function collectFormData() {
     
     // Add timestamp and user login
     formData["Timestamp"] = new Date().toISOString();
-    formData["User Login"] = Session.getActiveUser().getEmail() || '';
+
     
     return formData;
 }
