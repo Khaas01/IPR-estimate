@@ -873,6 +873,29 @@ function nextFromSolar() {
             });
     }
 }
+function nextFromSolarDetachReset() {
+    // Clear any existing preview and show loading state
+    showSection('review-section');
+    
+    submitForm()
+        .then(async () => {
+            // Add a small delay before fetching the new PDF ID
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            const pdfId = await getLatestPdfId();
+            if (pdfId) {
+                displayPDF(pdfId);
+            } else {
+                throw new Error('No PDF ID found');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError();
+        })
+        .finally(() => {
+            hideLoading();
+        });
+}
 function handleApiError(error) {
     console.error('API Error:', error);
     
