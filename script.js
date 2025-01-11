@@ -495,14 +495,68 @@ function submitForm() {
 
             console.log('Sending structured form data:', formData);
 
-        return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
+       // In submitForm(), replace lines 498-506 with this:
+return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
     method: 'POST',
     mode: 'no-cors',
     redirect: 'follow',
     headers: {
         'Content-Type': 'application/json',
     },
-body: JSON.stringify({values: [Object.values(submissionData)]})
+    body: JSON.stringify({
+        values: [[
+            formData["Timestamp"],
+            "Khaas01", // Hardcoded User Login
+            formData["Sales Rep Name"],
+            formData["Sales Rep Email"],
+            formData["Sales Rep Phone"],
+            formData["Company Name"],
+            formData["Owner Name"],
+            formData["Owner Address"],
+            formData["Owner City"],
+            formData["Owner State"],
+            formData["Owner ZIP"],
+            formData["Owner Phone"],
+            formData["Owner Email"],
+            formData["Project Type"],
+            formData["Insurance Company"],
+            formData["Insurance Phone"],
+            formData["Claim Number"],
+            formData["Policy Number"],
+            formData["Date of Loss"],
+            formData["Roofing Type"],
+            formData["Shingle Type"],
+            formData["Shingles Repaired"],
+            formData["Additional Repairs"],
+            formData["Shingle Replacement Squares"],
+            formData["Tile Roofing Type"],
+            formData["Tile Repair Squares"],
+            formData["Tile Underlayment Squares"],
+            formData["Tile Type"],
+            formData["Tile Remove/Replace Squares"],
+            formData["Modified Bitumen Squares"],
+            formData["Coating Squares"],
+            formData["Has Secondary Roof"],
+            formData["Secondary Roofing Type"],
+            formData["Secondary Shingles Squares"],
+            formData["Secondary Tile Underlayment Squares"],
+            formData["Secondary Modified Bitumen Squares"],
+            formData["Secondary Coating Squares"],
+            formData["Has Third Roof"],
+            formData["Third Roof Style"],
+            formData["Third Shingles Squares"],
+            formData["Third Tiles Squares"],
+            formData["Third Modified Squares"],
+            formData["Third Coating Squares"],
+            formData["Has Additional Charges"],
+            formData["Additional Charges Description"],
+            formData["Additional Charges Price"],
+            formData["Has Solar Panels"],
+            formData["Solar Detach/Reset Cost"],
+            formData["Amount Collected"],
+            formData["Unforseen Additions"]
+        ]]
+    })
 })
         .then(response => {
             // With no-cors, we can't read the response
