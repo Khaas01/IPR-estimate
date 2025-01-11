@@ -15,25 +15,27 @@ function getOAuthToken() {
       });
 }
 
-function doGet(e) {
-  return ContentService.createTextOutput("The web app is working correctly!")
-    .setMimeType(ContentService.MimeType.TEXT);
+function doGet() {
+  var sheet = SpreadsheetApp.openById("1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw").getSheetByName("Form Responses");
+  var lastRow = sheet.getLastRow();
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var pdfIdColumn = headers.indexOf('PDF_ID') + 1;
+  var pdfId = sheet.getRange(lastRow, pdfIdColumn).getValue();
+  
+  return HtmlService
+    .createHtmlOutput(`<script>window.top.location.href = "https://khaas01.github.io/IPR-estimate/review.html?id=${pdfId}";</script>`)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
+
 function doPost(e) {
   try {
-    // Verify authentication
-    const userEmail = Session.getActiveUser().getEmail();
-    if (!userEmail) {
-      throw new Error('User not authenticated');
-    }
-    
-    // Parse form data
+    // Parse form data first
     let formData;
     try {
-      if (e.parameter && e.parameter.data) {
-        formData = JSON.parse(e.parameter.data);
-      } else if (e.postData && e.postData.contents) {
+      if (e.postData && e.postData.contents) {
         formData = JSON.parse(e.postData.contents);
+      } else if (e.parameter && e.parameter.data) {
+        formData = JSON.parse(e.parameter.data);
       } else {
         throw new Error('No data received in request');
       }
@@ -60,15 +62,14 @@ function doPost(e) {
     }
     Logger.log('Sheet headers: ' + JSON.stringify(tableHeaders));
 
-    // Prepare row data
+    // Prepare row data - using formData.data directly
     const rowData = tableHeaders.map(header => {
       if (header === "Timestamp") return new Date();
-      if (header === "User Login") return Session.getActiveUser().getEmail() || '';
+      if (header === "User Login") return formData.data["User Login"] || 'Anonymous';
       return (formData.data && formData.data[header] !== undefined) ? formData.data[header] : '';
     });
     Logger.log('Final row data to be appended: ' + JSON.stringify(rowData));
 
-    // Append data to sheet
     formResponseSheet.appendRow(rowData);
 
     // Update Estimate sheet with Database row
@@ -116,13 +117,10 @@ function doPost(e) {
       body: 'Error in doPost: ' + error.message + '\n\nStack trace:\n' + error.stack
     });
     
-    // Return error response
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
       error: error.toString(),
-      message: error.message.includes('not authenticated') ? 
-        'Authentication failed. Please sign in and try again.' : 
-        'Form submission failed. Please try again.',
+      message: 'Form submission failed. Please try again.',
       timestamp: new Date().toISOString()
     })).setMimeType(ContentService.MimeType.JSON);
   }
@@ -185,6 +183,56 @@ function findLastRowWithData(sheet) {
   Logger.log('Final row number being returned: ' + lastRow);
   return lastRow;
 }
+function findLastRowWithData() {
+  var sheet = SpreadsheetApp.getActive().getSheetByName('Database');
+  var lastRow = sheet.getLastRow();
+  Logger.log('Last Row Number: ' + lastRow); // Log the last row number
+  return lastRow;
+}
+
+function getLatestPdfId() {
+  Logger.log('Starting getLatestPdfId function...');
+  
+  try {
+    // Get the last row from the sheet
+    var lastRow = findLastRowWithData();
+    var sheet = SpreadsheetApp.getActive().getSheetByName('Database');
+    
+    // Get stored PDF ID from Script Properties
+    var storedPdfId = PropertiesService.getScriptProperties().getProperty('latestPdfId');
+    Logger.log('Stored PDF ID in Properties: ' + storedPdfId);
+
+    // Get PDF ID from the last row of the sheet
+    var pdfUrlCell = sheet.getRange(lastRow, 14).getValue(); // Adjust column number if needed
+    Logger.log('Last row data: ' + pdfUrlCell);
+
+    if (pdfUrlCell) {
+      // If it's a URL, extract the ID
+      if (pdfUrlCell.toString().includes('drive.google.com')) {
+        var fileId = pdfUrlCell.toString().match(/[-\w]{25,}/);
+        Logger.log('Extracted File ID from URL: ' + fileId);
+        return fileId ? fileId[0] : null;
+      }
+      // If it's already an ID
+      Logger.log('Using direct File ID: ' + pdfUrlCell);
+      return pdfUrlCell;
+    } else {
+      Logger.log('No PDF URL/ID found in last row. Using stored ID: ' + storedPdfId);
+      return storedPdfId;
+    }
+    
+  } catch (error) {
+    Logger.log('Error in getLatestPdfId: ' + error.toString());
+    return null;
+  }
+}
+
+// Test function to run and check logs
+function testGetLatestPdfId() {
+  Logger.log('Testing PDF ID retrieval...');
+  var id = getLatestPdfId();
+  Logger.log('Retrieved PDF ID: ' + id);
+}
 
 function testRowNumbers() {
   var formWorkbook = SpreadsheetApp.openById('1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw');
@@ -215,11 +263,12 @@ function onFormSubmit(e) {
     var estimateWorkbook = SpreadsheetApp.openById('1fDIDwFk3cHU_LkgNJiDf_JKjDn0FGrwxRVD6qI7qNW8');
     var databaseSheet = estimateWorkbook.getSheetByName('Database');
     var estimateSheet = estimateWorkbook.getSheetByName('Estimate');
+    var formResponsesSheet = SpreadsheetApp.openById("1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw").getSheetByName("Form Responses");
     
     Logger.log("Estimate Workbook name: " + estimateWorkbook.getName());
     Logger.log("Event object received: " + JSON.stringify(e));
 
-    if (!databaseSheet || !estimateSheet) {
+    if (!databaseSheet || !estimateSheet || !formResponsesSheet) {
       throw new Error('Required sheets not found');
     }
 
@@ -242,14 +291,18 @@ function onFormSubmit(e) {
       return index + 1;
     }
 
-    // 4. Get client information from Database sheet
+    // 4. Get client information from Database sheet - MOVED THIS UP
     var clientName = databaseSheet.getRange(lastRow, getColumnByHeader("Owner Name")).getValue();
     var clientEmail = databaseSheet.getRange(lastRow, getColumnByHeader("Owner Email")).getValue();
     var salesRepName = databaseSheet.getRange(lastRow, getColumnByHeader("Sales Rep Name")).getValue();
     var companyType = databaseSheet.getRange(lastRow, getColumnByHeader("Company Name")).getValue();
     var senderEmail = 'khaas@ironpeakroofing.com';
 
-    // Log retrieved values
+    // Verify we have the client name before proceeding
+    if (!clientName) {
+      throw new Error('Client name not found in row ' + lastRow);
+    }
+
     Logger.log('Retrieved values:');
     Logger.log('Client Name: ' + clientName);
     Logger.log('Client Email: ' + clientEmail);
@@ -314,10 +367,25 @@ function onFormSubmit(e) {
     pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
     // Get the file ID and create the embedded preview URL
-    // After creating the PDF file
     var fileId = pdfFile.getId();
     var viewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
-    console.log('Generated PDF URL:', viewUrl); // Debug log
+    Logger.log('Generated PDF URL: ' + viewUrl);
+
+    // Save PDF ID to Form Responses sheet
+    try {
+      var formLastRow = formResponsesSheet.getLastRow();
+      var formHeaders = formResponsesSheet.getRange(1, 1, 1, formResponsesSheet.getLastColumn()).getValues()[0];
+      var pdfIdColumn = formHeaders.indexOf('PDF_ID') + 1;
+      
+      if (pdfIdColumn > 0) {
+        formResponsesSheet.getRange(formLastRow, pdfIdColumn).setValue(fileId);
+        Logger.log('Saved PDF ID to Form Responses sheet at column ' + pdfIdColumn + ', row ' + formLastRow);
+      } else {
+        Logger.log('PDF_ID column not found in Form Responses sheet');
+      }
+    } catch (pdfIdError) {
+      Logger.log('Error saving PDF ID to Form Responses: ' + pdfIdError.toString());
+    }
 
     // Send email with the PDF
     MailApp.sendEmail({
@@ -330,12 +398,11 @@ function onFormSubmit(e) {
     
     Logger.log('Email sent to: ' + senderEmail + ' CC: khaas@ironpeakroofing.com with attachment: ' + pdfFile.getUrl());
 
-    // Return with URL
     return {
       success: true,
       message: 'Form submitted successfully',
       pdfUrl: viewUrl,
-      fileId: fileId ,
+      fileId: fileId,
     };
    
   } catch (error) {
@@ -344,5 +411,29 @@ function onFormSubmit(e) {
       success: false,
       message: error.toString()
     };
+  }
+}
+
+// Add this helper function to get the latest PDF ID
+function getLatestPdfId() {
+  try {
+    var sheet = SpreadsheetApp.openById("1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw").getSheetByName("Form Responses");
+    var lastRow = sheet.getLastRow();
+    
+    // Find PDF_ID column
+    var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    var pdfIdColumn = headers.indexOf('PDF_ID') + 1;
+    
+    if (pdfIdColumn > 0) {
+      var lastPdfId = sheet.getRange(lastRow, pdfIdColumn).getValue();
+      Logger.log("Latest PDF ID retrieved: " + lastPdfId);
+      return lastPdfId;
+    } else {
+      Logger.log("PDF_ID column not found");
+      return null;
+    }
+  } catch (error) {
+    Logger.log("Error getting latest PDF ID: " + error.toString());
+    return null;
   }
 }
