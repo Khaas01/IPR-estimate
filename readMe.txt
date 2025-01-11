@@ -177,3 +177,105 @@ Version History
 v62 (Current): Enhanced error handling and PDF preview
 v61: Updated form structure and validation
 v60: Initial working version (Jan 1, 2025)
+
+# IPR Roofing Estimate Form
+
+A web-based form application for generating roofing estimates for Iron Peak Roofing.
+
+## Recent Updates (January 11, 2025)
+
+### Bug Fixes
+- Fixed form submission flow in the Solar Detach & Reset section
+- Standardized navigation behavior between Solar and Solar Detach & Reset sections
+- Resolved multiple submission issues
+- Corrected PDF preview loading in review section
+
+### Technical Changes
+1. Form Navigation
+   - Unified the submission flow across all sections
+   - Added `nextFromSolarDetachReset()` function to match `nextFromSolar()` behavior
+   - Improved error handling during form submission
+
+2. Data Collection
+   - Standardized form data structure for Google Apps Script integration
+   - Added proper timestamp handling
+   - Maintained consistent user login tracking
+
+### Form Structure
+The form follows a sequential flow:
+1. Sales Rep Information
+2. Company Information
+3. Property Owner Information
+4. Project Type Selection
+5. Roofing Details
+6. Solar Panel Information
+7. Review and PDF Generation
+
+### Known Dependencies
+- Google Apps Script for form processing
+- Google Drive API for PDF storage
+- Google Sheets API for data storage
+
+## Usage Notes
+- Form submissions are processed through Google Apps Script
+- PDFs are automatically generated upon successful submission
+- Preview functionality requires proper authentication
+- Solar panel section has two paths:
+  - Direct submission (No solar panels)
+  - Detach & Reset details (With solar panels)
+
+## Technical Requirements
+- Modern web browser with JavaScript enabled
+- Internet connection for API interactions
+- Access to Google services
+
+## Version
+Current Version: 62 (as of January 11, 2025)
+
+## Contributors
+- Primary Maintainer: @Khaas01
+
+## Future Improvements
+- Consider implementing form data validation before submission
+- Add progress indicator during PDF generation
+- Implement better error messaging for failed submissions
+
+## PROJECT PROGRESS LOG
+Started: 2025-01-11 23:42:01 UTC
+Author: Khaas01
+
+### ENTRY: 2025-01-11 23:42:01 UTC
+TYPE: Initial Documentation
+STATUS: In Progress
+
+CURRENT ISSUE ADDRESSED:
+- Solar Detach & Reset section behavior mismatch with Solar section
+
+IMPLEMENTATION DETAILS:
+1. Changed HTML in solar-detach-reset-section:
+   - FROM: onclick="submitForm().then(() => showSection('review-section'))"
+   - TO: onclick="nextFromSolarDetachReset()"
+
+2. Added new function:
+```javascript
+function nextFromSolarDetachReset() {
+    showSection('review-section');
+    submitForm()
+        .then(async () => {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            const pdfId = await getLatestPdfId();
+            if (pdfId) {
+                displayPDF(pdfId);
+            } else {
+                throw new Error('No PDF ID found');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError();
+        })
+        .finally(() => {
+            hideLoading();
+        });
+}
+
