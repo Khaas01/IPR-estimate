@@ -416,7 +416,7 @@ window.addEventListener('message', function(event) {
     }
 });
 
-// Simplified error handling
+
 function showError() {
     const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
     if (estimatePreviewFrame) {
