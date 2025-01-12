@@ -316,25 +316,16 @@ function displayPDF(pdfId) {
         const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
         if (estimatePreviewFrame && pdfId) {
             const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
-            console.log('Cleaned PDF ID:', cleanPdfId);
+            console.log('Clean PDF ID:', cleanPdfId);
             const embedUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
-            console.log('Generated embed URL:', embedUrl);
+            console.log('Setting embed URL:', embedUrl);
             
-            // Show loading state while PDF is loading
-            showLoading('Loading your estimate...');
-
-            // Clear any existing srcdoc
-            estimatePreviewFrame.removeAttribute('srcdoc');
+            // Show loading state
+            showLoading();
             
             // Set up load event listener before changing src
             estimatePreviewFrame.onload = () => {
-                console.log('Frame loaded successfully');
                 hideLoading();
-            };
-
-            estimatePreviewFrame.onerror = (error) => {
-                console.error('Frame loading error:', error);
-                showError();
             };
             
             // Set security attributes
@@ -345,12 +336,7 @@ function displayPDF(pdfId) {
             
             // Set the source
             estimatePreviewFrame.src = embedUrl;
-            console.log('Frame src set to:', embedUrl);
         } else {
-            console.error('Invalid PDF ID or missing preview frame:', {
-                frameExists: !!estimatePreviewFrame,
-                pdfIdProvided: !!pdfId
-            });
             throw new Error('Invalid PDF ID or missing preview frame');
         }
     } catch (error) {
@@ -403,20 +389,28 @@ window.addEventListener('message', function(event) {
 
 
 function showError() {
-    const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
-    if (estimatePreviewFrame) {
-        estimatePreviewFrame.srcdoc = `
-            <html>
-            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
-                <div style="color: red; text-align: center;">
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame) {
+        // Clear the iframe
+        previewFrame.src = 'about:blank';
+        
+        // Create error message outside the iframe
+        let errorDiv = document.getElementById('pdf-error-message');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'pdf-error-message';
+            errorDiv.innerHTML = `
+                <div style="color: red; text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                     <p>Error loading PDF preview.</p>
                     <p>Please try refreshing the page or contact support if the issue persists.</p>
                 </div>
-            </body>
-            </html>
-        `;
+            `;
+            previewFrame.parentNode.insertBefore(errorDiv, previewFrame.nextSibling);
+        }
+        errorDiv.style.display = 'block';
     }
 }
+
 
 function submitForm() {
     if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
@@ -611,29 +605,33 @@ function showError() {
 function showLoading() {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame) {
-        const loadingHtml = `
-            <html>
-            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif; background-color: #f5f5f5;">
-                <div style="text-align: center;">
+        // Clear any existing content first
+        previewFrame.src = 'about:blank';
+        
+        // Create a loading element outside the iframe
+        let loadingDiv = document.getElementById('pdf-loading-indicator');
+        if (!loadingDiv) {
+            loadingDiv = document.createElement('div');
+            loadingDiv.id = 'pdf-loading-indicator';
+            loadingDiv.innerHTML = `
+                <div style="text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                     <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
                     <p style="color: #666;">Generating your estimate...</p>
                 </div>
-                <style>
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                </style>
-            </body>
-            </html>
-        `;
-        previewFrame.srcdoc = loadingHtml;
+            `;
+            // Add the loading div as a sibling to the iframe
+            previewFrame.parentNode.insertBefore(loadingDiv, previewFrame.nextSibling);
+        }
+        loadingDiv.style.display = 'block';
     }
     console.log('Loading...');
 }
 
 function hideLoading() {
-    // Clear any loading states if needed
+    const loadingDiv = document.getElementById('pdf-loading-indicator');
+    if (loadingDiv) {
+        loadingDiv.style.display = 'none';
+    }
     console.log('Loading complete');
 }
 function nextProjectTypeSection() {
