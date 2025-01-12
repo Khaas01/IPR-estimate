@@ -401,7 +401,7 @@ function showError() {
         `;
     }
 }
-console.log('Form Data Being Sent:', JSON.stringify(formData, null, 2));
+
 function submitForm() {
     if (isSubmitting) return Promise.reject(new Error('Form is already being submitted'));
     
