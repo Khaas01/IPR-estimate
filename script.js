@@ -53,32 +53,8 @@ async function initializeGoogleAPIs() {
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize section history
     sectionHistory.push('salesRepSection');
-
-    // Show review section and loading indicator immediately
+    // Show initial sales rep section only
     showSection('salesRepSection');
-    showLoading('Loading latest estimate...');
-    
-    // Add a delay before fetching the PDF ID
-    setTimeout(async () => {
-        try {
-            const pdfId = await getLatestPdfId();
-            console.log('Initial PDF ID fetch:', pdfId);
-            
-            if (pdfId) {
-                displayPDF(pdfId);
-            } else {
-                console.error('No PDF ID found on initial load');
-                showError();
-            }
-        } catch (error) {
-            console.error('Error during initial PDF load:', error);
-            showError();
-        } finally {
-            if (!document.getElementById('estimatePreviewFrame').src) {
-                hideLoading();
-            }
-        }
-    }, 2000); // 2 second delay before fetching
 });
 
 window.addEventListener('message', function(event) {
@@ -148,19 +124,18 @@ solarRadios.forEach(radio => {
     });
 }
 
-// Show a specific section
 function showSection(sectionId) {
     hideAllSections();
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
         targetSection.style.display = 'block';
         
-        // Clear iframe content when showing review section
+        // Only prepare PDF frame in review section
         if (sectionId === 'review-section') {
-            const previewFrame = document.getElementById('estimatePreviewFrame');
-            if (previewFrame) {
-                previewFrame.src = 'about:blank';
-                showLoading();
+            const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
+            if (estimatePreviewFrame) {
+                estimatePreviewFrame.src = 'about:blank';
+                showLoading('Preparing your estimate...');
             }
         }
     }
@@ -342,34 +317,28 @@ function displayPDF(pdfId) {
             const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
             const embedUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
             
-            console.log('Clean PDF ID:', cleanPdfId);
-            console.log('Setting embed URL:', embedUrl);
-
             // Show loading state while PDF is loading
-            showLoading();
+            showLoading('Loading your estimate...');
 
             // Set up load event listener before changing src
             estimatePreviewFrame.onload = () => {
                 hideLoading();
             };
-
-            // Remove any existing srcdoc and sandbox attribute
-            estimatePreviewFrame.removeAttribute('srcdoc');
             
-            // Set more restrictive sandbox permissions
+            // Set security attributes
             estimatePreviewFrame.setAttribute('sandbox', 'allow-scripts allow-popups allow-forms allow-downloads allow-same-origin');
-            
-            // Add additional security attributes
             estimatePreviewFrame.setAttribute('allow', 'autoplay; encrypted-media');
             estimatePreviewFrame.setAttribute('allowfullscreen', 'true');
             estimatePreviewFrame.setAttribute('crossorigin', 'anonymous');
             
             // Set the source
             estimatePreviewFrame.src = embedUrl;
+        } else {
+            throw new Error('Invalid PDF ID or missing preview frame');
         }
     } catch (error) {
         console.error('Error in displayPDF:', error);
-        handlePdfError();
+        showError();
     }
 }
 // Updated error handler
