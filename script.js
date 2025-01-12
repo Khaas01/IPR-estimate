@@ -118,30 +118,39 @@ solarRadios.forEach(radio => {
         }
     });
 });
- function hideAllSections() {
-    document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
-        section.style.display = 'none';
-    });
-}
-
 function showSection(sectionId) {
+    console.log('Showing section:', sectionId);
     hideAllSections();
     const targetSection = document.getElementById(sectionId);
+    console.log('Found section:', targetSection);
     if (targetSection) {
         targetSection.style.display = 'block';
+        console.log('Set display to block for:', sectionId);
         
         // Only prepare PDF frame in review section
         if (sectionId === 'review-section') {
-            const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
-            if (estimatePreviewFrame) {
-                estimatePreviewFrame.src = 'about:blank';
-                showLoading('Preparing your estimate...');
+            const previewFrame = document.getElementById('estimatePreviewFrame');
+            if (previewFrame) {
+                previewFrame.src = 'about:blank';
+                showLoading();
             }
         }
+    } else {
+        console.error('Section not found:', sectionId);
     }
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId);
     }
+}
+
+function hideAllSections() {
+    console.log('Hiding all sections');
+    const sections = document.querySelectorAll('div[id$="Section"], div[id*="-section"]');
+    console.log('Found sections:', sections.length);
+    sections.forEach(section => {
+        section.style.display = 'none';
+        console.log('Hidden section:', section.id);
+    });
 }
 function goBack() {
     if (sectionHistory.length > 1) {
