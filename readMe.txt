@@ -605,7 +605,47 @@ Form submission flow maintained ✓
 Loading states visible ✓
 Error handling functional ✓
 END ENTRY
+### ENTRY: 2025-01-12 18:02:06 UTC
+TYPE: Bug Fix Testing
+STATUS: Progress Update
+AUTHOR: Khaas01
 
+TEST FINDINGS:
+1. Loading Overlay Test:
+   - Auto-hide after 3 seconds working ✓
+   - No interference with iframe content ✓
+   - Proper z-index layering ✓
+
+2. URL Behavior:
+   - Static URL test successful when manually set in console
+   - Default about:blank not interfering with dynamic URL setting
+   - iframe ready to receive dynamic PDF URL from form submission
+
+3. Configuration State:
+   - Reset initial section to salesRepSection ✓
+   - Restored iframe src to "about:blank" ✓
+   - Loading overlay properly positioned ✓
+
+NEXT STEPS:
+1. Test complete form submission flow
+2. Verify PDF ID retrieval
+3. Confirm dynamic URL setting
+4. Check loading overlay timing with actual PDF load
+
+KEY POINTS:
+- Keep iframe src="about:blank" in HTML as placeholder
+- Let JavaScript handle dynamic URL updates
+- Loading overlay provides visual feedback without blocking
+- 3-second timeout gives adequate time for PDF to load
+
+TEST SEQUENCE FOR FORM SUBMISSION:
+1. Fill out form
+2. Submit
+3. Watch for loading overlay
+4. Verify overlay clears after 3 seconds
+5. Confirm PDF displays
+
+### END ENTRY
 
 
 
