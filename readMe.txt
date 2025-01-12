@@ -360,3 +360,32 @@ Google Sheet ID: 1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw
 Form Responses Sheet Headers documented
 Code.gs integration requirements noted
 END ENTRY
+
+### ENTRY: 2025-01-12 00:13:45 UTC
+TYPE: Code Correction
+STATUS: Fixed
+AUTHOR: Khaas01
+
+ISSUE:
+Inconsistent element ID naming in showError function
+
+CORRECTION:
+- Reverted variable name back to 'estimatePreviewFrame' from 'previewFrame'
+- Maintains consistency with existing codebase naming conventions
+- Matches the HTML element ID used throughout the application
+
+AFFECTED CODE:
+```javascript
+// Changed from:
+const previewFrame = document.getElementById('estimatePreviewFrame');
+
+// Back to:
+const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
+REASON FOR CONSISTENCY:
+
+'estimatePreviewFrame' is used throughout the codebase
+Maintains clear connection to the HTML element ID
+Prevents potential confusion in code maintenance
+Follows established naming patterns in the project
+END ENTRY
+
