@@ -607,28 +607,28 @@
     <div class="review-instructions">
         <p>Please review your estimate below.</p>
     </div>
-<div class="estimate-preview-container" style="position: relative;">
-    <iframe 
-    id="estimatePreviewFrame"
-    src="https://drive.google.com/file/d/1A_OG8hTHNIg8AI_5OksJInfFUSx9rSz3/preview"
-    allowfullscreen
-    allow="autoplay"
-    style="display: block !important; 
-           visibility: visible !important;
-           width: 100%; 
-           height: 600px; 
-           border: none; 
-           margin: 0 auto;
-           opacity: 1;">
-</iframe>
-   
-<div id="loading-overlay" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); justify-content: center; align-items: center;">
-    <div style="text-align: center;">
-        <div class="loading-spinner"></div>
-        <p id="loading-message">Loading...</p>
+    <div class="estimate-preview-container" style="position: relative;">
+        <iframe 
+            id="estimatePreviewFrame"
+            src="https://drive.google.com/file/d/1A_OG8hTHNIg8AI_5OksJInfFUSx9rSz3/preview"
+            allowfullscreen
+            allow="autoplay"
+            style="display: block !important; 
+                   visibility: visible !important;
+                   width: 100%; 
+                   height: 600px; 
+                   border: none; 
+                   margin: 0 auto;
+                   opacity: 1;">
+        </iframe>
+        <!-- Add loading overlay as a sibling to iframe -->
+        <div id="loading-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: none;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                <div class="loading-spinner"></div>
+                <p id="loading-message">Loading...</p>
+            </div>
+        </div>
     </div>
-</div>
-</div>
 </div>
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
