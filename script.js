@@ -119,15 +119,27 @@ solarRadios.forEach(radio => {
     });
 });
  function hideAllSections() {
-    document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
+    console.log('Starting to hide all sections');
+    const sections = document.querySelectorAll('div[id$="Section"], div[id*="-section"]');
+    console.log('Found sections to hide:', sections.length);
+    sections.forEach(section => {
+        console.log('Hiding section:', section.id);
         section.style.display = 'none';
     });
+    console.log('All sections hidden');
 }
 
 function showSection(sectionId) {
+    console.log('Attempting to show section:', sectionId);
+    
     hideAllSections();
+    console.log('All sections hidden');
+    
     const targetSection = document.getElementById(sectionId);
+    console.log('Found target section:', targetSection);
+    
     if (targetSection) {
+        console.log('Setting display to block for section:', sectionId);
         targetSection.style.display = 'block';
         
         // Only prepare PDF frame in review section
@@ -138,12 +150,16 @@ function showSection(sectionId) {
                 showLoading('Preparing your estimate...');
             }
         }
+        console.log('Section display updated successfully');
+    } else {
+        console.error('Target section not found:', sectionId);
     }
+    
     if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
         sectionHistory.push(sectionId);
+        console.log('Section history updated:', sectionHistory);
     }
 }
-
 // Go back to the previous section
 function goBack() {
     if (sectionHistory.length > 1) {
