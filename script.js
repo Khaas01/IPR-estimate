@@ -118,40 +118,84 @@ solarRadios.forEach(radio => {
         }
     });
 });
-function showSection(sectionId) {
-    console.log('Showing section:', sectionId);
-    hideAllSections();
-    const targetSection = document.getElementById(sectionId);
-    console.log('Found section:', targetSection);
-    if (targetSection) {
-        targetSection.style.display = 'block';
-        console.log('Set display to block for:', sectionId);
-        
-        // Only prepare PDF frame in review section
-        if (sectionId === 'review-section') {
-            const previewFrame = document.getElementById('estimatePreviewFrame');
-            if (previewFrame) {
-                previewFrame.src = 'about:blank';
-                showLoading();
-            }
-        }
-    } else {
-        console.error('Section not found:', sectionId);
-    }
-    if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
-        sectionHistory.push(sectionId);
-    }
-}
+// Maintain section history
+let sectionHistory = [];
 
+// Function to hide all sections - keep it simple and efficient
 function hideAllSections() {
     console.log('Hiding all sections');
-    const sections = document.querySelectorAll('div[id$="Section"], div[id*="-section"]');
-    console.log('Found sections:', sections.length);
-    sections.forEach(section => {
+    document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
         section.style.display = 'none';
         console.log('Hidden section:', section.id);
     });
 }
+
+// Main section display function - restored to working version with added logging
+function showSection(sectionId) {
+    console.log('Attempting to show section:', sectionId);
+    
+    // First hide all sections
+    hideAllSections();
+    
+    // Get the target section
+    const targetSection = document.getElementById(sectionId);
+    console.log('Found target section:', targetSection);
+    
+    if (targetSection) {
+        // Set display before any other operations
+        targetSection.style.display = 'block';
+        console.log('Set display to block for:', sectionId);
+        
+        // Handle review section specially
+        if (sectionId === 'review-section') {
+            const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
+            if (estimatePreviewFrame) {
+                estimatePreviewFrame.src = 'about:blank';
+                showLoading('Preparing your estimate...');
+                console.log('Prepared review section preview frame');
+            }
+        }
+        
+        // Update section history
+        if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
+            sectionHistory.push(sectionId);
+            console.log('Updated section history:', sectionHistory);
+        }
+    } else {
+        console.error('Target section not found:', sectionId);
+    }
+}
+
+// Keep the original loading functions
+function showLoading(message = 'Loading...') {
+    const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
+    if (estimatePreviewFrame) {
+        const loadingHtml = `
+            <html>
+            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+                <div style="text-align: center;">
+                    <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
+                    <p style="color: #666;">${message}</p>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            </body>
+            </html>
+        `;
+        estimatePreviewFrame.srcdoc = loadingHtml;
+    }
+    console.log('Loading started:', message);
+}
+
+function hideLoading() {
+    console.log('Loading complete');
+}
+
+
 function goBack() {
     if (sectionHistory.length > 1) {
         hideAllSections();
@@ -609,38 +653,7 @@ function showError() {
         `;
     }
 }
-function showLoading() {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame) {
-        // Clear any existing content first
-        previewFrame.src = 'about:blank';
-        
-        // Create a loading element outside the iframe
-        let loadingDiv = document.getElementById('pdf-loading-indicator');
-        if (!loadingDiv) {
-            loadingDiv = document.createElement('div');
-            loadingDiv.id = 'pdf-loading-indicator';
-            loadingDiv.innerHTML = `
-                <div style="text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
-                    <p style="color: #666;">Generating your estimate...</p>
-                </div>
-            `;
-            // Add the loading div as a sibling to the iframe
-            previewFrame.parentNode.insertBefore(loadingDiv, previewFrame.nextSibling);
-        }
-        loadingDiv.style.display = 'block';
-    }
-    console.log('Loading...');
-}
 
-function hideLoading() {
-    const loadingDiv = document.getElementById('pdf-loading-indicator');
-    if (loadingDiv) {
-        loadingDiv.style.display = 'none';
-    }
-    console.log('Loading complete');
-}
 function nextProjectTypeSection() {
     const selectedProjectType = document.querySelector('input[name="projectType"]:checked');
     if (!selectedProjectType) {
