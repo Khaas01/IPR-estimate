@@ -166,30 +166,20 @@ function showSection(sectionId) {
 
 // Keep the original loading functions
 function showLoading(message = 'Loading...') {
-    const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
-    if (estimatePreviewFrame) {
-        const loadingHtml = `
-            <html>
-            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif; background-color: #f5f5f5;">
-                <div style="text-align: center;">
-                    <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
-                    <p style="color: #666;">${message}</p>
-                </div>
-                <style>
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                </style>
-            </body>
-            </html>
-        `;
-        estimatePreviewFrame.srcdoc = loadingHtml;
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingMessage = document.getElementById('loading-message');
+    
+    if (loadingOverlay && loadingMessage) {
+        loadingMessage.textContent = message;
+        loadingOverlay.style.display = 'flex';
     }
     console.log('Loading started:', message);
 }
-
 function hideLoading() {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
+    }
     console.log('Loading complete');
 }
 
