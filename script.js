@@ -164,7 +164,6 @@ function showSection(sectionId) {
     }
 }
 
-// Keep the original loading functions
 function showLoading(message = 'Loading...') {
     const loadingOverlay = document.getElementById('loading-overlay');
     const loadingMessage = document.getElementById('loading-message');
@@ -172,6 +171,11 @@ function showLoading(message = 'Loading...') {
     if (loadingOverlay && loadingMessage) {
         loadingMessage.textContent = message;
         loadingOverlay.style.display = 'flex';
+        
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            hideLoading();
+        }, 3000);
     }
     console.log('Loading started:', message);
 }
