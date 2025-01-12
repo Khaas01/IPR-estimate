@@ -420,10 +420,16 @@ window.addEventListener('message', function(event) {
 function showError() {
     const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
     if (estimatePreviewFrame) {
-        estimatePreviewFrame.src = 'about:blank';
-        const errorDiv = document.createElement('div');
-        errorDiv.innerHTML = 'Error loading PDF. Please try again.';
-        estimatePreviewFrame.parentNode.insertBefore(errorDiv, estimatePreviewFrame);
+        estimatePreviewFrame.srcdoc = `
+            <html>
+            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+                <div style="color: red; text-align: center;">
+                    <p>Error loading PDF preview.</p>
+                    <p>Please try refreshing the page or contact support if the issue persists.</p>
+                </div>
+            </body>
+            </html>
+        `;
     }
 }
 console.log('Form Data Being Sent:', JSON.stringify(formData, null, 2));
