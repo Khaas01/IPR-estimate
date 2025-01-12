@@ -323,6 +323,9 @@ function displayPDF(pdfId) {
             // Show loading state while PDF is loading
             showLoading('Loading your estimate...');
 
+            // Clear any existing srcdoc
+            estimatePreviewFrame.removeAttribute('srcdoc');
+            
             // Set up load event listener before changing src
             estimatePreviewFrame.onload = () => {
                 console.log('Frame loaded successfully');
