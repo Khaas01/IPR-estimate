@@ -430,3 +430,33 @@ NEXT STEPS:
 3. Track any PDF generation failures
 
 ### END ENTRY
+
+### ENTRY: 2025-01-12 00:33:36
+TYPE: Bug Fix
+STATUS: Fixed
+AUTHOR: Khaas01
+
+ISSUE:
+Global scope console.log attempting to access undefined formData variable
+Location: script.js:404
+
+PROBLEM:
+Debugging statement incorrectly placed in global scope:
+`console.log('Form Data Being Sent:', JSON.stringify(formData, null, 2));`
+
+FIX:
+1. Removed stray console.log statement from global scope
+2. If debugging is needed, logging should be moved inside submitForm function
+
+VERIFICATION:
+- ReferenceError should no longer occur on page load
+- Form submission debugging can be done within proper function scope
+
+NOTE:
+For future debugging of form data, place console.log inside submitForm:
+- After formData is created
+- Before fetch call
+- Within proper error handling
+
+### END ENTRY
+
