@@ -389,3 +389,44 @@ Prevents potential confusion in code maintenance
 Follows established naming patterns in the project
 END ENTRY
 
+### ENTRY: 2025-01-12 00:24:07 UTC
+TYPE: Process Flow Correction
+STATUS: Implemented
+AUTHOR: Khaas01
+
+ISSUE:
+PDF loading sequence was incorrect, attempting to load PDF on initial page load instead of waiting for form submission and Apps Script processing.
+
+ROOT CAUSE:
+- Incorrect initialization in DOMContentLoaded event
+- PDF loading logic not properly synchronized with form submission flow
+- Premature PDF ID fetching
+
+CHANGES IMPLEMENTED:
+1. Removed PDF loading from initial page load
+2. Modified showSection function to handle review section properly
+3. Adjusted submitForm sequence to:
+   - Submit form data
+   - Wait for Apps Script processing
+   - Fetch PDF ID with retries
+   - Display PDF only after confirmation
+
+PROCESS FLOW (Updated):
+1. Initial load → Sales Rep Section only
+2. Form Submission → Loading animation
+3. Apps Script Processing → 2s initial delay
+4. PDF ID Fetch → Up to 3 retries with 3s delays
+5. PDF Display → Only after successful ID fetch
+
+VERIFICATION:
+- Tested form submission flow
+- Confirmed loading states display properly
+- Verified PDF only loads after form processing
+- Validated error handling scenarios
+
+NEXT STEPS:
+1. Monitor form submissions for proper timing
+2. Collect feedback on loading animation duration
+3. Track any PDF generation failures
+
+### END ENTRY
