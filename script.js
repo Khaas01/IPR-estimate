@@ -311,18 +311,27 @@ function validateForm(formData) {
     return true;
 }
 function displayPDF(pdfId) {
+    console.log('Attempting to display PDF with ID:', pdfId);
     try {
         const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
         if (estimatePreviewFrame && pdfId) {
             const cleanPdfId = pdfId.replace(/^["'\s]+|["'\s]+$/g, '').trim();
+            console.log('Cleaned PDF ID:', cleanPdfId);
             const embedUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
+            console.log('Generated embed URL:', embedUrl);
             
             // Show loading state while PDF is loading
             showLoading('Loading your estimate...');
 
             // Set up load event listener before changing src
             estimatePreviewFrame.onload = () => {
+                console.log('Frame loaded successfully');
                 hideLoading();
+            };
+
+            estimatePreviewFrame.onerror = (error) => {
+                console.error('Frame loading error:', error);
+                showError();
             };
             
             // Set security attributes
@@ -333,7 +342,12 @@ function displayPDF(pdfId) {
             
             // Set the source
             estimatePreviewFrame.src = embedUrl;
+            console.log('Frame src set to:', embedUrl);
         } else {
+            console.error('Invalid PDF ID or missing preview frame:', {
+                frameExists: !!estimatePreviewFrame,
+                pdfIdProvided: !!pdfId
+            });
             throw new Error('Invalid PDF ID or missing preview frame');
         }
     } catch (error) {
@@ -341,7 +355,6 @@ function displayPDF(pdfId) {
         showError();
     }
 }
-// Updated error handler
 function handlePdfError() {
     const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
     if (estimatePreviewFrame) {
