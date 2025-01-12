@@ -183,6 +183,10 @@ function goBack() {
 }
 function collectFormData() {
     const formData = {
+        // Required fixed fields - these must be set by the system
+        "Timestamp": new Date().toISOString(),
+        "User Login": "Khaas01",
+        
         // Sales Rep Information
         "Sales Rep Name": document.getElementById('salesRepName')?.value || '',
         "Sales Rep Email": document.getElementById('salesRepEmail')?.value || '',
@@ -200,10 +204,8 @@ function collectFormData() {
         "Owner Phone": document.getElementById('ownerPhone')?.value || '',
         "Owner Email": document.getElementById('ownerEmail')?.value || '',
         
-        // Project Type
+        // Project Type and Insurance
         "Project Type": document.querySelector('input[name="projectType"]:checked')?.value || '',
-        
-        // Insurance Information
         "Insurance Company": document.getElementById('insuranceCompany')?.value || '',
         "Insurance Phone": document.getElementById('insurancePhone')?.value || '',
         "Claim Number": document.getElementById('claimNumber')?.value || '',
@@ -224,17 +226,15 @@ function collectFormData() {
         "Tile Type": document.querySelector('input[name="tile-type"]:checked')?.value || '',
         "Tile Remove/Replace Squares": document.getElementById('tile-roof-rr')?.value || '',
         
-        // Modified Bitumen
+        // Modified Bitumen and Coating
         "Modified Bitumen Squares": document.getElementById('modified-bitumen-sq')?.value || '',
-        
-        // Coating
         "Coating Squares": document.getElementById('coating-squares')?.value || '',
         
         // Secondary Roof
         "Has Secondary Roof": document.querySelector('input[name="secondary-roof"]:checked')?.value || '',
         "Secondary Roofing Type": document.querySelector('input[name="secondary-roofing-type"]:checked')?.value || '',
         "Secondary Shingles Squares": document.getElementById('shingles-squares')?.value || '',
-        "Secondary Tile Underlayment Squares": document.getElementById('tile-underlayment-squares')?.value || '',
+        "Secondary Tile Underlayment Squares": document.getElementById('tiles-squares')?.value || '',
         "Secondary Modified Bitumen Squares": document.getElementById('modified-bitumen-squares')?.value || '',
         "Secondary Coating Squares": document.getElementById('coating-squares')?.value || '',
         
@@ -251,19 +251,15 @@ function collectFormData() {
         "Additional Charges Description": document.getElementById('additional-charges-description')?.value || '',
         "Additional Charges Price": document.getElementById('additional-charges-price')?.value || '',
         
-        // Solar Panels
+        // Solar Details
         "Has Solar Panels": document.querySelector('input[name="solar"]:checked')?.value || '',
         "Solar Detach/Reset Cost": document.getElementById('solar-detach-reset')?.value || '',
         
-        // Misc
-        "Amount Collected": '',  // Optional field
-        "Unforseen Additions": '',  // Optional field
-        "PDF_ID": ''  // Optional field
+        // Optional fields
+        "Amount Collected": '',
+        "Unforseen Additions": '',
+        "PDF_ID": ''
     };
-    
-    // Add timestamp and user login
-    formData["Timestamp"] = new Date().toISOString();
-
     
     return formData;
 }
@@ -440,75 +436,75 @@ function submitForm() {
 
         const formData = collectFormData();
         
-        // Structure the data as expected by the Apps Script
-        const requestData = {
+        // Create submission data structure that exactly matches the Google Sheet headers
+        const submissionData = {
             data: {
-                "Timestamp": formData.timestamp,
-                "User Login": "Khaas01",
-                "Sales Rep Name": formData.salesRepName,
-                "Sales Rep Email": formData.salesRepEmail,
-                "Sales Rep Phone": formData.salesRepPhone,
-                "Company Name": formData.companyName,
-                "Owner Name": formData.ownerName,
-                "Owner Address": formData.ownerAddress,
-                "Owner City": formData.ownerCity,
-                "Owner State": formData.ownerState,
-                "Owner ZIP": formData.ownerZip,
-                "Owner Phone": formData.ownerPhone,
-                "Owner Email": formData.ownerEmail,
-                "Project Type": formData.projectType,
-                "Insurance Company": formData.insuranceCompany,
-                "Insurance Phone": formData.insurancePhone,
-                "Claim Number": formData.claimNumber,
-                "Policy Number": formData.policyNumber,
-                "Date of Loss": formData.dateOfLoss,
-                "Roofing Type": formData.roofingType,
-                "Shingle Type": formData.shingleType,
-                "Shingles Repaired": formData.shinglesRepaired,
-                "Additional Repairs": formData.additionalRepairs,
-                "Shingle Replacement Squares": formData.shingleReplacement,
-                "Tile Roofing Type": formData.tileRoofingType,
-                "Tile Repair Squares": formData.tileRepairSq,
-                "Tile Underlayment Squares": formData.tileUnderlaymentSq,
-                "Tile Type": formData.tileType,
-                "Tile Remove/Replace Squares": formData.tileRoofRR,
-                "Modified Bitumen Squares": formData.modifiedBitumenSq,
-                "Coating Squares": formData.coatingSquares,
-                "Has Secondary Roof": formData.secondaryRoof,
-                "Secondary Roofing Type": formData.secondaryRoofingType,
-                "Secondary Shingles Squares": formData.secondaryShingleSquares,
-                "Secondary Tile Underlayment Squares": formData.secondaryTileSquares,
-                "Secondary Modified Bitumen Squares": formData.secondaryModifiedBitumenSq,
-                "Secondary Coating Squares": formData.secondaryCoatingSquares,
-                "Has Third Roof": formData.thirdRoof,
-                "Third Roof Style": formData.thirdRoofStyle,
-                "Third Shingles Squares": formData.thirdShingleSquares,
-                "Third Tiles Squares": formData.thirdTileSquares,
-                "Third Modified Squares": formData.thirdModifiedSquares,
-                "Third Coating Squares": formData.thirdCoatingSquares,
-                "Has Additional Charges": formData.additionalCharges,
-                "Additional Charges Description": formData.additionalChargesDescription,
-                "Additional Charges Price": formData.additionalChargesPrice,
-                "Has Solar Panels": formData.solar,
-                "Solar Detach/Reset Cost": formData.solarDetachReset,
-                "Amount Collected": "",  // Optional field
-                "Unforseen Additions": ""  // Optional field
+                "Timestamp": formData["Timestamp"],
+                "User Login": formData["User Login"],
+                "Sales Rep Name": formData["Sales Rep Name"],
+                "Sales Rep Email": formData["Sales Rep Email"],
+                "Sales Rep Phone": formData["Sales Rep Phone"],
+                "Company Name": formData["Company Name"],
+                "Owner Name": formData["Owner Name"],
+                "Owner Address": formData["Owner Address"],
+                "Owner City": formData["Owner City"],
+                "Owner State": formData["Owner State"],
+                "Owner ZIP": formData["Owner ZIP"],
+                "Owner Phone": formData["Owner Phone"],
+                "Owner Email": formData["Owner Email"],
+                "Project Type": formData["Project Type"],
+                "Insurance Company": formData["Insurance Company"],
+                "Insurance Phone": formData["Insurance Phone"],
+                "Claim Number": formData["Claim Number"],
+                "Policy Number": formData["Policy Number"],
+                "Date of Loss": formData["Date of Loss"],
+                "Roofing Type": formData["Roofing Type"],
+                "Shingle Type": formData["Shingle Type"],
+                "Shingles Repaired": formData["Shingles Repaired"],
+                "Additional Repairs": formData["Additional Repairs"],
+                "Shingle Replacement Squares": formData["Shingle Replacement Squares"],
+                "Tile Roofing Type": formData["Tile Roofing Type"],
+                "Tile Repair Squares": formData["Tile Repair Squares"],
+                "Tile Underlayment Squares": formData["Tile Underlayment Squares"],
+                "Tile Type": formData["Tile Type"],
+                "Tile Remove/Replace Squares": formData["Tile Remove/Replace Squares"],
+                "Modified Bitumen Squares": formData["Modified Bitumen Squares"],
+                "Coating Squares": formData["Coating Squares"],
+                "Has Secondary Roof": formData["Has Secondary Roof"],
+                "Secondary Roofing Type": formData["Secondary Roofing Type"],
+                "Secondary Shingles Squares": formData["Secondary Shingles Squares"],
+                "Secondary Tile Underlayment Squares": formData["Secondary Tile Underlayment Squares"],
+                "Secondary Modified Bitumen Squares": formData["Secondary Modified Bitumen Squares"],
+                "Secondary Coating Squares": formData["Secondary Coating Squares"],
+                "Has Third Roof": formData["Has Third Roof"],
+                "Third Roof Style": formData["Third Roof Style"],
+                "Third Shingles Squares": formData["Third Shingles Squares"],
+                "Third Tiles Squares": formData["Third Tiles Squares"],
+                "Third Modified Squares": formData["Third Modified Squares"],
+                "Third Coating Squares": formData["Third Coating Squares"],
+                "Has Additional Charges": formData["Has Additional Charges"],
+                "Additional Charges Description": formData["Additional Charges Description"],
+                "Additional Charges Price": formData["Additional Charges Price"],
+                "Has Solar Panels": formData["Has Solar Panels"],
+                "Solar Detach/Reset Cost": formData["Solar Detach/Reset Cost"],
+                "Amount Collected": formData["Amount Collected"],
+                "Unforseen Additions": formData["Unforseen Additions"],
+                "PDF_ID": formData["PDF_ID"]
             }
         };
 
-            console.log('Sending structured form data:', requestData);
+        console.log('Sending structured form data:', submissionData);
 
         return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             redirect: 'follow',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'text/plain;charset=utf-8',
             },
-            body: JSON.stringify(requestData)
+            body: JSON.stringify(submissionData)
         })
         .then(response => {
-            // Continue with PDF retrieval attempts
             return new Promise((resolve, reject) => {
                 let attempts = 0;
                 const maxAttempts = 3;
