@@ -118,8 +118,6 @@ solarRadios.forEach(radio => {
         }
     });
 });
-// Maintain section history
-let sectionHistory = [];
 
 // Function to hide all sections - keep it simple and efficient
 function hideAllSections() {
