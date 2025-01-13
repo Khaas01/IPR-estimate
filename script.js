@@ -118,7 +118,98 @@ solarRadios.forEach(radio => {
         }
     });
 });
+// Initialize Google Places Autocomplete
+function initializeAutocomplete() {
+    const addressInput = document.getElementById('ownerAddress');
+    const autocomplete = new google.maps.places.Autocomplete(addressInput);
+    
+    // When a place is selected, fill in the other address fields
+    autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        if (!place.geometry) {
+            return;
+        }
+        fillInAddress(place);
+    });
+}
 
+// Handle "Use Current Location" button
+document.getElementById('getCurrentLocation').addEventListener('click', function() {
+    if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser');
+        return;
+    }
+
+    // Show loading state on button
+    this.textContent = 'Getting location...';
+    
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const geocoder = new google.maps.Geocoder();
+            const latlng = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+
+            geocoder.geocode({ location: latlng }, (results, status) => {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        document.getElementById('ownerAddress').value = results[0].formatted_address;
+                        fillInAddress(results[0]);
+                    } else {
+                        alert('No address found for this location');
+                    }
+                } else {
+                    alert('Geocoder failed due to: ' + status);
+                }
+                // Reset button text
+                this.textContent = '📍 Use Current Location';
+            });
+        },
+        (error) => {
+            alert(`Error getting location: ${error.message}`);
+            // Reset button text
+            this.textContent = '📍 Use Current Location';
+        }
+    );
+});
+
+// Helper function to fill in address components
+function fillInAddress(place) {
+    const componentForm = {
+        street_number: 'short_name',
+        route: 'long_name',
+        locality: 'long_name',                 // City
+        administrative_area_level_1: 'short_name', // State
+        postal_code: 'short_name'              // ZIP code
+    };
+
+    // Clear existing values
+    document.getElementById('ownerCity').value = '';
+    document.getElementById('ownerState').value = '';
+    document.getElementById('ownerZip').value = '';
+
+    // Get each component of the address from the place details
+    // and fill the corresponding field on the form.
+    for (const component of place.address_components) {
+        const addressType = component.types[0];
+        if (componentForm[addressType]) {
+            const val = component[componentForm[addressType]];
+            if (addressType === 'locality') {
+                document.getElementById('ownerCity').value = val;
+            }
+            if (addressType === 'administrative_area_level_1') {
+                document.getElementById('ownerState').value = val;
+            }
+            if (addressType === 'postal_code') {
+                document.getElementById('ownerZip').value = val;
+            }
+        }
+    }
+}
+
+// Initialize autocomplete when page loads
+document.addEventListener('DOMContentLoaded', initializeAutocomplete);
 // Function to hide all sections - keep it simple and efficient
 function hideAllSections() {
     console.log('Hiding all sections');
