@@ -2,6 +2,11 @@
 * {
     box-sizing: border-box;
 }
+.hint-text {
+    font-size: 0.85em;
+    color: #666;
+    font-style: italic;
+}
 .address-container {
     position: relative;
     margin-bottom: 15px;
