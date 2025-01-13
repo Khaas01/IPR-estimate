@@ -65,8 +65,20 @@
     name="ownerName" 
     style="text-transform: capitalize;"
     required>
-        <label for="ownerAddress">Address (Hint - Copy the address to paste into the measurement tool):</label>
-        <input type="text" class="uniform-input" id="ownerAddress" name="ownerAddress" required>
+      <div class="address-container">
+    <input type="text" 
+        class="uniform-input" 
+        id="ownerAddress" 
+        name="ownerAddress" 
+        placeholder="Start typing address..." 
+        required>
+    
+    <button type="button" 
+        class="location-btn" 
+        id="getCurrentLocation">
+        📍 Use Current Location
+    </button>
+</div>
         <label for="ownerCity">City:</label>
         <input type="text" class="uniform-input" id="ownerCity" name="ownerCity" required>
         <label for="ownerState">State:</label>
