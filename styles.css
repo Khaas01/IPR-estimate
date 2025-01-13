@@ -2,6 +2,11 @@
 * {
     box-sizing: border-box;
 }
+#estimatePreviewFrame {
+    min-height: 600px; /* Minimum height */
+    max-height: 90vh;  /* Maximum height */
+    height: auto;      /* Allow natural height */
+}
 .hint-text {
     font-size: 0.85em;
     color: #666;
