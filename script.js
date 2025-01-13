@@ -353,21 +353,27 @@ function validateForm(formData) {
 
     return true;
 }
-document.getElementById('ownerPhone').addEventListener('input', function(e) {
-    // Remove all non-numeric characters
-    let number = this.value.replace(/\D/g, '');
-    
-    // Format the number
-    if (number.length > 0) {
-        if (number.length <= 3) {
-            this.value = `(${number}`;
-        } else if (number.length <= 6) {
-            this.value = `(${number.slice(0,3)}) ${number.slice(3)}`;
-        } else {
-            this.value = `(${number.slice(0,3)}) ${number.slice(3,6)}-${number.slice(6,10)}`;
+function formatPhoneNumber(phoneInput) {
+    phoneInput.addEventListener('input', function(e) {
+        // Remove all non-numeric characters
+        let number = this.value.replace(/\D/g, '');
+        
+        // Format the number
+        if (number.length > 0) {
+            if (number.length <= 3) {
+                this.value = `(${number}`;
+            } else if (number.length <= 6) {
+                this.value = `(${number.slice(0,3)}) ${number.slice(3)}`;
+            } else {
+                this.value = `(${number.slice(0,3)}) ${number.slice(3,6)}-${number.slice(6,10)}`;
+            }
         }
-    }
-});
+    });
+}
+
+// Apply to both phone fields
+formatPhoneNumber(document.getElementById('ownerPhone'));
+formatPhoneNumber(document.getElementById('salesRepPhone'));
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
