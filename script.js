@@ -211,120 +211,99 @@ function hideAllSections() {
         console.log('Hidden section:', section.id);
     });
 }
-// Add this to your script.js
 document.addEventListener('DOMContentLoaded', function() {
+    // Function to properly capitalize words
+    function capitalizeWords(str) {
+        return str.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    }
+
+    // Sales Rep Name formatting
     const salesRepInput = document.getElementById('salesRepName');
-    
-    salesRepInput.addEventListener('input', function(e) {
-        let words = this.value.split(' ');
-        let capitalizedWords = words.map(word => {
-            if (word.length > 0) {
-                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-            }
-            return '';
-        });
-        this.value = capitalizedWords.join(' ');
+    salesRepInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
     });
-});
-document.addEventListener('DOMContentLoaded', function() {
-    // City input capitalization
+
+    // Property Owner Name formatting
+    const ownerNameInput = document.getElementById('ownerName');
+    ownerNameInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
+    });
+
+    // City formatting
     const cityInput = document.getElementById('ownerCity');
-    cityInput.addEventListener('input', function(e) {
-        let words = this.value.split(' ');
-        let capitalizedWords = words.map(word => {
-            if (word.length > 0) {
-                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-            }
-            return '';
-        });
-        this.value = capitalizedWords.join(' ');
+    cityInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
     });
 
-    // State input formatting
+    // State formatting
     const stateInput = document.getElementById('ownerState');
-    stateInput.addEventListener('input', function(e) {
-        // Convert to uppercase
+    stateInput.addEventListener('blur', function() {
         this.value = this.value.toUpperCase();
-        
-        // Limit to 2 characters
-        if (this.value.length > 2) {
-            this.value = this.value.slice(0, 2);
-        }
-        
-        // Optional: Validate against valid US state codes
-        const validStates = [
-            'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-            'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-            'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-            'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-            'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
-            'DC'
-        ];
-        
-        if (this.value.length === 2 && !validStates.includes(this.value)) {
-            this.setCustomValidity('Please enter a valid US state code');
-        } else {
-            this.setCustomValidity('');
-        }
     });
-});
-document.addEventListener('DOMContentLoaded', function() {
-    // Insurance Company Capitalization
+
+    // Insurance Company formatting
     const insuranceCompanyInput = document.getElementById('insuranceCompany');
-    insuranceCompanyInput.addEventListener('input', function(e) {
-        let words = this.value.split(' ');
-        let capitalizedWords = words.map(word => {
-            if (word.length > 0) {
-                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-            }
-            return '';
-        });
-        this.value = capitalizedWords.join(' ');
+    insuranceCompanyInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
     });
 
-    // Insurance Phone Formatting
-    const insurancePhoneInput = document.getElementById('insurancePhone');
-    insurancePhoneInput.addEventListener('input', function(e) {
-        // Remove all non-numeric characters
-        let number = this.value.replace(/\D/g, '');
-        
-        // Format the number
-        if (number.length > 0) {
-            if (number.length <= 3) {
-                this.value = `(${number}`;
-            } else if (number.length <= 6) {
-                this.value = `(${number.slice(0,3)}) ${number.slice(3)}`;
-            } else {
-                this.value = `(${number.slice(0,3)}) ${number.slice(3,6)}-${number.slice(6,10)}`;
-            }
+    // Format phone numbers
+    function formatPhoneNumber(phoneNumber) {
+        const cleaned = phoneNumber.replace(/\D/g, '');
+        const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+        if (match) {
+            return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+        }
+        return phoneNumber;
+    }
+
+    // Phone number formatting
+    const phoneInputs = [
+        document.getElementById('salesRepPhone'),
+        document.getElementById('ownerPhone'),
+        document.getElementById('insurancePhone')
+    ];
+
+    phoneInputs.forEach(input => {
+        if (input) {
+            input.addEventListener('blur', function() {
+                this.value = formatPhoneNumber(this.value);
+            });
         }
     });
 
-    // Claim Number Validation
+    // Claim and Policy number formatting (preserve case)
     const claimNumberInput = document.getElementById('claimNumber');
-    claimNumberInput.addEventListener('input', function(e) {
-        // Allow letters, numbers, hyphens, and underscores
-        this.value = this.value.replace(/[^A-Za-z0-9\-_]/g, '');
-    });
-
-    // Policy Number Validation
     const policyNumberInput = document.getElementById('policyNumber');
-    policyNumberInput.addEventListener('input', function(e) {
-        // Allow letters, numbers, hyphens, and underscores
-        this.value = this.value.replace(/[^A-Za-z0-9\-_]/g, '');
+    [claimNumberInput, policyNumberInput].forEach(input => {
+        if (input) {
+            input.addEventListener('blur', function() {
+                // Clean but preserve case
+                this.value = this.value.replace(/[^A-Za-z0-9\-_]/g, '');
+            });
+        }
     });
 
-    // Date of Loss - Set max date to today
+    // Date formatting
     const dateOfLossInput = document.getElementById('dateOfLoss');
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    let mm = today.getMonth() + 1; // Months start at 0
-    let dd = today.getDate();
-
-    if (dd < 10) dd = '0' + dd;
-    if (mm < 10) mm = '0' + mm;
-
-    dateOfLossInput.max = `${yyyy}-${mm}-${dd}`;
+    if (dateOfLossInput) {
+        dateOfLossInput.addEventListener('blur', function() {
+            // Ensure date is in correct format
+            if (this.value) {
+                const date = new Date(this.value);
+                if (date instanceof Date && !isNaN(date)) {
+                    const yyyy = date.getFullYear();
+                    let mm = date.getMonth() + 1;
+                    let dd = date.getDate();
+                    if (dd < 10) dd = '0' + dd;
+                    if (mm < 10) mm = '0' + mm;
+                    this.value = `${yyyy}-${mm}-${dd}`;
+                }
+            }
+        });
+    }
 });
 // Main section display function - restored to working version with added logging
 function showSection(sectionId) {
