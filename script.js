@@ -226,6 +226,48 @@ document.addEventListener('DOMContentLoaded', function() {
         this.value = capitalizedWords.join(' ');
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    // City input capitalization
+    const cityInput = document.getElementById('ownerCity');
+    cityInput.addEventListener('input', function(e) {
+        let words = this.value.split(' ');
+        let capitalizedWords = words.map(word => {
+            if (word.length > 0) {
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            }
+            return '';
+        });
+        this.value = capitalizedWords.join(' ');
+    });
+
+    // State input formatting
+    const stateInput = document.getElementById('ownerState');
+    stateInput.addEventListener('input', function(e) {
+        // Convert to uppercase
+        this.value = this.value.toUpperCase();
+        
+        // Limit to 2 characters
+        if (this.value.length > 2) {
+            this.value = this.value.slice(0, 2);
+        }
+        
+        // Optional: Validate against valid US state codes
+        const validStates = [
+            'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+            'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+            'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+            'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+            'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
+            'DC'
+        ];
+        
+        if (this.value.length === 2 && !validStates.includes(this.value)) {
+            this.setCustomValidity('Please enter a valid US state code');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+});
 // Main section display function - restored to working version with added logging
 function showSection(sectionId) {
     console.log('Attempting to show section:', sectionId);
