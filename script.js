@@ -336,6 +336,57 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the form element
+    const form = document.querySelector('form');
+
+    // Function to clean phone number format
+    function cleanPhoneNumber(phoneNumber) {
+        // Remove all non-numeric characters
+        return phoneNumber.replace(/\D/g, '');
+    }
+
+    // Add form submission event listener
+    form.addEventListener('submit', function(e) {
+        // Get all phone number fields
+        const phoneFields = [
+            document.getElementById('salesRepPhone'),
+            document.getElementById('ownerPhone'),
+            document.getElementById('insurancePhone')
+        ];
+
+        // Clean each phone number before submission
+        phoneFields.forEach(field => {
+            if (field && field.value) {
+                field.value = cleanPhoneNumber(field.value);
+            }
+        });
+    });
+
+    // Keep the display formatting for user experience
+    const formatPhoneDisplay = function(input) {
+        let cleaned = input.value.replace(/\D/g, '');
+        if (cleaned.length >= 10) {
+            cleaned = cleaned.substring(0, 10);
+            input.value = `(${cleaned.substring(0,3)}) ${cleaned.substring(3,6)}-${cleaned.substring(6)}`;
+        }
+    };
+
+    // Add input event listeners for display formatting
+    const phoneInputs = [
+        document.getElementById('salesRepPhone'),
+        document.getElementById('ownerPhone'),
+        document.getElementById('insurancePhone')
+    ];
+
+    phoneInputs.forEach(input => {
+        if (input) {
+            input.addEventListener('input', function() {
+                formatPhoneDisplay(this);
+            });
+        }
+    });
+});
 // Main section display function - restored to working version with added logging
 function showSection(sectionId) {
     console.log('Attempting to show section:', sectionId);
