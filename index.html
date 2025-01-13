@@ -175,19 +175,48 @@
     <div id="insuranceInfoSection" style="display:none;">
         <h2>Insurance Information</h2>
         <label for="insuranceCompany">Insurance Company:</label>
-        <input type="text" class="uniform-input" id="insuranceCompany" name="insuranceCompany" required>
+        <input type="text" 
+    class="uniform-input" 
+    id="insuranceCompany" 
+    name="insuranceCompany" 
+    style="text-transform: capitalize;"
+    required>
+
 
         <label for="insurancePhone">Insurance Phone:</label>
-        <input type="tel" class="uniform-input" id="insurancePhone" name="insurancePhone" required>
+        <input type="tel" 
+    class="uniform-input" 
+    id="insurancePhone" 
+    name="insurancePhone" 
+    pattern="[0-9]*" 
+    inputmode="numeric"
+    placeholder="(000) 000-0000"
+    required>
 
         <label for="claimNumber">Claim Number:</label>
-        <input type="text" class="uniform-input" id="claimNumber" name="claimNumber" required>
+        <input type="text" 
+    class="uniform-input" 
+    id="claimNumber" 
+    name="claimNumber" 
+    pattern="[A-Za-z0-9\-_]+"
+    placeholder="Enter claim number"
+    required>
 
         <label for="policyNumber">Policy Number:</label>
-        <input type="text" class="uniform-input" id="policyNumber" name="policyNumber" required>
+        <input type="text" 
+    class="uniform-input" 
+    id="policyNumber" 
+    name="policyNumber" 
+    pattern="[A-Za-z0-9\-_]+"
+    placeholder="Enter policy number"
+    required>
 
         <label for="dateOfLoss">Date of Loss:</label>
-        <input type="text" class="uniform-input" id="dateOfLoss" name="dateOfLoss" required>
+       <input type="date" 
+    class="uniform-input" 
+    id="dateOfLoss" 
+    name="dateOfLoss" 
+    required>
             <div id="navigationButtons">
       <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('roofingTypeSection')">Next</button>
