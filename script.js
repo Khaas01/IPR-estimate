@@ -118,61 +118,54 @@ solarRadios.forEach(radio => {
         }
     });
 });
-// Initialize Google Places Autocomplete
 function initializeAutocomplete() {
     const addressInput = document.getElementById('ownerAddress');
-    const autocomplete = new google.maps.places.Autocomplete(addressInput);
+    const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+        // Restrict to getting just address components
+        types: ['address'],
+        // Restrict to USA addresses
+        componentRestrictions: { country: 'us' }
+    });
     
-    // When a place is selected, fill in the other address fields
     autocomplete.addListener('place_changed', function() {
         const place = autocomplete.getPlace();
         if (!place.geometry) {
             return;
         }
-        fillInAddress(place);
+        
+        // Get only street address components
+        let streetNumber = '';
+        let streetName = '';
+        
+        for (const component of place.address_components) {
+            const type = component.types[0];
+            
+            if (type === 'street_number') {
+                streetNumber = component.long_name;
+            }
+            if (type === 'route') {
+                streetName = component.long_name;
+            }
+            // Still fill in the other fields
+            if (type === 'locality') {
+                document.getElementById('ownerCity').value = component.long_name;
+            }
+            if (type === 'administrative_area_level_1') {
+                document.getElementById('ownerState').value = component.short_name;
+            }
+            if (type === 'postal_code') {
+                document.getElementById('ownerZip').value = component.long_name;
+            }
+        }
+        
+        // Set only the street address in the address field
+        const streetAddress = `${streetNumber} ${streetName}`.trim();
+        addressInput.value = streetAddress;
     });
 }
 
-// Handle "Use Current Location" button
-document.getElementById('getCurrentLocation').addEventListener('click', function() {
-    if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser');
-        return;
-    }
-
-    // Show loading state on button
-    this.textContent = 'Getting location...';
-    
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const geocoder = new google.maps.Geocoder();
-            const latlng = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
-
-            geocoder.geocode({ location: latlng }, (results, status) => {
-                if (status === 'OK') {
-                    if (results[0]) {
-                        document.getElementById('ownerAddress').value = results[0].formatted_address;
-                        fillInAddress(results[0]);
-                    } else {
-                        alert('No address found for this location');
-                    }
-                } else {
-                    alert('Geocoder failed due to: ' + status);
-                }
-                // Reset button text
-                this.textContent = '📍 Use Current Location';
-            });
-        },
-        (error) => {
-            alert(`Error getting location: ${error.message}`);
-            // Reset button text
-            this.textContent = '📍 Use Current Location';
-        }
-    );
-});
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', initializeAutocomplete);
 
 // Helper function to fill in address components
 function fillInAddress(place) {
