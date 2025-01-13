@@ -209,6 +209,23 @@ input[type="date"].uniform-input {
     padding: 10px 20px;
     width: 48%; /* Instead of 100% */
 }
+#navigationButtons button, .location-btn {
+    width: 200px;
+    padding: 6px 12px;
+    background-color: #0d6efd;
+    color: white;
+    border: 1px solid #0d6efd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 8px auto;
+    display: block;
+}
+
+#navigationButtons button:hover, .location-btn:hover {
+    background-color: #0b5ed7;
+    border-color: #0b5ed7;
+}
 /* Button Styles */
 button {
     display: inline-block;
