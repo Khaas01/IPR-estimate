@@ -21,22 +21,6 @@
     width: 100%;
 }
 
-.location-btn {
-    display: block;
-    width: 200px: /* Match width of navigation buttons*/
-    margin: 8px auto;
-    padding: 6px 12px;
-    background-color: #0d6efd;
-    color: white;
-    border: 1px solid #0d6efd;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
-.location-btn:hover {
-    background-color: #0b5ed7;
-    border-color: #0b5ed7;
-}
 .estimate-preview-container {
     width: 100%;
     max-width: 1000px; /* Controls overall width */
