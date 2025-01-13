@@ -268,6 +268,64 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    // Insurance Company Capitalization
+    const insuranceCompanyInput = document.getElementById('insuranceCompany');
+    insuranceCompanyInput.addEventListener('input', function(e) {
+        let words = this.value.split(' ');
+        let capitalizedWords = words.map(word => {
+            if (word.length > 0) {
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            }
+            return '';
+        });
+        this.value = capitalizedWords.join(' ');
+    });
+
+    // Insurance Phone Formatting
+    const insurancePhoneInput = document.getElementById('insurancePhone');
+    insurancePhoneInput.addEventListener('input', function(e) {
+        // Remove all non-numeric characters
+        let number = this.value.replace(/\D/g, '');
+        
+        // Format the number
+        if (number.length > 0) {
+            if (number.length <= 3) {
+                this.value = `(${number}`;
+            } else if (number.length <= 6) {
+                this.value = `(${number.slice(0,3)}) ${number.slice(3)}`;
+            } else {
+                this.value = `(${number.slice(0,3)}) ${number.slice(3,6)}-${number.slice(6,10)}`;
+            }
+        }
+    });
+
+    // Claim Number Validation
+    const claimNumberInput = document.getElementById('claimNumber');
+    claimNumberInput.addEventListener('input', function(e) {
+        // Allow letters, numbers, hyphens, and underscores
+        this.value = this.value.replace(/[^A-Za-z0-9\-_]/g, '');
+    });
+
+    // Policy Number Validation
+    const policyNumberInput = document.getElementById('policyNumber');
+    policyNumberInput.addEventListener('input', function(e) {
+        // Allow letters, numbers, hyphens, and underscores
+        this.value = this.value.replace(/[^A-Za-z0-9\-_]/g, '');
+    });
+
+    // Date of Loss - Set max date to today
+    const dateOfLossInput = document.getElementById('dateOfLoss');
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    let mm = today.getMonth() + 1; // Months start at 0
+    let dd = today.getDate();
+
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+
+    dateOfLossInput.max = `${yyyy}-${mm}-${dd}`;
+});
 // Main section display function - restored to working version with added logging
 function showSection(sectionId) {
     console.log('Attempting to show section:', sectionId);
