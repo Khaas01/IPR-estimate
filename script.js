@@ -49,6 +49,37 @@ async function initializeGoogleAPIs() {
         return false;
     }
 }
+function adjustIframeHeight() {
+    const iframe = document.getElementById('estimatePreviewFrame');
+    
+    // Wait for iframe to load
+    iframe.onload = function() {
+        try {
+            // Get the height of the iframe's content
+            const height = iframe.contentWindow.document.documentElement.scrollHeight;
+            
+            // Add a small buffer (e.g., 20px) to prevent any potential scrolling
+            iframe.style.height = (height + 20) + 'px';
+            
+            // Add a resize observer to handle dynamic content changes
+            const resizeObserver = new ResizeObserver(entries => {
+                const height = entries[0].target.scrollHeight;
+                iframe.style.height = (height + 20) + 'px';
+            });
+            
+            resizeObserver.observe(iframe.contentWindow.document.body);
+        } catch (e) {
+            console.log('Failed to adjust iframe height:', e);
+        }
+    };
+}
+
+// Call the function when the document is ready
+document.addEventListener('DOMContentLoaded', adjustIframeHeight);
+
+// Also adjust on window resize
+window.addEventListener('resize', adjustIframeHeight);
+
 
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize section history
