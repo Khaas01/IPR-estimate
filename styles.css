@@ -2,6 +2,74 @@
 * {
     box-sizing: border-box;
 }
+.estimate-preview-container {
+    width: 100%;
+    max-width: 1000px; /* Controls overall width */
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 500px;
+    position: relative;
+}
+
+/* First, let's create a container for the preview that maintains aspect ratio */
+#review-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.review-instructions {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+/* Adjust the iframe to fit the content properly */
+#estimatePreviewFrame {
+    width: 100%;
+    height: calc(100vh - 200px); /* Subtract header + margins + buttons height */
+    border: none;
+    margin: 20px 0;
+    display: block;
+}
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #estimatePreviewFrame {
+        height: calc(100vh - 150px); /* Slightly less padding on mobile */
+    }
+    
+    #review-section {
+        padding: 10px;
+    }
+}
+
+.review-instructions {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
 
 body {
     font-family: 'Arial', sans-serif;
@@ -42,8 +110,9 @@ h2 {
 
 /* Form Container */
 form {
-    max-width: 100%;
-    margin: 0 auto;
+    max-width: 600px;  /* Set a fixed max-width */
+    width: 100%;       /* Keep full width up to max-width */
+    margin: 0 auto;    /* Center the form */
     padding: 15px;
     background: white;
     border-radius: 8px;
@@ -90,7 +159,21 @@ input[type="date"].uniform-input {
     background-color: #fff;
     font-size: 16px;
 }
+#navigationButtons {
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 600px; /* Match the form max-width */
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+}
 
+#navigationButtons button {
+    margin: 0;
+    padding: 10px 20px;
+    width: 48%; /* Instead of 100% */
+}
 /* Button Styles */
 button {
     display: inline-block;
@@ -115,18 +198,6 @@ button:active {
     transform: translateY(0);
 }
 
-/* Navigation Buttons */
-#navigationButtons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    gap: 10px;
-}
-
-#backButton {
-    display: none;
-    width: 48%;
-}
 
 /* Radio Button Styles */
 input[type="radio"] {
@@ -211,8 +282,41 @@ label {
     #backButton {
         display: block;
     }
-}
 
+   @media (forced-colors: active) {
+            .preview-fallback {
+                text-align: center;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                margin: 10px 0;
+            }
+            
+            .pdf-link {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                margin: 10px 0;
+            }
+            
+            .pdf-link:hover {
+                background-color: #0056b3;
+            }
+@media (forced-colors: active) {
+    /* Add forced colors mode styles */
+    button {
+        forced-color-adjust: none;
+        background-color: ButtonFace;
+        color: ButtonText;
+    }
+    
+    input[type="radio"] {
+        forced-color-adjust: none;
+    }
+    
 /* Larger Screen Media Queries */
 @media (min-width: 601px) {
     header .logo {

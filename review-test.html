@@ -1,0 +1,90 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Section Test - IPR Estimate</title>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <script src="review-test.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+ <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval'
+        https://apis.google.com
+        https://*.googleapis.com
+        https://accounts.google.com
+        https://www.gstatic.com
+        https://*.googleusercontent.com
+        https://www.google.com
+        https://github.com/Khaas01/IPR-estimate
+        http://localhost:3000/;
+    style-src 'self' 'unsafe-inline'
+        https://fonts.googleapis.com
+        https://www.gstatic.com
+        https://apis.google.com;
+    img-src 'self' data: blob:
+        https://i.imgur.com
+        https://*.googleapis.com
+        https://*.gstatic.com
+        https://*.google.com
+        https://*.googleusercontent.com;
+    connect-src 'self'
+        https://apis.google.com
+        https://*.googleapis.com
+        https://accounts.google.com
+        https://oauth2.googleapis.com
+        https://*.gstatic.com
+        https://www.google.com
+        https://securetoken.googleapis.com
+        https://content-sheets.googleapis.com
+        https://content.googleapis.com
+        https://script.google.com
+        https://*.script.google.com
+        https://*.script.googleusercontent.com
+        http://localhost:3000/;
+    frame-src 'self'
+        https://accounts.google.com
+        https://*.googleapis.com
+        https://content-sheets.googleapis.com
+        https://content.googleapis.com
+        https://www.google.com
+        https://*.gstatic.com
+        https://script.google.com
+        https://*.script.google.com;
+    font-src 'self'
+        https://fonts.gstatic.com
+        https://fonts.googleapis.com
+        https://www.gstatic.com;
+    worker-src 'self' blob:;
+    child-src 'self' blob:;
+    media-src 'self' blob:;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self'
+        https://accounts.google.com
+  https://script.google.com/macros
+  https://script.googleusercontent.com/macros
+        https://*.googleapis.com;">
+
+</head>
+<body>
+    <header>
+        <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
+        <h1>Estimate Review Test</h1>
+    </header>
+
+    <!-- Review Section -->
+    <div id="review-section" style="display:block;">
+        <h2>Review Your Estimate</h2>
+        <div class="review-instructions">
+            <p>Please review your estimate below. You can go back to make changes if needed.</p>
+        </div>
+        <iframe id="estimatePreviewFrame" style="width: 100%; height: 600px; border: none;"></iframe>
+        <div id="navigationButtons">
+            <button type="button" onclick="goBack()">Back</button>
+            <button type="button" onclick="shareEstimate()" class="share-button">Share</button>
+        </div>
+    </div>
+</body>
+</html>
