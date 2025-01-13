@@ -10,11 +10,20 @@
 .address-container {
     position: relative;
     margin-bottom: 15px;
-    text-align: center; /* This centers the button */
+}
+
+.address-container label {
+    text-align: left;
+    display: block;
+}
+
+.address-container input {
+    width: 100%;
 }
 
 .location-btn {
-    margin-top: 8px;
+    display: block;
+    margin: 8px auto;
     padding: 6px 12px;
     background-color: #0d6efd;
     color: white;
@@ -23,7 +32,6 @@
     cursor: pointer;
     font-size: 14px;
 }
-
 .location-btn:hover {
     background-color: #0b5ed7;
     border-color: #0b5ed7;
