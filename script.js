@@ -211,7 +211,21 @@ function hideAllSections() {
         console.log('Hidden section:', section.id);
     });
 }
-
+// Add this to your script.js
+document.addEventListener('DOMContentLoaded', function() {
+    const salesRepInput = document.getElementById('salesRepName');
+    
+    salesRepInput.addEventListener('input', function(e) {
+        let words = this.value.split(' ');
+        let capitalizedWords = words.map(word => {
+            if (word.length > 0) {
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            }
+            return '';
+        });
+        this.value = capitalizedWords.join(' ');
+    });
+});
 // Main section display function - restored to working version with added logging
 function showSection(sectionId) {
     console.log('Attempting to show section:', sectionId);
