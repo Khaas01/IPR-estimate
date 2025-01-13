@@ -72,7 +72,16 @@
         <label for="ownerState">State:</label>
         <input type="text" class="uniform-input" id="ownerState" name="ownerState" required>
         <label for="ownerZip">Zip Code:</label>
-        <input type="text" class="uniform-input" id="ownerZip" name="ownerZip" required>
+        <input type="number" 
+    class="uniform-input" 
+    id="ownerZip" 
+    name="ownerZip" 
+    pattern="[0-9]*" 
+    inputmode="numeric" 
+    maxlength="5" 
+    minlength="5"
+    placeholder="ZIP Code"
+    required>
         <label for="ownerPhone">Phone:</label>
        <input type="tel" 
     class="uniform-input" 
