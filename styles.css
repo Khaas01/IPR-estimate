@@ -1,15 +1,96 @@
 /* Reset and Base Styles */
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+}
+.estimate-preview-container {
+    width: 100%;
+    max-width: 1000px; /* Controls overall width */
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 500px;
+    position: relative;
+}
+
+/* First, let's create a container for the preview that maintains aspect ratio */
+#review-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.review-instructions {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+/* Adjust the iframe to fit the content properly */
+#estimatePreviewFrame {
+    width: 100%;
+    height: calc(100vh - 200px); /* Subtract header + margins + buttons height */
+    border: none;
+    margin: 20px 0;
+    display: block;
+}
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #estimatePreviewFrame {
+        height: calc(100vh - 150px); /* Slightly less padding on mobile */
+    }
+    
+    #review-section {
+        padding: 10px;
+    }
+}
+
+.review-instructions {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
 }
 
 body {
     font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
     background-color: #ffffff;
     color: #333;
     line-height: 1.6;
+}
+
+/* Header Styles */
+header {
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+header .logo {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 10px;
 }
 
 /* Typography */
@@ -25,43 +106,28 @@ h2 {
     border-bottom: 2px solid #0056b3;
     padding-bottom: 10px;
     font-weight: normal;
-    margin-bottom: 20px;
 }
 
-/* Header Styles */
-header {
-    text-align: center;
-    padding: 20px;
-    background-color: #f9f9f9;
-    margin-bottom: 20px;
-}
-
-header .logo {
-    max-width: 150px;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-/* Form Container and Sections */
+/* Form Container */
 form {
-    max-width: 600px;
-    width: 100%;
-    margin: 0 auto;
+    max-width: 600px;  /* Set a fixed max-width */
+    width: 100%;       /* Keep full width up to max-width */
+    margin: 0 auto;    /* Center the form */
     padding: 15px;
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Form Input Styles */
+/* Input Fields */
 .uniform-input {
     width: 100%;
     padding: 12px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
     background-color: #fff;
     font-size: 16px;
 }
@@ -69,7 +135,7 @@ form {
 .uniform-input:focus {
     border-color: #0056b3;
     outline: none;
-    box-shadow: 0 0 10px rgba(0, 86, 179, 0.2);
+    box-shadow: 0 0 15px rgba(0, 86, 179, 0.5);
 }
 
 /* Select Input Styling */
@@ -77,12 +143,61 @@ select.uniform-input {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"%3E%3Cpath fill="none" stroke="%23333" stroke-width="2" d="M3 6l4 4 4-4"%3E%3C/path%3E%3C/svg%3E');
     background-repeat: no-repeat;
     background-position: right 10px center;
-    background-size: 12px;
-    padding-right: 30px;
+    background-size: 12px 8px;
 }
+
+/* Date Input Styling */
+input[type="date"].uniform-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 16px;
+}
+#navigationButtons {
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 600px; /* Match the form max-width */
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+#navigationButtons button {
+    margin: 0;
+    padding: 10px 20px;
+    width: 48%; /* Instead of 100% */
+}
+/* Button Styles */
+button {
+    display: inline-block;
+    background-color: #0056b3;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #004494;
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
 
 /* Radio Button Styles */
 input[type="radio"] {
@@ -97,183 +212,101 @@ label {
     font-weight: normal;
 }
 
-/* Address Container Styles */
-.address-container {
-    position: relative;
-    margin-bottom: 15px;
-}
-
-.address-container label {
-    text-align: left;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.hint-text {
-    font-size: 0.85em;
-    color: #666;
-    font-style: italic;
-    margin-left: 5px;
-}
-
-/* Navigation Buttons */
-#navigationButtons {
-    margin-top: 20px;
-    text-align: center;
-    width: 100%;
-    max-width: 600px;
-    padding: 20px 0;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-}
-
-#navigationButtons button {
-    margin: 0;
-    padding: 12px 20px;
-    width: 48%;
-    background-color: #0056b3;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-#navigationButtons button:hover {
-    background-color: #004494;
-    transform: translateY(-1px);
-}
-
-#navigationButtons button:active {
-    transform: translateY(0);
-}
-
-@media (max-width: 768px) {
-    #navigationButtons button {
-        padding: 12px 10px;
-    }
-}
-
-/* PDF Preview Container */
-.estimate-preview-container {
-    position: relative;
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-    min-height: 800px;
-    overflow: visible;
-}
-
-#estimatePreviewFrame {
-    width: 100%;
-    min-height: 800px;
-    border: none;
-    margin: 0;
-    padding: 0;
-    display: block;
-    visibility: visible;
-    opacity: 1;
-    transition: height 0.3s ease;
-}
-
-/* Loading Overlay */
-#loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.95);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.loading-spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #0056b3;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 0.8s linear infinite;
-    margin-bottom: 15px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-#loading-message {
-    color: #333;
-    font-size: 16px;
-    text-align: center;
-    margin-top: 15px;
-}
-
-/* Review Section */
-#review-section {
+.radio-group {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
+}
+
+.radio-group label {
+    margin-bottom: 10px;
+}
+
+/* Form Section Styles */
+.form-section {
+    margin-top: 20px;
     padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
 }
 
-.review-instructions {
-    text-align: center;
-    margin-bottom: 20px;
-    width: 100%;
+.form-section .section-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
-/* Error Messages */
-.preview-error {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    max-width: 80%;
-    z-index: 1001;
+.form-section .form-label {
+    font-size: 1.1em;
+    font-weight: normal;
+    display: block;
+    margin-bottom: 8px;
 }
 
-/* Media Queries */
-@media (max-width: 768px) {
+.form-section .form-options {
+    margin-top: 10px;
+}
+
+.form-section .form-radio {
+    margin-right: 10px;
+}
+
+.form-section .form-option-label {
+    font-size: 1em;
+}
+
+/* Mobile-first Media Queries */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5em;
+    }
+
     form {
+        padding: 15px;
+    }
+
+    button {
         padding: 10px;
     }
 
-    #estimatePreviewFrame {
-        min-height: 600px;
-    }
-}
-
-@media (min-width: 769px) {
-    header .logo {
-        max-width: 200px;
-    }
-
-    h1 {
-        font-size: 1.8em;
+    #navigationButtons {
+        flex-direction: row;
+        justify-content: space-between;
     }
 
     #navigationButtons button {
-        padding: 12px 30px;
+        width: 48%;
+        margin-bottom: 0;
     }
-}
 
-/* High Contrast Mode Support */
+    #backButton {
+        display: block;
+    }
+
+   @media (forced-colors: active) {
+            .preview-fallback {
+                text-align: center;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                margin: 10px 0;
+            }
+            
+            .pdf-link {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                margin: 10px 0;
+            }
+            
+            .pdf-link:hover {
+                background-color: #0056b3;
+            }
 @media (forced-colors: active) {
+    /* Add forced colors mode styles */
     button {
         forced-color-adjust: none;
         background-color: ButtonFace;
@@ -282,5 +315,31 @@ label {
     
     input[type="radio"] {
         forced-color-adjust: none;
+    }
+    
+/* Larger Screen Media Queries */
+@media (min-width: 601px) {
+    header .logo {
+        max-width: 200px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    form {
+        max-width: 600px;
+    }
+
+    #navigationButtons {
+        flex-direction: row;
+    }
+
+    #navigationButtons button {
+        width: 48%;
+    }
+
+    #backButton {
+        display: inline-block;
     }
 }
