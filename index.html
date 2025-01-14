@@ -271,9 +271,7 @@
  
 <div id="shingle-repair-section" style="display:none;">
     <h2>Shingle Repair Details</h2>
-   
     <label for="shingles-repaired">How many shingles are we repairing?</label>
-   <label for="shingles-repaired">How many shingles are we repairing?</label>
 <input type="number" 
     id="shingles-repaired" 
     name="shingles-repaired" 
@@ -305,18 +303,16 @@
        
 <div id="shingle-replacement-section" style="display:none;">
     <h2>Shingle Replacement Details</h2>
-    
     <label for="shingle-replacement">How many squares of shingles are we replacing?</label>
-    <!-- Shingle replacement section -->
-<label for="shingle-replacement">How many squares of shingles are we replacing?</label>
-<input type="number" 
-    id="shingle-replacement" 
-    name="shingle-replacement" 
-    class="uniform-input" 
-    placeholder="Enter number of squares of shingles"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <input type="number" 
+        id="shingle-replacement" 
+        name="shingle-replacement" 
+        class="uniform-input" 
+        placeholder="Enter number of squares of shingles"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        step="0.01">
+    <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
     </div>
