@@ -28,7 +28,7 @@
 /* iPad Mini in portrait */
 @media screen and (min-width: 768px) and (max-width: 834px) and (orientation: portrait) {
     .estimate-preview-container {
-        height: calc(700vh - 65px);
+        height: calc(70vh - 65px);
         margin: 10px auto;
     }
 }
