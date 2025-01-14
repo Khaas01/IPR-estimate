@@ -128,7 +128,7 @@ label {
 #navigationButtons button {
     flex: 1;
     min-width: 120px;
-    max-width: 200px;
+    max-width: none; /* Remove max-width restriction */
     padding: 12px 20px;
     background-color: #0056b3;
     color: white;
@@ -146,6 +146,16 @@ label {
 
 #navigationButtons button:active {
     transform: translateY(0);
+}
+  #navigationButtons {
+        flex-direction: row;
+    }
+
+    #navigationButtons button {
+        flex: 1;
+        min-width: 0; /* Allow buttons to be narrower on mobile */
+        padding: 12px 10px; /* Slightly reduce padding on mobile */
+    }
 }
 
 /* PDF Preview Container */
@@ -247,14 +257,6 @@ label {
 
     #estimatePreviewFrame {
         min-height: 600px;
-    }
-
-    #navigationButtons {
-        flex-direction: column;
-    }
-
-    #navigationButtons button {
-        max-width: 100%;
     }
 }
 
