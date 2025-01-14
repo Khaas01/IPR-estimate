@@ -387,6 +387,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+function hideAllSections() {
+    console.group('Hiding Sections');
+    document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
+        const previousDisplay = section.style.display;
+        section.style.display = 'none';
+        console.log(`${section.id}: ${previousDisplay} -> none`);
+    });
+    console.groupEnd();
+}
 // Main section display function - restored to working version with added logging
 function showSection(sectionId) {
     console.group('Section Navigation');
