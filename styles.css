@@ -117,26 +117,20 @@ label {
 }
 
 /* Navigation Buttons */
-#navigationButtons {
+.navigationButtons {
     margin-top: 20px;
+    text-align: center;
     width: 100%;
+    max-width: 600px;
+    padding: 20px 0;
     display: flex;
     justify-content: space-between;
-    gap: 15px;
 }
 
-#navigationButtons button {
-    flex: 1;
-    min-width: 120px;
-    max-width: none; /* Remove max-width restriction */
-    padding: 12px 20px;
-    background-color: #0056b3;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+.navigationButtons button {
+    margin: 0;
+    padding: 10px 20px;
+    width: 48%;
 }
 
 #navigationButtons button:hover {
