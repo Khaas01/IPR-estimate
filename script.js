@@ -649,12 +649,13 @@ function displayPDF(pdfId) {
         // Set new event listeners
         previewFrame.onerror = () => {
             console.error('Failed to load preview frame');
+            hideLoading();
             showError();
         };
         
         previewFrame.onload = () => {
             console.log('Preview frame loaded successfully');
-            // Don't use srcdoc here
+            hideLoading(); // Only hide loading when PDF is actually loaded
         };
 
         // Set the source directly
@@ -663,6 +664,7 @@ function displayPDF(pdfId) {
         }
     } else {
         console.error('Preview frame not found or invalid PDF ID');
+        hideLoading();
         showError();
     }
 }
