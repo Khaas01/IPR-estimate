@@ -89,9 +89,9 @@ window.addEventListener('load', adjustIframeHeight);
 window.addEventListener('resize', adjustIframeHeight);
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize section history
-    sectionHistory.push('review-section');
+    sectionHistory.push('salesRepSection');
     // Show initial sales rep section only
-    showSection('review-section');
+    showSection('salesRepSection');
 });
 
 window.addEventListener('message', function(event) {
