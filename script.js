@@ -389,40 +389,25 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 // Main section display function - restored to working version with added logging
 function showSection(sectionId) {
-    console.log('Attempting to show section:', sectionId);
+    console.group('Section Navigation');
+    console.log('Current section:', sectionId);
+    console.log('Section history before:', [...sectionHistory]);
     
-    // First hide all sections
     hideAllSections();
     
-    // Get the target section
     const targetSection = document.getElementById(sectionId);
-    console.log('Found target section:', targetSection);
-    
     if (targetSection) {
-        // Set display before any other operations
         targetSection.style.display = 'block';
-        console.log('Set display to block for:', sectionId);
-        
-        // Handle review section specially
-        if (sectionId === 'review-section') {
-            const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
-            if (estimatePreviewFrame) {
-                estimatePreviewFrame.src = 'about:blank';
-                showLoading('Preparing your estimate...');
-                console.log('Prepared review section preview frame');
-            }
-        }
-        
-        // Update section history
         if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
             sectionHistory.push(sectionId);
-            console.log('Updated section history:', sectionHistory);
         }
+        console.log('Section history after:', [...sectionHistory]);
+        console.log('Target section visibility:', targetSection.style.display);
     } else {
         console.error('Target section not found:', sectionId);
     }
+    console.groupEnd();
 }
-
 function showLoading(message = 'Loading...') {
     const loadingOverlay = document.getElementById('loading-overlay');
     const loadingMessage = document.getElementById('loading-message');
