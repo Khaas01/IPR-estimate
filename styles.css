@@ -11,7 +11,8 @@
     margin: 20px auto;
     width: 100%;
     max-width: 850px;
-    height: calc(100vh - 40px); /* viewport height minus margins */
+    height: 700px
+    /*height: calc(100vh - 40px); /* viewport height minus margins */
 }
 
 #estimatePreviewFrame {
