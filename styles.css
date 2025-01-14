@@ -28,7 +28,7 @@
 /* iPad Mini in portrait */
 @media screen and (min-width: 768px) and (max-width: 834px) and (orientation: portrait) {
     .estimate-preview-container {
-        height: calc(100vh - 55px);
+        height: calc(100vh - 60px);
         margin: 10px auto;
     }
 }
@@ -36,7 +36,7 @@
 /* iPhone in portrait */
 @media screen and (max-width: 428px) and (orientation: portrait) {
     .estimate-preview-container {
-        height: calc(100vh - 75px);
+        height: calc(100vh - 80px);
         margin: 10px auto;
         width: calc(100% - 20px);
     }
