@@ -11,7 +11,7 @@
     margin: 20px auto;
     width: 100%;
     max-width: 850px;
-    aspect-ratio: 8.5 / 11; /* Maintain US Letter aspect ratio */
+    height: calc(100vh - 40px); /* viewport height minus margins */
 }
 
 #estimatePreviewFrame {
@@ -23,6 +23,32 @@
     margin: 0;
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* iPad Mini in portrait */
+@media screen and (min-width: 768px) and (max-width: 834px) and (orientation: portrait) {
+    .estimate-preview-container {
+        height: calc(100vh - 60px);
+        margin: 10px auto;
+    }
+}
+
+/* iPhone in portrait */
+@media screen and (max-width: 428px) and (orientation: portrait) {
+    .estimate-preview-container {
+        height: calc(100vh - 80px);
+        margin: 10px auto;
+        width: calc(100% - 20px);
+    }
+}
+
+/* Add a minimum height for all devices */
+@media screen and (min-height: 500px) {
+    .estimate-preview-container {
+        min-height: 500px;
+    }
+}
+
     
 /* First, let's create a container for the preview that maintains aspect ratio */
 #review-section {
