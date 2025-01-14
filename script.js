@@ -200,7 +200,12 @@ function goBack() {
     }
 }
 function collectFormData() {
-    const formData = {
+    // Function to clean phone number format
+    function cleanPhoneNumber(phoneNumber) {
+        // Remove all non-digit characters: (, ), -, and spaces
+        return phoneNumber.replace(/\D/g, '');
+    }
+     const formData = {
         // Required fixed fields - these must be set by the system
         "Timestamp": new Date().toISOString(),
         "User Login": "Khaas01",
@@ -208,7 +213,8 @@ function collectFormData() {
         // Sales Rep Information
         "Sales Rep Name": document.getElementById('salesRepName')?.value || '',
         "Sales Rep Email": document.getElementById('salesRepEmail')?.value || '',
-        "Sales Rep Phone": document.getElementById('salesRepPhone')?.value || '',
+        "Sales Rep Phone": cleanPhoneNumber(document.getElementById('salesRepPhone')?.value || ''),
+        
         
         // Company Information
         "Company Name": document.getElementById('companyName')?.value || '',
@@ -219,13 +225,13 @@ function collectFormData() {
         "Owner City": document.getElementById('ownerCity')?.value || '',
         "Owner State": document.getElementById('ownerState')?.value || '',
         "Owner ZIP": document.getElementById('ownerZip')?.value || '',
-        "Owner Phone": document.getElementById('ownerPhone')?.value || '',
+        "Owner Phone": cleanPhoneNumber(document.getElementById('ownerPhone')?.value || ''),
         "Owner Email": document.getElementById('ownerEmail')?.value || '',
         
         // Project Type and Insurance
         "Project Type": document.querySelector('input[name="projectType"]:checked')?.value || '',
         "Insurance Company": document.getElementById('insuranceCompany')?.value || '',
-        "Insurance Phone": document.getElementById('insurancePhone')?.value || '',
+        "Insurance Phone": cleanPhoneNumber(document.getElementById('insurancePhone')?.value || ''),
         "Claim Number": document.getElementById('claimNumber')?.value || '',
         "Policy Number": document.getElementById('policyNumber')?.value || '',
         "Date of Loss": document.getElementById('dateOfLoss')?.value || '',
