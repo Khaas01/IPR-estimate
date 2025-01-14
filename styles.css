@@ -117,7 +117,7 @@ label {
 }
 
 /* Navigation Buttons */
-.navigationButtons {
+#navigationButtons {
     margin-top: 20px;
     text-align: center;
     width: 100%;
@@ -125,12 +125,20 @@ label {
     padding: 20px 0;
     display: flex;
     justify-content: space-between;
+    flex-direction: row;
 }
 
-.navigationButtons button {
+#navigationButtons button {
     margin: 0;
-    padding: 10px 20px;
+    padding: 12px 20px;
     width: 48%;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 #navigationButtons button:hover {
@@ -141,14 +149,10 @@ label {
 #navigationButtons button:active {
     transform: translateY(0);
 }
-  #navigationButtons {
-        flex-direction: row;
-    }
 
+@media (max-width: 768px) {
     #navigationButtons button {
-        flex: 1;
-        min-width: 0; /* Allow buttons to be narrower on mobile */
-        padding: 12px 10px; /* Slightly reduce padding on mobile */
+        padding: 12px 10px;
     }
 }
 
