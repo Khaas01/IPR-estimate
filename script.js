@@ -430,11 +430,6 @@ function showLoading(message = 'Loading...') {
     if (loadingOverlay && loadingMessage) {
         loadingMessage.textContent = message;
         loadingOverlay.style.display = 'flex';
-        
-        // Auto-hide after 3 seconds
-        setTimeout(() => {
-            hideLoading();
-        }, 3000);
     }
     console.log('Loading started:', message);
 }
