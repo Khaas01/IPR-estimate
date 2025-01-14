@@ -34,7 +34,7 @@ and (max-height: 834px)
 and (orientation: landscape) {
     .estimate-preview-container {
         max-width: 85vw;
-        height: calc(85vh - 40px); /* Larger viewport height */
+        height: calc(95vh - 40px); /* Larger viewport height */
         aspect-ratio: auto; /* Override aspect ratio for better landscape view */
         margin: 20px auto;
     }
