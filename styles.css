@@ -3,14 +3,27 @@
     box-sizing: border-box;
 }
 .estimate-preview-container {
-    width: 100%;
-    max-width: 1000px; /* Controls overall width */
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
-    height: auto;
-    min-height: 500px;
     position: relative;
+    background-color: #f0f0f0; /* Light gray background */
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 100%;
+    height: 800px; /* Fixed height container */
+    overflow: hidden;
+}
+
+#estimatePreviewFrame {
+    display: block !important;
+    visibility: visible !important;
+    width: calc(100% - 10px) !important; /* Account for padding */
+    height: calc(100% - 10px) !important; /* Account for padding */
+    border: none;
+    margin: 0 auto;
+    opacity: 1;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 /* First, let's create a container for the preview that maintains aspect ratio */
