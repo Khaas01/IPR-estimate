@@ -49,6 +49,37 @@ async function initializeGoogleAPIs() {
         return false;
     }
 }
+function adjustIframeHeight() {
+    const iframe = document.getElementById('estimatePreviewFrame');
+    
+    // Wait for iframe to load
+    iframe.onload = function() {
+        try {
+            // Get the height of the iframe's content
+            const height = iframe.contentWindow.document.documentElement.scrollHeight;
+            
+            // Add a small buffer (e.g., 20px) to prevent any potential scrolling
+            iframe.style.height = (height + 20) + 'px';
+            
+            // Add a resize observer to handle dynamic content changes
+            const resizeObserver = new ResizeObserver(entries => {
+                const height = entries[0].target.scrollHeight;
+                iframe.style.height = (height + 20) + 'px';
+            });
+            
+            resizeObserver.observe(iframe.contentWindow.document.body);
+        } catch (e) {
+            console.log('Failed to adjust iframe height:', e);
+        }
+    };
+}
+
+// Call the function when the document is ready
+document.addEventListener('DOMContentLoaded', adjustIframeHeight);
+
+// Also adjust on window resize
+window.addEventListener('resize', adjustIframeHeight);
+
 
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize section history
@@ -118,7 +149,91 @@ solarRadios.forEach(radio => {
         }
     });
 });
+function initializeAutocomplete() {
+    const addressInput = document.getElementById('ownerAddress');
+    const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+        // Restrict to getting just address components
+        types: ['address'],
+        // Restrict to USA addresses
+        componentRestrictions: { country: 'us' }
+    });
+    
+    autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        if (!place.geometry) {
+            return;
+        }
+        
+        // Get only street address components
+        let streetNumber = '';
+        let streetName = '';
+        
+        for (const component of place.address_components) {
+            const type = component.types[0];
+            
+            if (type === 'street_number') {
+                streetNumber = component.long_name;
+            }
+            if (type === 'route') {
+                streetName = component.long_name;
+            }
+            // Still fill in the other fields
+            if (type === 'locality') {
+                document.getElementById('ownerCity').value = component.long_name;
+            }
+            if (type === 'administrative_area_level_1') {
+                document.getElementById('ownerState').value = component.short_name;
+            }
+            if (type === 'postal_code') {
+                document.getElementById('ownerZip').value = component.long_name;
+            }
+        }
+        
+        // Set only the street address in the address field
+        const streetAddress = `${streetNumber} ${streetName}`.trim();
+        addressInput.value = streetAddress;
+    });
+}
 
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', initializeAutocomplete);
+
+// Helper function to fill in address components
+function fillInAddress(place) {
+    const componentForm = {
+        street_number: 'short_name',
+        route: 'long_name',
+        locality: 'long_name',                 // City
+        administrative_area_level_1: 'short_name', // State
+        postal_code: 'short_name'              // ZIP code
+    };
+
+    // Clear existing values
+    document.getElementById('ownerCity').value = '';
+    document.getElementById('ownerState').value = '';
+    document.getElementById('ownerZip').value = '';
+
+    // Get each component of the address from the place details
+    // and fill the corresponding field on the form.
+    for (const component of place.address_components) {
+        const addressType = component.types[0];
+        if (componentForm[addressType]) {
+            const val = component[componentForm[addressType]];
+            if (addressType === 'locality') {
+                document.getElementById('ownerCity').value = val;
+            }
+            if (addressType === 'administrative_area_level_1') {
+                document.getElementById('ownerState').value = val;
+            }
+            if (addressType === 'postal_code') {
+                document.getElementById('ownerZip').value = val;
+            }
+        }
+    }
+}
+
+// Initialize autocomplete when page loads
+document.addEventListener('DOMContentLoaded', initializeAutocomplete);
 // Function to hide all sections - keep it simple and efficient
 function hideAllSections() {
     console.log('Hiding all sections');
@@ -127,43 +242,181 @@ function hideAllSections() {
         console.log('Hidden section:', section.id);
     });
 }
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to properly capitalize words
+    function capitalizeWords(str) {
+        return str.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    }
 
+    // Sales Rep Name formatting
+    const salesRepInput = document.getElementById('salesRepName');
+    salesRepInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
+    });
+
+    // Property Owner Name formatting
+    const ownerNameInput = document.getElementById('ownerName');
+    ownerNameInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
+    });
+
+    // City formatting
+    const cityInput = document.getElementById('ownerCity');
+    cityInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
+    });
+
+    // State formatting
+    const stateInput = document.getElementById('ownerState');
+    stateInput.addEventListener('blur', function() {
+        this.value = this.value.toUpperCase();
+    });
+
+    // Insurance Company formatting
+    const insuranceCompanyInput = document.getElementById('insuranceCompany');
+    insuranceCompanyInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
+    });
+
+    // Format phone numbers
+    function formatPhoneNumber(phoneNumber) {
+        const cleaned = phoneNumber.replace(/\D/g, '');
+        const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+        if (match) {
+            return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+        }
+        return phoneNumber;
+    }
+
+    // Phone number formatting
+    const phoneInputs = [
+        document.getElementById('salesRepPhone'),
+        document.getElementById('ownerPhone'),
+        document.getElementById('insurancePhone')
+    ];
+
+    phoneInputs.forEach(input => {
+        if (input) {
+            input.addEventListener('blur', function() {
+                this.value = formatPhoneNumber(this.value);
+            });
+        }
+    });
+
+    // Claim and Policy number formatting (preserve case)
+    const claimNumberInput = document.getElementById('claimNumber');
+    const policyNumberInput = document.getElementById('policyNumber');
+    [claimNumberInput, policyNumberInput].forEach(input => {
+        if (input) {
+            input.addEventListener('blur', function() {
+                // Clean but preserve case
+                this.value = this.value.replace(/[^A-Za-z0-9\-_]/g, '');
+            });
+        }
+    });
+
+    // Date formatting
+    const dateOfLossInput = document.getElementById('dateOfLoss');
+    if (dateOfLossInput) {
+        dateOfLossInput.addEventListener('blur', function() {
+            // Ensure date is in correct format
+            if (this.value) {
+                const date = new Date(this.value);
+                if (date instanceof Date && !isNaN(date)) {
+                    const yyyy = date.getFullYear();
+                    let mm = date.getMonth() + 1;
+                    let dd = date.getDate();
+                    if (dd < 10) dd = '0' + dd;
+                    if (mm < 10) mm = '0' + mm;
+                    this.value = `${yyyy}-${mm}-${dd}`;
+                }
+            }
+        });
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the form element
+    const form = document.querySelector('form');
+
+    // Function to clean phone number format
+    function cleanPhoneNumber(phoneNumber) {
+        // Remove all non-numeric characters
+        return phoneNumber.replace(/\D/g, '');
+    }
+
+    // Add form submission event listener
+    form.addEventListener('submit', function(e) {
+        // Get all phone number fields
+        const phoneFields = [
+            document.getElementById('salesRepPhone'),
+            document.getElementById('ownerPhone'),
+            document.getElementById('insurancePhone')
+        ];
+
+        // Clean each phone number before submission
+        phoneFields.forEach(field => {
+            if (field && field.value) {
+                field.value = cleanPhoneNumber(field.value);
+            }
+        });
+    });
+
+    // Keep the display formatting for user experience
+    const formatPhoneDisplay = function(input) {
+        let cleaned = input.value.replace(/\D/g, '');
+        if (cleaned.length >= 10) {
+            cleaned = cleaned.substring(0, 10);
+            input.value = `(${cleaned.substring(0,3)}) ${cleaned.substring(3,6)}-${cleaned.substring(6)}`;
+        }
+    };
+
+    // Add input event listeners for display formatting
+    const phoneInputs = [
+        document.getElementById('salesRepPhone'),
+        document.getElementById('ownerPhone'),
+        document.getElementById('insurancePhone')
+    ];
+
+    phoneInputs.forEach(input => {
+        if (input) {
+            input.addEventListener('input', function() {
+                formatPhoneDisplay(this);
+            });
+        }
+    });
+});
+function hideAllSections() {
+    console.group('Hiding Sections');
+    document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
+        const previousDisplay = section.style.display;
+        section.style.display = 'none';
+        console.log(`${section.id}: ${previousDisplay} -> none`);
+    });
+    console.groupEnd();
+}
 // Main section display function - restored to working version with added logging
 function showSection(sectionId) {
-    console.log('Attempting to show section:', sectionId);
+    console.group('Section Navigation');
+    console.log('Current section:', sectionId);
+    console.log('Section history before:', [...sectionHistory]);
     
-    // First hide all sections
     hideAllSections();
     
-    // Get the target section
     const targetSection = document.getElementById(sectionId);
-    console.log('Found target section:', targetSection);
-    
     if (targetSection) {
-        // Set display before any other operations
         targetSection.style.display = 'block';
-        console.log('Set display to block for:', sectionId);
-        
-        // Handle review section specially
-        if (sectionId === 'review-section') {
-            const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
-            if (estimatePreviewFrame) {
-                estimatePreviewFrame.src = 'about:blank';
-                showLoading('Preparing your estimate...');
-                console.log('Prepared review section preview frame');
-            }
-        }
-        
-        // Update section history
         if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
             sectionHistory.push(sectionId);
-            console.log('Updated section history:', sectionHistory);
         }
+        console.log('Section history after:', [...sectionHistory]);
+        console.log('Target section visibility:', targetSection.style.display);
     } else {
         console.error('Target section not found:', sectionId);
     }
+    console.groupEnd();
 }
-
 function showLoading(message = 'Loading...') {
     const loadingOverlay = document.getElementById('loading-overlay');
     const loadingMessage = document.getElementById('loading-message');
@@ -171,11 +424,6 @@ function showLoading(message = 'Loading...') {
     if (loadingOverlay && loadingMessage) {
         loadingMessage.textContent = message;
         loadingOverlay.style.display = 'flex';
-        
-        // Auto-hide after 3 seconds
-        setTimeout(() => {
-            hideLoading();
-        }, 3000);
     }
     console.log('Loading started:', message);
 }
@@ -200,25 +448,6 @@ function goBack() {
     }
 }
 function collectFormData() {
-    // Function to clean phone number format with debug logging
-    function cleanPhoneNumber(phoneNumber) {
-        if (!phoneNumber) return '';
-        const cleaned = phoneNumber.replace(/[\(\)\s-]/g, '');
-        console.log('Original phone:', phoneNumber);
-        console.log('Cleaned phone:', cleaned);
-        return cleaned;
-    }
-
-    // Get the phone numbers and clean them
-    const salesRepPhone = document.getElementById('salesRepPhone')?.value || '';
-    const ownerPhone = document.getElementById('ownerPhone')?.value || '';
-    const insurancePhone = document.getElementById('insurancePhone')?.value || '';
-
-    // Clean and log each phone number
-    const cleanedSalesRepPhone = cleanPhoneNumber(salesRepPhone);
-    const cleanedOwnerPhone = cleanPhoneNumber(ownerPhone);
-    const cleanedInsurancePhone = cleanPhoneNumber(insurancePhone);
-
     const formData = {
         // Required fixed fields - these must be set by the system
         "Timestamp": new Date().toISOString(),
@@ -227,8 +456,7 @@ function collectFormData() {
         // Sales Rep Information
         "Sales Rep Name": document.getElementById('salesRepName')?.value || '',
         "Sales Rep Email": document.getElementById('salesRepEmail')?.value || '',
-        "Sales Rep Phone": cleanedSalesRepPhone,
-        
+        "Sales Rep Phone": document.getElementById('salesRepPhone')?.value || '',
         
         // Company Information
         "Company Name": document.getElementById('companyName')?.value || '',
@@ -239,13 +467,13 @@ function collectFormData() {
         "Owner City": document.getElementById('ownerCity')?.value || '',
         "Owner State": document.getElementById('ownerState')?.value || '',
         "Owner ZIP": document.getElementById('ownerZip')?.value || '',
-        "Owner Phone": cleanedOwnerPhone,
+        "Owner Phone": document.getElementById('ownerPhone')?.value || '',
         "Owner Email": document.getElementById('ownerEmail')?.value || '',
         
         // Project Type and Insurance
         "Project Type": document.querySelector('input[name="projectType"]:checked')?.value || '',
         "Insurance Company": document.getElementById('insuranceCompany')?.value || '',
-        "Insurance Phone": cleanedInsurancePhone,
+        "Insurance Phone": document.getElementById('insurancePhone')?.value || '',
         "Claim Number": document.getElementById('claimNumber')?.value || '',
         "Policy Number": document.getElementById('policyNumber')?.value || '',
         "Date of Loss": document.getElementById('dateOfLoss')?.value || '',
@@ -298,7 +526,6 @@ function collectFormData() {
         "Unforseen Additions": '',
         "PDF_ID": ''
     };
-     console.log('Form Data:', formData);
     
     return formData;
 }
@@ -374,6 +601,27 @@ function validateForm(formData) {
 
     return true;
 }
+function formatPhoneNumber(phoneInput) {
+    phoneInput.addEventListener('input', function(e) {
+        // Remove all non-numeric characters
+        let number = this.value.replace(/\D/g, '');
+        
+        // Format the number
+        if (number.length > 0) {
+            if (number.length <= 3) {
+                this.value = `(${number}`;
+            } else if (number.length <= 6) {
+                this.value = `(${number.slice(0,3)}) ${number.slice(3)}`;
+            } else {
+                this.value = `(${number.slice(0,3)}) ${number.slice(3,6)}-${number.slice(6,10)}`;
+            }
+        }
+    });
+}
+
+// Apply to both phone fields
+formatPhoneNumber(document.getElementById('ownerPhone'));
+formatPhoneNumber(document.getElementById('salesRepPhone'));
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
@@ -395,12 +643,13 @@ function displayPDF(pdfId) {
         // Set new event listeners
         previewFrame.onerror = () => {
             console.error('Failed to load preview frame');
+            hideLoading();
             showError();
         };
         
         previewFrame.onload = () => {
             console.log('Preview frame loaded successfully');
-            // Don't use srcdoc here
+            hideLoading(); // Only hide loading when PDF is actually loaded
         };
 
         // Set the source directly
@@ -409,6 +658,7 @@ function displayPDF(pdfId) {
         }
     } else {
         console.error('Preview frame not found or invalid PDF ID');
+        hideLoading();
         showError();
     }
 }
