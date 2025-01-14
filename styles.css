@@ -4,28 +4,26 @@
 }
 .estimate-preview-container {
     position: relative;
-    background-color: #f0f0f0; /* Light gray background */
+    background-color: #f0f0f0;
     padding: 5px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin: 20px auto;
-    max-width: 100%;
-    height: 680px; /* Fixed height container */
-    overflow: hidden;
+    width: 100%;
+    max-width: 850px;
+    aspect-ratio: 8.5 / 11; /* Maintain US Letter aspect ratio */
 }
 
 #estimatePreviewFrame {
     display: block !important;
     visibility: visible !important;
-    width: calc(100% - 10px) !important; /* Account for padding */
-    height: calc(100% - 10px) !important; /* Account for padding */
+    width: 100% !important;
+    height: 100% !important;
     border: none;
-    margin: 0 auto;
-    opacity: 1;
+    margin: 0;
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
+    
 /* First, let's create a container for the preview that maintains aspect ratio */
 #review-section {
     display: flex;
@@ -67,11 +65,19 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    #estimatePreviewFrame {
-        height: calc(100vh - 150px); /* Slightly less padding on mobile */
+/* Media query for mobile devices in portrait mode */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    .estimate-preview-container {
+        margin: 10px auto;
+        width: calc(100% - 20px); /* Account for margins */
+        aspect-ratio: 8.5 / 11; /* Maintain aspect ratio */
+        min-height: 0; /* Remove min-height constraint */
     }
+
+    #estimatePreviewFrame {
+        min-height: 0; /* Remove min-height constraint */
+    }
+}
     
     #review-section {
         padding: 10px;
