@@ -25,30 +25,6 @@
     visibility: visible;
     opacity: 1;
 }
-/* iPad Mini in portrait */
-@media screen and (min-width: 768px) and (max-width: 834px) and (orientation: portrait) {
-    .estimate-preview-container {
-        height: calc(100vh - 60px);
-        margin: 10px auto;
-    }
-}
-
-/* iPhone in portrait */
-@media screen and (max-width: 428px) and (orientation: portrait) {
-    .estimate-preview-container {
-        height: calc(30vh - 85px);
-        margin: 10px auto;
-        width: calc(100% - 20px);
-    }
-}
-
-/* Add a minimum height for all devices */
-@media screen and (min-height: 500px) {
-    .estimate-preview-container {
-        min-height: 500px;
-    }
-}
-
     
 /* First, let's create a container for the preview that maintains aspect ratio */
 #review-section {
