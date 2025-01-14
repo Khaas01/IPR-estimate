@@ -2,7 +2,7 @@
 * {
     box-sizing: border-box;
 }
-.estimate-preview-container {
+estimate-preview-container {
     position: relative;
     background-color: #f0f0f0;
     padding: 5px;
@@ -11,8 +11,7 @@
     margin: 20px auto;
     width: 100%;
     max-width: 850px;
-    height: 710px
-    /*height: calc(100vh - 40px); /* viewport height minus margins */
+    height: calc(100vh - 45px); /* Changed from 40px to 45px */
 }
 
 #estimatePreviewFrame {
