@@ -11,7 +11,7 @@
     margin: 20px auto;
     width: 100%;
     max-width: 850px;
-    height: calc(68vh - 45px); /* Changed from 40px to 45px */
+    height: calc(70vh - 45px); /* Changed from 40px to 45px */
 }
 
 #estimatePreviewFrame {
