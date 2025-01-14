@@ -50,37 +50,43 @@ async function initializeGoogleAPIs() {
     }
 }
 function adjustIframeHeight() {
+    const container = document.querySelector('.estimate-preview-container');
     const iframe = document.getElementById('estimatePreviewFrame');
     
-    // Wait for iframe to load
+    if (!container || !iframe) return;
+
+    // Reset any previous height settings
+    container.style.height = 'auto';
+    
     iframe.onload = function() {
         try {
-            // Get the height of the iframe's content
-            const height = iframe.contentWindow.document.documentElement.scrollHeight;
+            // Get the natural dimensions of the PDF
+            const pdfHeight = iframe.contentWindow.document.body.scrollHeight;
+            const pdfWidth = iframe.contentWindow.document.body.scrollWidth;
             
-            // Add a small buffer (e.g., 20px) to prevent any potential scrolling
-            iframe.style.height = (height + 20) + 'px';
+            // Calculate the aspect ratio
+            const aspectRatio = pdfWidth / pdfHeight;
             
-            // Add a resize observer to handle dynamic content changes
-            const resizeObserver = new ResizeObserver(entries => {
-                const height = entries[0].target.scrollHeight;
-                iframe.style.height = (height + 20) + 'px';
-            });
+            // Set container width based on viewport
+            const maxWidth = Math.min(800, window.innerWidth - 40); // 40px for padding
+            container.style.width = maxWidth + 'px';
             
-            resizeObserver.observe(iframe.contentWindow.document.body);
+            // Set height based on aspect ratio
+            const height = maxWidth / aspectRatio;
+            container.style.height = height + 'px';
+            
+            // Ensure iframe fills container
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
         } catch (e) {
-            console.log('Failed to adjust iframe height:', e);
+            console.error('Failed to adjust iframe dimensions:', e);
         }
     };
 }
 
-// Call the function when the document is ready
-document.addEventListener('DOMContentLoaded', adjustIframeHeight);
-
-// Also adjust on window resize
+// Call on load and resize
+window.addEventListener('load', adjustIframeHeight);
 window.addEventListener('resize', adjustIframeHeight);
-
-
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize section history
     sectionHistory.push('review-section');
