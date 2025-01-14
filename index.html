@@ -35,12 +35,13 @@
     
     <!-- Phone field -->
     <label for="salesRepPhone">Sales Rep's Phone:</label>
-    <input type="tel" 
-        class="uniform-input" 
-        id="salesRepPhone" 
-        name="salesRepPhone" 
-        placeholder="(000) 000-0000"
-        required>
+   <input type="tel" 
+    class="uniform-input" 
+    id="salesRepPhone" 
+    name="salesRepPhone" 
+    placeholder="0000000000"
+    required>
+
     
     <!-- Email field -->
     <label for="salesRepEmail">Sales Rep's Email:</label>
@@ -126,7 +127,7 @@
     class="uniform-input" 
     id="ownerPhone" 
     name="ownerPhone" 
-    placeholder="(000) 000-0000"
+    placeholder="0000000000"
     required>
         <label for="ownerEmail">Email:</label>
         <input type="email" class="uniform-input" id="ownerEmail" name="ownerEmail" required>
@@ -191,16 +192,12 @@
     name="insuranceCompany" 
     style="text-transform: capitalize;"
     required>
-
-
         <label for="insurancePhone">Insurance Phone:</label>
         <input type="tel" 
     class="uniform-input" 
     id="insurancePhone" 
     name="insurancePhone" 
-    pattern="[0-9]*" 
-    inputmode="numeric"
-    placeholder="(000) 000-0000"
+    placeholder="0000000000"
     required>
 
         <label for="claimNumber">Claim Number:</label>
