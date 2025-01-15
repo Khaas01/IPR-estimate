@@ -29,13 +29,13 @@ function doGet() {
 
 function doPost(e) {
   try {
-    // Parse form data first
+    // Parse form data with enhanced error checking
     let formData;
     try {
-      if (e.postData && e.postData.contents) {
-        formData = JSON.parse(e.postData.contents);
-      } else if (e.parameter && e.parameter.data) {
+      if (e.parameter && e.parameter.data) {
         formData = JSON.parse(e.parameter.data);
+      } else if (e.postData && e.postData.contents) {
+        formData = JSON.parse(e.postData.contents);
       } else {
         throw new Error('No data received in request');
       }
@@ -65,7 +65,7 @@ function doPost(e) {
     // Prepare row data - using formData.data directly
     const rowData = tableHeaders.map(header => {
       if (header === "Timestamp") return new Date();
-      if (header === "User Login") return formData.data["User Login"] || 'Anonymous';
+      if (header === "User Login") return Session.getActiveUser().getEmail() || '';
       return (formData.data && formData.data[header] !== undefined) ? formData.data[header] : '';
     });
     Logger.log('Final row data to be appended: ' + JSON.stringify(rowData));
