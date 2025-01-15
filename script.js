@@ -739,9 +739,6 @@ function submitForm() {
             },
             body: JSON.stringify(submissionData)
         })
-        // ... rest of the function remains the same ...
-    }
-}
         .then(response => {
             return new Promise((resolve, reject) => {
                 let attempts = 0;
