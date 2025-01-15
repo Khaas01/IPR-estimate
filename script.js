@@ -8,7 +8,7 @@ const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
 const SHEET_NAME = "Form Responses";
 
 const API_CONFIG = {
-    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbx4gvJGojm-RJSS6q6r16y3RhQxlgX7D-kF6TGrFISi43WYJ5a0uypOWXOtf828fr1d3w/exec',
+    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwI1W5tosOBGZLEsu7LtQZtzAh3apxb-4CL4nJHXfQ_1FtYK52RVbW-JxthEHQbot6tiw/exec',
     API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
     CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
     REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
