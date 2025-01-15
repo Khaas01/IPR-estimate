@@ -49,7 +49,44 @@ async function initializeGoogleAPIs() {
         return false;
     }
 }
+function adjustIframeHeight() {
+    const container = document.querySelector('.estimate-preview-container');
+    const iframe = document.getElementById('estimatePreviewFrame');
+    
+    if (!container || !iframe) return;
 
+    // Reset any previous height settings
+    container.style.height = 'auto';
+    
+    iframe.onload = function() {
+        try {
+            // Get the natural dimensions of the PDF
+            const pdfHeight = iframe.contentWindow.document.body.scrollHeight;
+            const pdfWidth = iframe.contentWindow.document.body.scrollWidth;
+            
+            // Calculate the aspect ratio
+            const aspectRatio = pdfWidth / pdfHeight;
+            
+            // Set container width based on viewport
+            const maxWidth = Math.min(800, window.innerWidth - 40); // 40px for padding
+            container.style.width = maxWidth + 'px';
+            
+            // Set height based on aspect ratio
+            const height = maxWidth / aspectRatio;
+            container.style.height = height + 'px';
+            
+            // Ensure iframe fills container
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+        } catch (e) {
+            console.error('Failed to adjust iframe dimensions:', e);
+        }
+    };
+}
+
+// Call on load and resize
+window.addEventListener('load', adjustIframeHeight);
+window.addEventListener('resize', adjustIframeHeight);
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize section history
     sectionHistory.push('salesRepSection');
@@ -118,7 +155,91 @@ solarRadios.forEach(radio => {
         }
     });
 });
+function initializeAutocomplete() {
+    const addressInput = document.getElementById('ownerAddress');
+    const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+        // Restrict to getting just address components
+        types: ['address'],
+        // Restrict to USA addresses
+        componentRestrictions: { country: 'us' }
+    });
+    
+    autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        if (!place.geometry) {
+            return;
+        }
+        
+        // Get only street address components
+        let streetNumber = '';
+        let streetName = '';
+        
+        for (const component of place.address_components) {
+            const type = component.types[0];
+            
+            if (type === 'street_number') {
+                streetNumber = component.long_name;
+            }
+            if (type === 'route') {
+                streetName = component.long_name;
+            }
+            // Still fill in the other fields
+            if (type === 'locality') {
+                document.getElementById('ownerCity').value = component.long_name;
+            }
+            if (type === 'administrative_area_level_1') {
+                document.getElementById('ownerState').value = component.short_name;
+            }
+            if (type === 'postal_code') {
+                document.getElementById('ownerZip').value = component.long_name;
+            }
+        }
+        
+        // Set only the street address in the address field
+        const streetAddress = `${streetNumber} ${streetName}`.trim();
+        addressInput.value = streetAddress;
+    });
+}
 
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', initializeAutocomplete);
+
+// Helper function to fill in address components
+function fillInAddress(place) {
+    const componentForm = {
+        street_number: 'short_name',
+        route: 'long_name',
+        locality: 'long_name',                 // City
+        administrative_area_level_1: 'short_name', // State
+        postal_code: 'short_name'              // ZIP code
+    };
+
+    // Clear existing values
+    document.getElementById('ownerCity').value = '';
+    document.getElementById('ownerState').value = '';
+    document.getElementById('ownerZip').value = '';
+
+    // Get each component of the address from the place details
+    // and fill the corresponding field on the form.
+    for (const component of place.address_components) {
+        const addressType = component.types[0];
+        if (componentForm[addressType]) {
+            const val = component[componentForm[addressType]];
+            if (addressType === 'locality') {
+                document.getElementById('ownerCity').value = val;
+            }
+            if (addressType === 'administrative_area_level_1') {
+                document.getElementById('ownerState').value = val;
+            }
+            if (addressType === 'postal_code') {
+                document.getElementById('ownerZip').value = val;
+            }
+        }
+    }
+}
+
+// Initialize autocomplete when page loads
+document.addEventListener('DOMContentLoaded', initializeAutocomplete);
 // Function to hide all sections - keep it simple and efficient
 function hideAllSections() {
     console.log('Hiding all sections');
@@ -127,43 +248,107 @@ function hideAllSections() {
         console.log('Hidden section:', section.id);
     });
 }
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to properly capitalize words
+    function capitalizeWords(str) {
+        return str.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    }
 
+    // Sales Rep Name formatting
+    const salesRepInput = document.getElementById('salesRepName');
+    salesRepInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
+    });
+
+    // Property Owner Name formatting
+    const ownerNameInput = document.getElementById('ownerName');
+    ownerNameInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
+    });
+
+    // City formatting
+    const cityInput = document.getElementById('ownerCity');
+    cityInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
+    });
+
+    // State formatting
+    const stateInput = document.getElementById('ownerState');
+    stateInput.addEventListener('blur', function() {
+        this.value = this.value.toUpperCase();
+    });
+
+    // Insurance Company formatting
+    const insuranceCompanyInput = document.getElementById('insuranceCompany');
+    insuranceCompanyInput.addEventListener('blur', function() {
+        this.value = capitalizeWords(this.value);
+    });
+
+    // Claim and Policy number formatting (preserve case)
+    const claimNumberInput = document.getElementById('claimNumber');
+    const policyNumberInput = document.getElementById('policyNumber');
+    [claimNumberInput, policyNumberInput].forEach(input => {
+        if (input) {
+            input.addEventListener('blur', function() {
+                // Clean but preserve case
+                this.value = this.value.replace(/[^A-Za-z0-9\-_]/g, '');
+            });
+        }
+    });
+
+    // Date formatting
+    const dateOfLossInput = document.getElementById('dateOfLoss');
+    if (dateOfLossInput) {
+        dateOfLossInput.addEventListener('blur', function() {
+            // Ensure date is in correct format
+            if (this.value) {
+                const date = new Date(this.value);
+                if (date instanceof Date && !isNaN(date)) {
+                    const yyyy = date.getFullYear();
+                    let mm = date.getMonth() + 1;
+                    let dd = date.getDate();
+                    if (dd < 10) dd = '0' + dd;
+                    if (mm < 10) mm = '0' + mm;
+                    this.value = `${yyyy}-${mm}-${dd}`;
+                }
+            }
+        });
+    }
+});
+
+   
+function hideAllSections() {
+    console.group('Hiding Sections');
+    document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
+        const previousDisplay = section.style.display;
+        section.style.display = 'none';
+        console.log(`${section.id}: ${previousDisplay} -> none`);
+    });
+    console.groupEnd();
+}
 // Main section display function - restored to working version with added logging
 function showSection(sectionId) {
-    console.log('Attempting to show section:', sectionId);
+    console.group('Section Navigation');
+    console.log('Current section:', sectionId);
+    console.log('Section history before:', [...sectionHistory]);
     
-    // First hide all sections
     hideAllSections();
     
-    // Get the target section
     const targetSection = document.getElementById(sectionId);
-    console.log('Found target section:', targetSection);
-    
     if (targetSection) {
-        // Set display before any other operations
         targetSection.style.display = 'block';
-        console.log('Set display to block for:', sectionId);
-        
-        // Handle review section specially
-        if (sectionId === 'review-section') {
-            const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
-            if (estimatePreviewFrame) {
-                estimatePreviewFrame.src = 'about:blank';
-                showLoading('Preparing your estimate...');
-                console.log('Prepared review section preview frame');
-            }
-        }
-        
-        // Update section history
         if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
             sectionHistory.push(sectionId);
-            console.log('Updated section history:', sectionHistory);
         }
+        console.log('Section history after:', [...sectionHistory]);
+        console.log('Target section visibility:', targetSection.style.display);
     } else {
         console.error('Target section not found:', sectionId);
     }
+    console.groupEnd();
 }
-
 function showLoading(message = 'Loading...') {
     const loadingOverlay = document.getElementById('loading-overlay');
     const loadingMessage = document.getElementById('loading-message');
@@ -171,11 +356,6 @@ function showLoading(message = 'Loading...') {
     if (loadingOverlay && loadingMessage) {
         loadingMessage.textContent = message;
         loadingOverlay.style.display = 'flex';
-        
-        // Auto-hide after 3 seconds
-        setTimeout(() => {
-            hideLoading();
-        }, 3000);
     }
     console.log('Loading started:', message);
 }
@@ -353,6 +533,7 @@ function validateForm(formData) {
 
     return true;
 }
+
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
@@ -374,12 +555,13 @@ function displayPDF(pdfId) {
         // Set new event listeners
         previewFrame.onerror = () => {
             console.error('Failed to load preview frame');
+            hideLoading();
             showError();
         };
         
         previewFrame.onload = () => {
             console.log('Preview frame loaded successfully');
-            // Don't use srcdoc here
+            hideLoading(); // Only hide loading when PDF is actually loaded
         };
 
         // Set the source directly
@@ -388,6 +570,7 @@ function displayPDF(pdfId) {
         }
     } else {
         console.error('Preview frame not found or invalid PDF ID');
+        hideLoading();
         showError();
     }
 }
@@ -647,6 +830,25 @@ function showError() {
             </body>
             </html>
         `;
+    }
+}
+function shareEstimate() {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    
+    if (previewFrame && previewFrame.src) {
+        // Get the current preview URL
+        let previewUrl = previewFrame.src;
+        
+        // Convert the preview URL to a direct view URL
+        // From: https://drive.google.com/file/d/{fileId}/preview
+        // To: https://drive.google.com/file/d/{fileId}/view
+        previewUrl = previewUrl.replace('/preview', '/view');
+        
+        // Open in a new tab
+        window.open(previewUrl, '_blank');
+    } else {
+        console.error('No preview URL found');
+        alert('Unable to share at this time. Please try again later.');
     }
 }
 

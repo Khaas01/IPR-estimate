@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,29 +8,54 @@
     <title>Iron Peak Roofing - Estimate Form</title>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="styles.css">
+    <!-- Add this just before </body> -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254&libraries=places"></script>
 </head>
     
 <body>
 <header>
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
-    <h1>Roofing Estimate Form Version 62</h1>
+    <h1>Roofing Estimate Form</h1>
 
 
 </header>
 <form id="estimateForm">
    <!--Sales Rep Section -->
-    <div id="salesRepSection" style="display:block;">
-        <h2>Sales Rep Information</h2>
-        <label for="salesRepName">Sales Rep's Name:</label>
-        <input type="text" class="uniform-input" id="salesRepName" name="salesRepName" required>
-        <label for="salesRepEmail">Sales Rep's Email:</label>
-        <input type="email" class="uniform-input" id="salesRepEmail" name="salesRepEmail" required>
-        <label for="salesRepPhone">Sales Rep's Phone:</label>
-        <input type="tel" class="uniform-input" id="salesRepPhone" name="salesRepPhone" required>
-        <div id="navigationButtons">
+   <div id="salesRepSection" style="display:block;">
+    <h2>Sales Rep Information</h2>
+    
+    <!-- Name field -->
+    <label for="salesRepName">Sales Rep's Name:</label>
+    <input type="text" 
+        class="uniform-input" 
+        id="salesRepName" 
+        name="salesRepName" 
+        style="text-transform: capitalize;"
+        required>
+    
+    <!-- Phone field -->
+    <label for="salesRepPhone">Sales Rep's Phone:</label>
+   <input type="tel" 
+    class="uniform-input" 
+    id="salesRepPhone" 
+    name="salesRepPhone" 
+    placeholder="0000000000"
+    required>
+
+    
+    <!-- Email field -->
+    <label for="salesRepEmail">Sales Rep's Email:</label>
+    <input type="email" 
+        class="uniform-input" 
+        id="salesRepEmail" 
+        name="salesRepEmail" 
+        required>
+    
+    <!-- Navigation buttons should be last -->
+    <div id="navigationButtons">
         <button type="button" onclick="showSection('companySection')">Next</button>
     </div>
-    </div>
+</div>
 
 
    
@@ -54,17 +77,58 @@
     <div id="propertyOwnerSection" style="display:none;">
         <h2>Property Owner Information</h2>
         <label for="ownerName">Owner's Name:</label>
-        <input type="text" class="uniform-input" id="ownerName" name="ownerName" required>
-        <label for="ownerAddress">Address (Hint - Copy the address to paste into the measurement tool):</label>
-        <input type="text" class="uniform-input" id="ownerAddress" name="ownerAddress" required>
+        <input type="text" 
+    class="uniform-input" 
+    id="ownerName" 
+    name="ownerName" 
+    style="text-transform: capitalize;"
+    required>
+     <div class="address-container">
+    <label for="ownerAddress">
+        Address <span class="hint-text">(Hint - Copy the address to paste into the measurement tool)</span>
+    </label>
+    <input type="text" 
+        class="uniform-input" 
+        id="ownerAddress" 
+        name="ownerAddress" 
+        placeholder="Start typing address..." 
+        required>
+</div>
         <label for="ownerCity">City:</label>
-        <input type="text" class="uniform-input" id="ownerCity" name="ownerCity" required>
+        <!-- Update the City input -->
+<input type="text" 
+    class="uniform-input" 
+    id="ownerCity" 
+    name="ownerCity" 
+    style="text-transform: capitalize;"
+    required>
         <label for="ownerState">State:</label>
-        <input type="text" class="uniform-input" id="ownerState" name="ownerState" required>
+        <!-- Update the State input -->
+<input type="text" 
+    class="uniform-input" 
+    id="ownerState" 
+    name="ownerState" 
+    style="text-transform: uppercase;"
+    maxlength="2"
+    required>
         <label for="ownerZip">Zip Code:</label>
-        <input type="text" class="uniform-input" id="ownerZip" name="ownerZip" required>
+        <input type="number" 
+    class="uniform-input" 
+    id="ownerZip" 
+    name="ownerZip" 
+    pattern="[0-9]*" 
+    inputmode="numeric" 
+    maxlength="5" 
+    minlength="5"
+    placeholder="ZIP Code"
+    required>
         <label for="ownerPhone">Phone:</label>
-        <input type="tel" class="uniform-input" id="ownerPhone" name="ownerPhone" required>
+       <input type="tel" 
+    class="uniform-input" 
+    id="ownerPhone" 
+    name="ownerPhone" 
+    placeholder="0000000000"
+    required>
         <label for="ownerEmail">Email:</label>
         <input type="email" class="uniform-input" id="ownerEmail" name="ownerEmail" required>
        
@@ -83,7 +147,7 @@
         </p>
       <iframe 
     src="https://www.oneclickestimate.com" 
-    style="width:90%; height:500px; border:0;" 
+    style="width:100%; height:800px; border:0;" 
     title="Roof Measurement Tool" 
     id="measurementToolIframe"
     sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-top-navigation-by-user-activation"
@@ -122,19 +186,44 @@
     <div id="insuranceInfoSection" style="display:none;">
         <h2>Insurance Information</h2>
         <label for="insuranceCompany">Insurance Company:</label>
-        <input type="text" class="uniform-input" id="insuranceCompany" name="insuranceCompany" required>
-
+        <input type="text" 
+    class="uniform-input" 
+    id="insuranceCompany" 
+    name="insuranceCompany" 
+    style="text-transform: capitalize;"
+    required>
         <label for="insurancePhone">Insurance Phone:</label>
-        <input type="tel" class="uniform-input" id="insurancePhone" name="insurancePhone" required>
+        <input type="tel" 
+    class="uniform-input" 
+    id="insurancePhone" 
+    name="insurancePhone" 
+    placeholder="0000000000"
+    required>
 
         <label for="claimNumber">Claim Number:</label>
-        <input type="text" class="uniform-input" id="claimNumber" name="claimNumber" required>
+        <input type="text" 
+    class="uniform-input" 
+    id="claimNumber" 
+    name="claimNumber" 
+    pattern="[A-Za-z0-9\-_]+"
+    placeholder="Enter claim number"
+    required>
 
         <label for="policyNumber">Policy Number:</label>
-        <input type="text" class="uniform-input" id="policyNumber" name="policyNumber" required>
+        <input type="text" 
+    class="uniform-input" 
+    id="policyNumber" 
+    name="policyNumber" 
+    pattern="[A-Za-z0-9\-_]+"
+    placeholder="Enter policy number"
+    required>
 
         <label for="dateOfLoss">Date of Loss:</label>
-        <input type="text" class="uniform-input" id="dateOfLoss" name="dateOfLoss" required>
+       <input type="date" 
+    class="uniform-input" 
+    id="dateOfLoss" 
+    name="dateOfLoss" 
+    required>
             <div id="navigationButtons">
       <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('roofingTypeSection')">Next</button>
@@ -189,15 +278,28 @@
  
 <div id="shingle-repair-section" style="display:none;">
     <h2>Shingle Repair Details</h2>
-   
     <label for="shingles-repaired">How many shingles are we repairing?</label>
-    <input type="text" id="shingles-repaired" name="shingles-repaired" class="uniform-input" placeholder="Enter number of shingles">
+<input type="number" 
+    id="shingles-repaired" 
+    name="shingles-repaired" 
+    class="uniform-input" 
+    placeholder="Enter number of shingles"
+    inputmode="numeric"
+    pattern="[0-9]*">
     
     <label for="repair-anything-else">Are we repairing anything else?</label>
     <input type="text" id="repair-anything-else" name="repair-anything-else" class="uniform-input" placeholder="Describe any additional repairs">
     
-    <label for="additional-charges">Additional shingle repair charges?</label>
-    <input type="text" id="additional-charges" name="additional-charges" class="uniform-input" placeholder="Enter any additional charges">
+   <label for="additional-charges">Additional shingle repair charges?</label>
+<input type="number" 
+    id="additional-charges" 
+    name="additional-charges" 
+    class="uniform-input" 
+    placeholder="Enter any additional charges"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
+
   <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
@@ -208,10 +310,16 @@
        
 <div id="shingle-replacement-section" style="display:none;">
     <h2>Shingle Replacement Details</h2>
-    
     <label for="shingle-replacement">How many squares of shingles are we replacing?</label>
-    <input type="text" id="shingle-replacement" name="shingle-replacement" class="uniform-input" placeholder="Enter number of squares of shingles">
-  <div id="navigationButtons">
+    <input type="number" 
+        id="shingle-replacement" 
+        name="shingle-replacement" 
+        class="uniform-input" 
+        placeholder="Enter number of squares of shingles"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        step="0.01">
+    <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
     </div>
@@ -240,9 +348,15 @@
 
 <div id="tile-repair-section" style="display:none;">
     <h2>Tile Repair</h2>
-    
-    <label for="tile-repair-sq">How many Sq of tile are we repairing?</label>
-    <input type="text" id="tile-repair-sq" name="tile-repair-sq" class="uniform-input" placeholder="Enter the number of squares">
+<label for="tile-repair-sq">How many Sq of tile are we repairing?</label>
+<input type="number" 
+    id="tile-repair-sq" 
+    name="tile-repair-sq" 
+    class="uniform-input" 
+    placeholder="Enter the number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
@@ -253,8 +367,15 @@
 
 <div id="tile-underlayment-section" style="display:none;">
     <h2>Tile Underlayment</h2>
-    <label for="tile-underlayment-sq">How many Sq of tile underlayment are we replacing?</label>
-    <input type="text" id="tile-underlayment-sq" name="tile-underlayment-sq" class="uniform-input" placeholder="Enter the number of squares">
+    <label for="tile-underlayment-sq">How many Sq of tile are we repairing?</label>
+<input type="number" 
+    id="tile-underlayment-sq" 
+    name="tile-underlayment-sq" 
+    class="uniform-input" 
+    placeholder="How many Sq of tile are we repairing?"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
@@ -287,10 +408,15 @@
 
 <div id="tile-roof-rr-section" style="display:none;">
     <h2>Tile Roof R&R Amount</h2>
-    
-    <label for="tile-roof-rr">How many squares of tile roofing are we removing and replacing?</label>
-    <input type="text" id="tile-roof-rr" name="tile-roof-rr" class="uniform-input" placeholder="Enter number of squares of tile roofing">
- 
+  <label for="tile-roof-rr">How many squares of tile roofing are we removing and replacing?</label>
+<input type="number" 
+    id="tile-roof-rr" 
+    name="tile-roof-rr" 
+    class="uniform-input" 
+    placeholder="Enter number of squares of tile roofing"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
@@ -298,13 +424,17 @@
 </div>
 
 
-
 <div id="modified-bitumen-section" style="display:none;">
     <h2>Modified Bitumen</h2>
-   
-    <label for="modified-bitumen-sq">How many square of modified bitumen are we replacing?</label>
-    <input type="text" id="modified-bitumen-sq" name="modified-bitumen-sq" class="uniform-input" placeholder="Enter the number of squares">
-  
+  <label for="modified-bitumen-sq">How many square of modified bitumen are we replacing?</label>
+<input type="number" 
+    id="modified-bitumen-sq" 
+    name="modified-bitumen-sq" 
+    class="uniform-input" 
+    placeholder="Enter number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
@@ -315,10 +445,15 @@
     
 <div id="coating-section" style="display:none;">
     <h2>Coating</h2>
-   
-    <label for="coating-squares">How many square of roof surface are we re-coating?</label>
-    <input type="text" id="coating-squares" name="coating-squares" class="uniform-input" placeholder="Enter number of squares">
- 
+  <label for="coating-squares">How many square of roof surface are we re-coating?</label>
+<input type="number" 
+    id="coating-squares" 
+    name="coating-squares" 
+    class="uniform-input" 
+    placeholder="Enter number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
@@ -346,7 +481,7 @@
     </div>
 </div>
 
-<div id="secondary-roofing-type-section">
+<div id="secondary-roofing-type-section" style="display:none;">
     <h2>Secondary Roofing Type</h2>
     <label>Secondary Roofing Type</label>
     <div>
@@ -376,10 +511,15 @@
 
 <div id="secondary-roof-type-shingles-section" style="display:none;">
     <h2>Secondary Roof Type - Shingles</h2>
-  
-    <label for="shingles-squares">How many squares of shingles are we replacing?</label>
-    <input type="text" id="shingles-squares" name="shingles-squares" class="uniform-input" placeholder="Enter number of squares">
- 
+  <label for="shingles-squares">How many squares of shingles are we replacing?</label>
+<input type="number" 
+    id="shingles-squares" 
+    name="shingles-squares" 
+    class="uniform-input" 
+    placeholder="Enter number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
@@ -389,10 +529,15 @@
 
 <div id="secondary-roof-type-tile-section" style="display:none;">
     <h2>Secondary Roof Type - Tile</h2>
-   
-    <label for="tile-underlayment-squares">How many squares of tile underlayment are we replacing?</label>
-    <input type="text" id="tile-underlayment-squares" name="tile-underlayment-squares" class="uniform-input" placeholder="Enter number of squares">
-
+ <label for="tile-underlayment-squares">How many squares of tile underlayment are we replacing?</label>
+<input type="number" 
+    id="tile-underlayment-squares" 
+    name="tile-underlayment-squares" 
+    class="uniform-input" 
+    placeholder="Enter number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
@@ -401,11 +546,17 @@
 
 
 <div id="secondary-roof-type-modified-bitumen-section" style="display:none;">
-    <h2>Secondary Roof Type - Modified Bitumen</h2>
-  
+    <h2>Secondary Roof Type - Modified Bitumen</h2> 
     <label for="modified-bitumen-squares">How many squares of modified bitumen are we replacing?</label>
-    <input type="text" id="modified-bitumen-squares" name="modified-bitumen-squares" class="uniform-input" placeholder="Enter number of squares">
- 
+<input type="number" 
+    id="modified-bitumen-squares" 
+    name="modified-bitumen-squares" 
+    class="uniform-input" 
+    placeholder="Enter number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
+    
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
@@ -415,10 +566,15 @@
 
 <div id="secondary-roof-type-coating-section" style="display:none;">
     <h2>Secondary Roof Type - Coating</h2>
-   
-    <label for="coating-squares">How many squares of roof coating are we applying?</label>
-    <input type="text" id="coating-squares" name="coating-squares" class="uniform-input" placeholder="Enter number of squares">
- 
+ <label for="coating-squares">How many squares of roof coating are we applying?</label>
+<input type="number" 
+    id="coating-squares" 
+    name="coating-squares" 
+    class="uniform-input" 
+    placeholder="Enter number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
@@ -477,10 +633,15 @@
 
 <div id="third-roof-type-shingles-section" style="display:none;">
     <h2>Third Roof Type - Shingles</h2>
-   
-    <label for="shingles-squares">How many squares of shingles are we replacing?</label>
-    <input type="text" id="shingles-squares" name="shingles-squares" class="uniform-input" placeholder="Enter number of squares">
-
+ <label for="shingles-squares">How many squares of shingles are we replacing?</label>
+<input type="number" 
+    id="shingles-squares" 
+    name="shingles-squares" 
+    class="uniform-input" 
+    placeholder="Enter number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">  
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('additional-charges-section')">Next</button>
@@ -490,10 +651,16 @@
 
 <div id="third-roof-type-tiles-section" style="display:none;">
     <h2>Third Roof Type - Tiles</h2>
-   
-    <label for="tiles-squares">How many squares of tile underlayment are we replacing?</label>
-    <input type="text" id="tiles-squares" name="tiles-squares" class="uniform-input" placeholder="Enter number of squares">
-  
+ <label for="tiles-squares">How many squares of tile underlayment are we replacing?</label>
+<input type="number" 
+    id="tiles-squares" 
+    name="tiles-squares" 
+    class="uniform-input" 
+    placeholder="Enter number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
+    
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('additional-charges-section')">Next</button>
@@ -502,10 +669,15 @@
 
 <div id="third-roof-type-modified-section" style="display:none;">
     <h2>Third Roof Type - Modified</h2>
-    
-    <label for="modified-squares">How many squares of modified bitumen are we replacing?</label>
-    <input type="text" id="modified-squares" name="modified-squares" class="uniform-input" placeholder="Enter number of squares">
-  
+  <label for="modified-squares">How many squares of modified bitumen are we replacing?</label>
+<input type="number" 
+    id="modified-squares" 
+    name="modified-squares" 
+    class="uniform-input" 
+    placeholder="Enter number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('additional-charges-section')">Next</button>
@@ -517,9 +689,15 @@
 <div id="third-roof-type-coatings-section" style="display:none;">
     <h2>Third Roof Type - Coatings</h2>
    
-    <label for="coatings-squares">How many squares of roof surface are we re-coating?</label>
-    <input type="text" id="coatings-squares" name="coatings-squares" class="uniform-input" placeholder="Enter number of squares">
- 
+   <label for="coatings-squares">How many squares of roof surface are we re-coating?</label>
+<input type="number" 
+    id="coatings-squares" 
+    name="coatings-squares" 
+    class="uniform-input" 
+    placeholder="Enter number of squares"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('additional-charges-section')">Next</button>
@@ -564,8 +742,14 @@
     <h2>Additional Charges - Price</h2>
    
     <label for="additional-charges-price">How much are we charging to complete these additional roofing related items?</label>
-    <input type="text" id="additional-charges-price" name="additional-charges-price" class="uniform-input" placeholder="Enter price">
-  
+  <input type="number" 
+    id="additional-charges-price" 
+    name="additional-charges-price" 
+    class="uniform-input" 
+    placeholder="Enter price"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="showSection('solar-section')">Next</button>
@@ -595,8 +779,14 @@
 <div id="solar-detach-reset-section" style="display:none;">
     <h2>Solar - Detach and Reset</h2>
     <label for="solar-detach-reset">How many solar panels are we detaching and resetting to complete the roof repair?</label>
-    <input type="text" id="solar-detach-reset" name="solar-detach-reset" class="uniform-input" placeholder="Enter number of panels">
-   
+    <input type="number" 
+    id="solar-detach-reset" 
+    name="solar-detach-reset" 
+    class="uniform-input" 
+    placeholder="Enter number of panels"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    step="0.01">
     <div id="navigationButtons">
         <button type="button" onclick="goBack()">Back</button>
         <button type="button" onclick="nextFromSolarDetachReset()">Submit</button>
@@ -608,19 +798,16 @@
         <p>Please review your estimate below.</p>
     </div>
     <div class="estimate-preview-container" style="position: relative;">
-        <iframe 
-            id="estimatePreviewFrame"
-            src="about:blank"
-            allowfullscreen
-            allow="autoplay"
-            style="display: block !important; 
-                   visibility: visible !important;
-                   width: 100%; 
-                   height: 600px; 
-                   border: none; 
-                   margin: 0 auto;
-                   opacity: 1;">
-        </iframe>
+       <iframe 
+    id="estimatePreviewFrame"
+    src="about:blank"
+    style="display: block !important; 
+           visibility: visible !important;
+           width: 100%; 
+           border: none; 
+           margin: 0 auto;
+           opacity: 1;">
+</iframe>
         <!-- Add loading overlay as a sibling to iframe -->
         <div id="loading-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: none;">
             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
