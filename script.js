@@ -832,6 +832,25 @@ function showError() {
         `;
     }
 }
+function shareEstimate() {
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    
+    if (previewFrame && previewFrame.src) {
+        // Get the current preview URL
+        let previewUrl = previewFrame.src;
+        
+        // Convert the preview URL to a direct view URL
+        // From: https://drive.google.com/file/d/{fileId}/preview
+        // To: https://drive.google.com/file/d/{fileId}/view
+        previewUrl = previewUrl.replace('/preview', '/view');
+        
+        // Open in a new tab
+        window.open(previewUrl, '_blank');
+    } else {
+        console.error('No preview URL found');
+        alert('Unable to share at this time. Please try again later.');
+    }
+}
 
 function nextProjectTypeSection() {
     const selectedProjectType = document.querySelector('input[name="projectType"]:checked');
