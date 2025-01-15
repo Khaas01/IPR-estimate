@@ -533,7 +533,14 @@ function validateForm(formData) {
 
     return true;
 }
-
+function editForm() {
+    hideAllSections();
+    sectionHistory = ['salesRepSection']; // Reset history to just the first section
+    const firstSection = document.getElementById('salesRepSection');
+    if (firstSection) {
+        firstSection.style.display = 'block';
+    }
+}
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
