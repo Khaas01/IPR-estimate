@@ -816,10 +816,11 @@
             </div>
         </div>
     </div>
-<div id="navigationButtons">
-    <button type="button" onclick="editForm()" class="edit-button">Edit</button>
-    <button type="button" onclick="shareEstimate()" class="share-button">Share</button>
-</div>
+    <!-- Moved navigationButtons inside review-section and fixed div nesting -->
+    <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="shareEstimate()" class="share-button">Share</button>
+    </div>
 </div>
 </form>
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
