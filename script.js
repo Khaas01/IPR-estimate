@@ -533,9 +533,17 @@ function validateForm(formData) {
 
     return true;
 }
+let currentPdfId = null; // Add at the top with other global variables
+
 function editForm() {
+    // Store the current PDF ID before navigating
+    const previewFrame = document.getElementById('estimatePreviewFrame');
+    if (previewFrame && previewFrame.src) {
+        currentPdfId = previewFrame.src.match(/\/d\/(.+?)\/preview/)?.[1];
+    }
+    
     hideAllSections();
-    sectionHistory = ['salesRepSection']; // Reset history to just the first section
+    sectionHistory = ['salesRepSection'];
     const firstSection = document.getElementById('salesRepSection');
     if (firstSection) {
         firstSection.style.display = 'block';
