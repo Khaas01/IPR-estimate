@@ -317,7 +317,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+let currentFormId = null; // To track if we're editing an existing form
 
+function editForm() {
+    // Store current form data before navigating back
+    const formData = collectFormData();
+    sessionStorage.setItem('editFormData', JSON.stringify(formData));
+    
+    // Reset sections and go back to start
+    hideAllSections();
+    sectionHistory = ['salesRepSection']; // Reset section history
+    showSection('salesRepSection');
+}
    
 function hideAllSections() {
     console.group('Hiding Sections');
@@ -650,6 +661,7 @@ function submitForm() {
         showLoading('Submitting form...');
 
         const formData = collectFormData();
+        const editData = sessionStorage.getItem('editFormData');
         
         // Create submission data structure that exactly matches the Google Sheet headers
         const submissionData = {
@@ -707,6 +719,19 @@ function submitForm() {
                 "PDF_ID": formData["PDF_ID"]
             }
         };
+ // If we're editing, get the old PDF ID
+        let oldPdfId = null;
+        if (editData) {
+            const parsedEditData = JSON.parse(editData);
+            oldPdfId = parsedEditData.PDF_ID || null;
+        }
+        
+        const submissionData = {
+            data: formData,
+            isUpdate: !!editData,
+            timestamp: formData["Timestamp"],
+            oldPdfId: oldPdfId // Pass the old PDF ID to the server
+        };
 
         console.log('Sending structured form data:', submissionData);
 
@@ -720,6 +745,9 @@ function submitForm() {
             body: JSON.stringify(submissionData)
         })
         .then(response => {
+            // Clear the edit data after successful submission
+            sessionStorage.removeItem('editFormData');
+            
             return new Promise((resolve, reject) => {
                 let attempts = 0;
                 const maxAttempts = 3;
@@ -743,14 +771,6 @@ function submitForm() {
 
                 tryGetPdfId();
             });
-        })
-        .catch(error => {
-            console.error('Form submission error:', error);
-            throw error;
-        })
-        .finally(() => {
-            isSubmitting = false;
-            hideLoading();
         });
     } catch (error) {
         isSubmitting = false;
