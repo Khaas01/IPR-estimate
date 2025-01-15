@@ -8,7 +8,7 @@ const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
 const SHEET_NAME = "Form Responses";
 
 const API_CONFIG = {
-    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzmjZppoybF7zsA3qYmc7phAa9N1rVGapJoVWRGF5o7B3a4zj2d0YDYx1qMNZ7OcWIUDg/exec',
+    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwOCAIWr3ohEsDE91BGXMP4tHz9wagzaILi6Z_qeIZ_bJixP_SG7YHQjxugyojXTuQ5Uw/exec',
     API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
     CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
     REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
@@ -317,18 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-let currentFormId = null; // To track if we're editing an existing form
 
-function editForm() {
-    // Store current form data before navigating back
-    const formData = collectFormData();
-    sessionStorage.setItem('editFormData', JSON.stringify(formData));
-    
-    // Reset sections and go back to start
-    hideAllSections();
-    sectionHistory = ['salesRepSection']; // Reset section history
-    showSection('salesRepSection');
-}
    
 function hideAllSections() {
     console.group('Hiding Sections');
@@ -661,7 +650,6 @@ function submitForm() {
         showLoading('Submitting form...');
 
         const formData = collectFormData();
-        const editData = sessionStorage.getItem('editFormData');
         
         // Create submission data structure that exactly matches the Google Sheet headers
         const submissionData = {
@@ -717,19 +705,9 @@ function submitForm() {
                 "Amount Collected": formData["Amount Collected"],
                 "Unforseen Additions": formData["Unforseen Additions"],
                 "PDF_ID": formData["PDF_ID"]
-            },
-            isUpdate: !!editData,
-            timestamp: formData["Timestamp"],
-            oldPdfId: oldPdfId // Pass the old PDF ID to the server
+            }
         };
 
- // If we're editing, get the old PDF ID
-        let oldPdfId = null;
-        if (editData) {
-            const parsedEditData = JSON.parse(editData);
-            oldPdfId = parsedEditData.PDF_ID || null;
-        }
-        
         console.log('Sending structured form data:', submissionData);
 
         return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
@@ -742,9 +720,6 @@ function submitForm() {
             body: JSON.stringify(submissionData)
         })
         .then(response => {
-            // Clear the edit data after successful submission
-            sessionStorage.removeItem('editFormData');
-            
             return new Promise((resolve, reject) => {
                 let attempts = 0;
                 const maxAttempts = 3;
@@ -768,6 +743,14 @@ function submitForm() {
 
                 tryGetPdfId();
             });
+        })
+        .catch(error => {
+            console.error('Form submission error:', error);
+            throw error;
+        })
+        .finally(() => {
+            isSubmitting = false;
+            hideLoading();
         });
     } catch (error) {
         isSubmitting = false;
@@ -1171,3 +1154,5 @@ async function getDecodedServiceAccountCredentials() {
         throw new Error('Failed to initialize service account credentials');
     }
 }
+
+
