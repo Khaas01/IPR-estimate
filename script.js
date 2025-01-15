@@ -665,6 +665,12 @@ function submitForm() {
         
         // Create submission data structure that exactly matches the Google Sheet headers
         const submissionData = {
+            data: formData,
+            isUpdate: !!editData,
+            timestamp: formData["Timestamp"],
+            oldPdfId: oldPdfId // Pass the old PDF ID to the server
+        };
+
             data: {
                 "Timestamp": formData["Timestamp"],
                 "User Login": formData["User Login"],
@@ -726,13 +732,6 @@ function submitForm() {
             oldPdfId = parsedEditData.PDF_ID || null;
         }
         
-        const submissionData = {
-            data: formData,
-            isUpdate: !!editData,
-            timestamp: formData["Timestamp"],
-            oldPdfId: oldPdfId // Pass the old PDF ID to the server
-        };
-
         console.log('Sending structured form data:', submissionData);
 
         return fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
