@@ -665,12 +665,6 @@ function submitForm() {
         
         // Create submission data structure that exactly matches the Google Sheet headers
         const submissionData = {
-            data: formData,
-            isUpdate: !!editData,
-            timestamp: formData["Timestamp"],
-            oldPdfId: oldPdfId // Pass the old PDF ID to the server
-        };
-
             data: {
                 "Timestamp": formData["Timestamp"],
                 "User Login": formData["User Login"],
@@ -723,8 +717,12 @@ function submitForm() {
                 "Amount Collected": formData["Amount Collected"],
                 "Unforseen Additions": formData["Unforseen Additions"],
                 "PDF_ID": formData["PDF_ID"]
-            }
+            },
+            isUpdate: !!editData,
+            timestamp: formData["Timestamp"],
+            oldPdfId: oldPdfId // Pass the old PDF ID to the server
         };
+
  // If we're editing, get the old PDF ID
         let oldPdfId = null;
         if (editData) {
