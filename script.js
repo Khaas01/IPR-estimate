@@ -1,7 +1,7 @@
 // Global variables
 let isSubmitting = false;
 let sectionHistory = []; // Initialize sectionHistory
-
+let currentEditRow = null;
 // Centralized API configuration
 
 const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
@@ -536,10 +536,14 @@ function validateForm(formData) {
 let currentPdfId = null; // Add at the top with other global variables
 
 function editForm() {
-    // Store the current PDF ID before navigating
+    // Get the current row from the sheet based on PDF_ID
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && previewFrame.src) {
-        currentPdfId = previewFrame.src.match(/\/d\/(.+?)\/preview/)?.[1];
+        const pdfId = previewFrame.src.match(/\/d\/(.+?)\/preview/)?.[1];
+        if (pdfId) {
+            // Store the PDF_ID for later use
+            currentEditRow = pdfId;
+        }
     }
     
     hideAllSections();
@@ -719,8 +723,9 @@ function submitForm() {
                 "Solar Detach/Reset Cost": formData["Solar Detach/Reset Cost"],
                 "Amount Collected": formData["Amount Collected"],
                 "Unforseen Additions": formData["Unforseen Additions"],
-                "PDF_ID": formData["PDF_ID"]
-            }
+                "PDF_ID": currentEditRow || '' // Include the current edit row if it exists
+            },
+            editRow: currentEditRow // Add this to indicate we're editing
         };
 
         console.log('Sending structured form data:', submissionData);
@@ -734,6 +739,9 @@ function submitForm() {
             },
             body: JSON.stringify(submissionData)
         })
+        // ... rest of the function remains the same ...
+    }
+}
         .then(response => {
             return new Promise((resolve, reject) => {
                 let attempts = 0;
