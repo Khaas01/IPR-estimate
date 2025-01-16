@@ -62,50 +62,69 @@ function doPost(e) {
     }
     Logger.log('Sheet headers: ' + JSON.stringify(tableHeaders));
 
-    // Prepare row data - using formData.data directly
+    // Prepare row data
     const rowData = tableHeaders.map(header => {
       if (header === "Timestamp") return new Date();
       if (header === "User Login") return Session.getActiveUser().getEmail() || '';
       return (formData.data && formData.data[header] !== undefined) ? formData.data[header] : '';
     });
-    Logger.log('Final row data to be appended: ' + JSON.stringify(rowData));
 
-    formResponseSheet.appendRow(rowData);
+    let targetRow;
+    // Check if this is an edit operation
+    if (formData.editRow) {
+      // Find the row with matching PDF_ID
+      const pdfIdColumn = tableHeaders.indexOf('PDF_ID') + 1;
+      const dataRange = formResponseSheet.getRange(2, pdfIdColumn, formResponseSheet.getLastRow() - 1);
+      const pdfIds = dataRange.getValues();
+      
+      for (let i = 0; i < pdfIds.length; i++) {
+        if (pdfIds[i][0] === formData.editRow) {
+          targetRow = i + 2; // +2 because we start at row 2 and i is 0-based
+          // Update existing row
+          formResponseSheet.getRange(targetRow, 1, 1, rowData.length).setValues([rowData]);
+          break;
+        }
+      }
+      
+      if (!targetRow) {
+        throw new Error('Could not find row to edit with PDF_ID: ' + formData.editRow);
+      }
+    } else {
+      // This is a new entry
+      formResponseSheet.appendRow(rowData);
+      targetRow = formResponseSheet.getLastRow();
+    }
 
+    // Force the sheet to update
+    SpreadsheetApp.flush();
+    
     // Update Estimate sheet with Database row
-    Utilities.sleep(5000); // 5 second delay for IMPORTRANGE
+    Utilities.sleep(2000); // Reduced delay for IMPORTRANGE
     const lastDatabaseRow = findLastRowWithData(databaseSheet);
     estimateSheet.getRange('K4').setValue(lastDatabaseRow);
-    Logger.log('Updated Estimate sheet K4 with row: ' + lastDatabaseRow);
+    
+    // Force another update
+    SpreadsheetApp.flush();
+    Utilities.sleep(1000);
 
     // Process form submission and generate PDF
-    try {
-      const submitResult = onFormSubmit({
-        lastRow: lastDatabaseRow,
-        clientName: formData.data["Owner Name"],
-        clientData: formData.data,
-        estimateWorkbook: estimateWorkbook
-      });
+    const submitResult = onFormSubmit({
+      lastRow: lastDatabaseRow,
+      clientName: formData.data["Owner Name"],
+      clientData: formData.data,
+      estimateWorkbook: estimateWorkbook
+    });
 
-      if (submitResult && submitResult.pdfUrl) {
-        return ContentService.createTextOutput(JSON.stringify({
-          success: true,
-          pdfUrl: submitResult.pdfUrl,
-          fileId: submitResult.fileId, 
-          timestamp: new Date().toISOString()
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
-
-      throw new Error('No preview URL generated');
-
-    } catch (submitError) {
-      Logger.log('Warning: onFormSubmit error: ' + submitError.message);
+    if (submitResult && submitResult.pdfUrl) {
       return ContentService.createTextOutput(JSON.stringify({
-        success: false,
-        message: submitError.message,
+        success: true,
+        pdfUrl: submitResult.pdfUrl,
+        fileId: submitResult.fileId,
         timestamp: new Date().toISOString()
       })).setMimeType(ContentService.MimeType.JSON);
     }
+
+    throw new Error('No preview URL generated');
 
   } catch (error) {
     Logger.log('Error in doPost: ' + error.message);
@@ -387,8 +406,8 @@ function onFormSubmit(e) {
       Logger.log('Error saving PDF ID to Form Responses: ' + pdfIdError.toString());
     }
 
-    // Send email with the PDF
-    MailApp.sendEmail({
+     //Send email with the PDF
+     MailApp.sendEmail({
       to: senderEmail,
       cc: 'khaas@ironpeakroofing.com',
       subject: subject,
