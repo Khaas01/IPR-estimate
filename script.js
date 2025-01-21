@@ -6,6 +6,11 @@ let currentEditRow = null;
 
 const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
 const SHEET_NAME = "Form Responses";
+const DIALOGFLOW_CONFIG = {
+    PROJECT_ID: 'ipr-roof-estimate-form-review',
+    LOCATION: 'us',
+    AGENT_ID: '5343493c-e057-445c-a767-86216ae1862d'
+};
 
 const API_CONFIG = {
     GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwjjzqXnmM1wuw83CU6ZBr0zm1IhkrtlK8DEHHXeIurwf4J9jmCFcu6AUEWEx0zjTjK5Q/exec',
@@ -104,6 +109,23 @@ async function initializeGoogleAPIs() {
         return false;
     }
 }
+document.addEventListener('df-messenger-loaded', function() {
+    console.log('Dialogflow CX Messenger loaded successfully');
+    
+    // Configure the messenger
+    const dfMessenger = document.querySelector('df-messenger');
+    if (dfMessenger) {
+        // Set custom styling
+        dfMessenger.setAttribute('chat-width', '400');
+        dfMessenger.setAttribute('chat-height', '500');
+        dfMessenger.setAttribute('expand', 'true');
+        
+        // Add error handling
+        dfMessenger.addEventListener('df-messenger-error', function(event) {
+            console.error('Dialogflow Messenger Error:', event.detail);
+        });
+    }
+});
 function adjustIframeHeight() {
     const container = document.querySelector('.estimate-preview-container');
     const iframe = document.getElementById('estimatePreviewFrame');
