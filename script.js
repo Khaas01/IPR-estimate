@@ -68,6 +68,14 @@ document.addEventListener('df-response-received', function(event) {
     const response = event.detail.response;
     console.log('Bot response:', response);
 });
+// Initialize map function (required for callback)
+function initMap() {
+    // This function will be called when the Maps API is loaded
+    console.log('Google Maps API loaded successfully');
+}
+
+// Fallback in case the page loads before the API
+window.initMap = initMap;
 async function initializeGoogleAPIs() {
     try {
         if (typeof gapi === 'undefined') {
