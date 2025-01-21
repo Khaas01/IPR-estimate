@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mia Chatbot</title>
+    <!-- Include the same API scripts as index.html -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
     <link rel="stylesheet" href="styles.css">
+    <!-- Add Dialogflow messenger script -->
     <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
     <link rel="icon" type="image/x-icon" href="https://i.imgur.com/kj09wS4.png">
+    <!-- Include Google Maps API with the same key -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254&libraries=places"></script>
 </head>
 <body>
     <header>
@@ -22,15 +28,15 @@
         </nav>
     </header>
 
+    <!-- Dialogflow CX Messenger Element -->
     <df-messenger
+        intent="WELCOME"
         location="us"
         project-id="ipr-roof-estimate-form-review"
         agent-id="5343493c-e057-445c-a767-86216ae1862d"
-        language-code="en">
-        <df-messenger-chat 
-            chat-title="Mia"
-            chat-icon="https://i.imgur.com/kj09wS4.png">
-        </df-messenger-chat>
+        language-code="en"
+        chat-title="Mia"
+        chat-icon="https://i.imgur.com/kj09wS4.png">
     </df-messenger>
 
     <style>
