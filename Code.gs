@@ -72,15 +72,15 @@ function doPost(e) {
     let targetRow;
     // Check if this is an edit operation
     if (formData.editRow) {
-      // Find the row with matching PDF_ID
+      Logger.log('Edit operation detected for PDF_ID: ' + formData.editRow);
       const pdfIdColumn = tableHeaders.indexOf('PDF_ID') + 1;
       const dataRange = formResponseSheet.getRange(2, pdfIdColumn, formResponseSheet.getLastRow() - 1);
       const pdfIds = dataRange.getValues();
       
       for (let i = 0; i < pdfIds.length; i++) {
         if (pdfIds[i][0] === formData.editRow) {
-          targetRow = i + 2; // +2 because we start at row 2 and i is 0-based
-          // Update existing row
+          targetRow = i + 2;
+          Logger.log('Found matching row: ' + targetRow);
           formResponseSheet.getRange(targetRow, 1, 1, rowData.length).setValues([rowData]);
           break;
         }
@@ -90,17 +90,20 @@ function doPost(e) {
         throw new Error('Could not find row to edit with PDF_ID: ' + formData.editRow);
       }
     } else {
-      // This is a new entry
+      Logger.log('New entry detected');
       formResponseSheet.appendRow(rowData);
       targetRow = formResponseSheet.getLastRow();
+      Logger.log('New row added at: ' + targetRow);
     }
 
     // Force the sheet to update
     SpreadsheetApp.flush();
+    Logger.log('Sheet updated');
     
     // Update Estimate sheet with Database row
-    Utilities.sleep(2000); // Reduced delay for IMPORTRANGE
+    Utilities.sleep(2000);
     const lastDatabaseRow = findLastRowWithData(databaseSheet);
+    Logger.log('Last database row: ' + lastDatabaseRow);
     estimateSheet.getRange('K4').setValue(lastDatabaseRow);
     
     // Force another update
@@ -108,12 +111,14 @@ function doPost(e) {
     Utilities.sleep(1000);
 
     // Process form submission and generate PDF
+    Logger.log('Preparing to generate PDF...');
     const submitResult = onFormSubmit({
       lastRow: lastDatabaseRow,
       clientName: formData.data["Owner Name"],
       clientData: formData.data,
       estimateWorkbook: estimateWorkbook
     });
+    Logger.log('PDF generation result: ' + JSON.stringify(submitResult));
 
     if (submitResult && submitResult.pdfUrl) {
       return ContentService.createTextOutput(JSON.stringify({
@@ -128,12 +133,22 @@ function doPost(e) {
 
   } catch (error) {
     Logger.log('Error in doPost: ' + error.message);
+    Logger.log('Stack trace: ' + error.stack);
     
-    // Send error notification email
+    // Send error notification email with more details
     MailApp.sendEmail({
       to: 'khaas@ironpeakroofing.com',
       subject: 'Form Submission Error',
-      body: 'Error in doPost: ' + error.message + '\n\nStack trace:\n' + error.stack
+      body: `Error in doPost: ${error.message}
+      
+Stack trace:
+${error.stack}
+
+Form Data:
+${JSON.stringify(formData, null, 2)}
+
+Last Database Row: ${lastDatabaseRow}
+Target Row: ${targetRow}`
     });
     
     return ContentService.createTextOutput(JSON.stringify({
@@ -170,36 +185,37 @@ function findLastRowWithData(sheet) {
   var databaseSheet = workbook.getSheetByName('Database');
   
   Logger.log('Starting findLastRowWithData function...');
-  Logger.log('Database sheet name: ' + databaseSheet.getName());
   
   // 2. Get the actual last row from Database sheet
   var lastRow = databaseSheet.getLastRow();
   Logger.log('Raw last row from Database sheet: ' + lastRow);
   
-  // 3. Verify data exists at this row
-  var headers = databaseSheet.getRange(2225, 1, 1, databaseSheet.getLastColumn()).getValues()[0];
+  // 3. Get the header row - FIXED: Use consistent row number
+  const HEADER_ROW = 2400; // Define this as a constant
+  var headers = databaseSheet.getRange(HEADER_ROW, 1, 1, databaseSheet.getLastColumn()).getValues()[0];
   var ownerNameCol = headers.indexOf("Owner Name") + 1;
-  Logger.log('Owner Name column index: ' + ownerNameCol);
   
-  var ownerName = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
-  Logger.log('Owner Name at last row ' + lastRow + ': ' + ownerName);
-  
-  // Add verification for the last few rows
-  Logger.log('Checking previous rows for verification:');
-  Logger.log('Row ' + (lastRow-1) + ' Owner Name: ' + databaseSheet.getRange(lastRow-1, ownerNameCol).getValue());
-  Logger.log('Row ' + (lastRow-2) + ' Owner Name: ' + databaseSheet.getRange(lastRow-2, ownerNameCol).getValue());
-   var currentRowValue = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
-  if (!currentRowValue) {
-    Logger.log('Warning: Empty owner name found at row ' + lastRow + ', checking previous row...');
-    lastRow = lastRow - 1;
-    currentRowValue = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
-    if (!currentRowValue) {
-      Logger.log('Warning: Empty owner name found at row ' + lastRow + ' as well, using original row number');
-      lastRow = lastRow + 1;
-    }
+  if (ownerNameCol === 0) {
+    throw new Error('Owner Name column not found in headers');
   }
   
-  Logger.log('Final row number being returned: ' + lastRow);
+  // 4. Verify the data exists
+  var currentRowValue = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
+  var maxAttempts = 5;  // Add safety limit for row checking
+  var attempts = 0;
+  
+  while (!currentRowValue && attempts < maxAttempts) {
+    lastRow--;
+    attempts++;
+    currentRowValue = databaseSheet.getRange(lastRow, ownerNameCol).getValue();
+    Logger.log(`Checking row ${lastRow}, value: ${currentRowValue}`);
+  }
+  
+  if (!currentRowValue) {
+    throw new Error('Could not find valid row with Owner Name');
+  }
+  
+  Logger.log('Final valid row found: ' + lastRow);
   return lastRow;
 }
 function findLastRowWithData() {
@@ -298,8 +314,9 @@ function onFormSubmit(e) {
     // Update Estimate sheet again to ensure correct row
     estimateSheet.getRange('K4').setValue(lastRow);
     
-    // 3. Get headers from Database sheet (starting at row 2225)
-    var headers = databaseSheet.getRange(2225, 1, 1, databaseSheet.getLastColumn()).getValues()[0];
+    // 3. Get headers from Database sheet  
+    const HEADER_ROW = 2400;
+    var headers = databaseSheet.getRange(HEADER_ROW, 1, 1, databaseSheet.getLastColumn()).getValues()[0];
     Logger.log('Headers from Database: ' + headers.join(', '));
 
     function getColumnByHeader(headerName) {
