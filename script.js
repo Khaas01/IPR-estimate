@@ -53,10 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-// Add this to your script.js file
-document.addEventListener('df-messenger-loaded', function() {
-    console.log('Dialogflow CX Messenger loaded successfully');
-});
 
 document.addEventListener('df-messenger-error', function(event) {
     console.error('Dialogflow CX Messenger Error:', event.detail);
@@ -109,22 +105,19 @@ async function initializeGoogleAPIs() {
         return false;
     }
 }
-document.addEventListener('df-messenger-loaded', function() {
-    console.log('Dialogflow CX Messenger loaded successfully');
+document.addEventListener('df-messenger-error', function(event) {
+    console.error('Dialogflow CX Messenger Error:', event.detail);
     
-    // Configure the messenger
+    // Attempt to recover from error
     const dfMessenger = document.querySelector('df-messenger');
     if (dfMessenger) {
-        // Set custom styling
-        dfMessenger.setAttribute('chat-width', '400');
-        dfMessenger.setAttribute('chat-height', '500');
-        dfMessenger.setAttribute('expand', 'true');
-        
-        // Add error handling
-        dfMessenger.addEventListener('df-messenger-error', function(event) {
-            console.error('Dialogflow Messenger Error:', event.detail);
-        });
+        dfMessenger.setAttribute('refresh', Date.now().toString());
     }
+});
+
+// Add response handling
+document.addEventListener('df-response-received', function(event) {
+    console.log('Bot response received:', event.detail.response);
 });
 function adjustIframeHeight() {
     const container = document.querySelector('.estimate-preview-container');
