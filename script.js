@@ -20,6 +20,7 @@ const API_CONFIG = {
         'https://www.googleapis.com/auth/spreadsheets'
     ].join(' ')
 };
+// nav.js
 function toggleMenu() {
     const menuToggle = document.querySelector('.menu-toggle');
     const navMenu = document.querySelector('.nav-menu');
@@ -31,7 +32,7 @@ function toggleMenu() {
 document.addEventListener('click', function(event) {
     const navMenu = document.querySelector('.nav-menu');
     const menuToggle = document.querySelector('.menu-toggle');
-    if (navMenu.classList.contains('active') && 
+    if (navMenu && navMenu.classList.contains('active') && 
         !event.target.closest('.nav-container')) {
         navMenu.classList.remove('active');
         menuToggle.classList.remove('active');
@@ -39,10 +40,14 @@ document.addEventListener('click', function(event) {
 });
 
 // Prevent menu from closing when clicking inside
-document.querySelector('.nav-container').addEventListener('click', function(event) {
-    event.stopPropagation();
+document.addEventListener('DOMContentLoaded', function() {
+    const navContainer = document.querySelector('.nav-container');
+    if (navContainer) {
+        navContainer.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    }
 });
-
 async function initializeGoogleAPIs() {
     try {
         if (typeof gapi === 'undefined') {
