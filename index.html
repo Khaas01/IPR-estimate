@@ -28,6 +28,35 @@
     </ul>
 </nav>
 </header>
+<div id="mia-section" style="display:none;">
+    <h2>Chat with Mia</h2>
+    <!-- Dialogflow CX Messenger Element -->
+    <df-messenger
+        intent="WELCOME"
+        location="us"
+        project-id="ipr-roof-estimate-form-review"
+        agent-id="5343493c-e057-445c-a767-86216ae1862d"
+        language-code="en"
+        chat-title="Mia"
+        chat-icon="https://i.imgur.com/kj09wS4.png">
+    </df-messenger>
+
+    <style>
+        df-messenger {
+            z-index: 999;
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            --df-messenger-bot-message: #878fac;
+            --df-messenger-button-titlebar-color: #0056b3;
+            --df-messenger-chat-background-color: #fafafa;
+            --df-messenger-font-color: rgba(0, 0, 0, 0.87);
+            --df-messenger-send-icon: #0056b3;
+            --df-messenger-user-message: #0056b3;
+        }
+    </style>
+</div>
+
 <form id="estimateForm">
    <!--Sales Rep Section -->
    <div id="salesRepSection" style="display:block;">
