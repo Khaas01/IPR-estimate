@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mia Chatbot</title>
+    <title>Chat with Mia</title>
     <!-- Include the same API scripts as index.html -->
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
@@ -17,15 +17,17 @@
 <body>
     <header>
         <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
-        <h1>Mia Chatbot</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="form.html">Estimate Form</a></li>
-                <li><a href="review.html">Review Estimate</a></li>
-                <li><a href="mia.html">Mia Chatbot</a></li>
-            </ul>
-        </nav>
+        <h1>Chat with Mia</h1>
+       <nav class="nav-container">
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle Menu">
+        <span class="hamburger"></span>
+    </button>
+    <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#" onclick="showSection('measureRoofSection'); return false;">Measurement</a></li>
+        <li><a href="mia.html">Chat with Mia</a></li>
+    </ul>
+</nav>
     </header>
 
     <!-- Dialogflow CX Messenger Element -->
