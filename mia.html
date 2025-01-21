@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mia Chatbot</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" 
-        href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css">
+    <!-- Updated to CX-specific messenger stylesheet -->
+    <link rel="stylesheet" href="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></link>
     <link rel="icon" type="image/x-icon" href="https://i.imgur.com/kj09wS4.png">
 </head>
 <body>
@@ -23,19 +23,14 @@
         </nav>
     </header>
 
-    <script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
-
-    <!-- Updated Dialogflow Messenger configuration -->
+    <!-- Dialogflow CX Messenger Element -->
     <df-messenger
+        location="us-central1"
         project-id="ipr-roof-estimate-form-review"
         agent-id="5343493c-e057-445c-a767-86216ae1862d"
-        language-code="en">
-        <df-messenger-chat
-            chat-title="Mia"
-            placeholder-text="Ask me about roofing estimates..."
-            chat-width="400"
-            chat-height="500">
-        </df-messenger-chat>
+        language-code="en"
+        chat-title="Mia"
+        chat-icon="https://i.imgur.com/kj09wS4.png">
     </df-messenger>
 
     <style>
@@ -50,7 +45,6 @@
             --df-messenger-font-color: rgba(0, 0, 0, 0.87);
             --df-messenger-send-icon: #0056b3;
             --df-messenger-user-message: #0056b3;
-            --df-messenger-minimize-icon-display: none;
         }
     </style>
 
@@ -64,27 +58,12 @@
     </footer>
 
     <script>
-        // Enhanced error handling
-        window.addEventListener('df-messenger-error', function (event) {
-            console.error('Dialogflow Messenger Error:', event.detail);
-            
-            // Log specific error details
-            if (event.detail && event.detail.error) {
-                const error = event.detail.error;
-                console.error('Error Code:', error.code);
-                console.error('Error Message:', error.message);
-                console.error('Error Status:', error.status);
-            }
+        window.addEventListener('df-messenger-loaded', function() {
+            console.log('Dialogflow CX Messenger loaded successfully');
         });
 
-        // Add loaded event handler
-        window.addEventListener('df-messenger-loaded', function (event) {
-            console.log('Dialogflow Messenger loaded successfully');
-        });
-
-        // Handle unhandled promise rejections
-        window.addEventListener('unhandledrejection', function(event) {
-            console.error('Unhandled Promise Rejection:', event.reason);
+        window.addEventListener('df-messenger-error', function(event) {
+            console.error('Dialogflow CX Messenger Error:', event.detail);
         });
     </script>
 </body>
