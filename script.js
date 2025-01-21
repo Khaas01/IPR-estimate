@@ -48,6 +48,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+// Add this to your script.js file
+document.addEventListener('df-messenger-loaded', function() {
+    console.log('Dialogflow CX Messenger loaded successfully');
+});
+
+document.addEventListener('df-messenger-error', function(event) {
+    console.error('Dialogflow CX Messenger Error:', event.detail);
+    if (event.detail && event.detail.error) {
+        console.log('Error details:', {
+            code: event.detail.error.code,
+            message: event.detail.error.message
+        });
+    }
+});
+
+// Optional: Add this if you want to handle specific responses
+document.addEventListener('df-response-received', function(event) {
+    const response = event.detail.response;
+    console.log('Bot response:', response);
+});
 async function initializeGoogleAPIs() {
     try {
         if (typeof gapi === 'undefined') {
