@@ -2,10 +2,41 @@
 * {
     box-sizing: border-box;
 }
-/* Navigation Styles */
-.nav-container {
+/* Add padding to account for menu */
+form {
+    padding-top: 60px; /* Add space at top for header and menu */
+}
+
+/* Adjust header and nav container positioning */
+header {
     position: relative;
-    padding: 1rem;
+    margin-bottom: 20px;
+}
+
+.nav-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 0;
+}
+
+.nav-menu {
+    position: absolute;
+    top: 45px; /* Adjust based on menu toggle button height */
+    right: 0;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-width: 200px;
+    z-index: 999;
+}
+
+/* Adjust section containers */
+[id$="Section"] {
+    position: relative;
+    margin-top: 20px;
 }
 
 .menu-toggle {
