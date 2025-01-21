@@ -17,15 +17,16 @@
     <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
     <h1>Roofing Estimate Form</h1>
 
-<nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="form.html">Estimate Form</a></li>
-            <li><a href="review.html">Review Estimate</a></li>
-            <li><a href="mia.html">Mia Chatbot</a></li>
-            <li><a href="#" onclick="measureRoofSection()">Measurement</a></li>
-        </ul>
-    </nav>
+<nav class="nav-container">
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle Menu">
+        <span class="hamburger"></span>
+    </button>
+    <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#" onclick="showSection('measureRoofSection'); return false;">Measurement</a></li>
+        <li><a href="mia.html">Mia Chatbot</a></li>
+    </ul>
+</nav>
 </header>
 <form id="estimateForm">
    <!--Sales Rep Section -->
