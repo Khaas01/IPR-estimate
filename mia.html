@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mia Chatbot</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Dialogflow CX Messenger Resources -->
     <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
     <link rel="icon" type="image/x-icon" href="https://i.imgur.com/kj09wS4.png">
 </head>
@@ -23,9 +22,8 @@
         </nav>
     </header>
 
-    <!-- Dialogflow CX Messenger Element -->
     <df-messenger
-        location="us-central1"
+        location="us"
         project-id="ipr-roof-estimate-form-review"
         agent-id="5343493c-e057-445c-a767-86216ae1862d"
         language-code="en">
@@ -66,6 +64,12 @@
 
         window.addEventListener('df-messenger-error', function(event) {
             console.error('Dialogflow CX Messenger Error:', event.detail);
+            if (event.detail && event.detail.error) {
+                console.log('Error details:', {
+                    code: event.detail.error.code,
+                    message: event.detail.error.message
+                });
+            }
         });
     </script>
 </body>
