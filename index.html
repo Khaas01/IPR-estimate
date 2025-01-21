@@ -858,6 +858,15 @@
         --df-messenger-send-icon: #0056b3;
         --df-messenger-user-message: #0056b3;
     }
+    /* Ensure chat doesn't interfere with form elements */
+df-messenger-chat {
+    z-index: 1000;
+}
+
+/* Add margin to form to prevent chat from covering buttons */
+#navigationButtons {
+    margin-bottom: 80px;
+}
 </style>
 </body>
 </html>
