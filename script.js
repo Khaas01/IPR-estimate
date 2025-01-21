@@ -32,6 +32,17 @@ function toggleMenu() {
     menuToggle.classList.toggle('active');
     navMenu.classList.toggle('active');
 }
+function refreshChatbot() {
+    const dfMessenger = document.querySelector('df-messenger');
+    if (dfMessenger) {
+        // Force a refresh by updating the refresh attribute
+        dfMessenger.setAttribute('refresh', Date.now().toString());
+        console.log('Chatbot refresh triggered');
+    }
+}
+
+// Add this to your window load event
+window.addEventListener('load', refreshChatbot);
 
 // Close menu when clicking outside
 document.addEventListener('click', function(event) {
