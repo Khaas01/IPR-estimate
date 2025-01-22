@@ -85,6 +85,42 @@ function initMap() {
     // This function will be called when the Maps API is loaded
     console.log('Google Maps API loaded successfully');
 }
+window.addEventListener('load', async function() {
+    try {
+        // Initialize service account
+        const credentials = await getDecodedServiceAccountCredentials();
+        
+        const dfMessenger = document.querySelector('df-messenger');
+        if (dfMessenger) {
+            // Set necessary attributes
+            dfMessenger.setAttribute('auth-type', 'service-account');
+            
+            // Add error handling
+            dfMessenger.addEventListener('df-messenger-error', function(event) {
+                console.error('Dialogflow Error:', event.detail);
+                if (event.detail && event.detail.error) {
+                    // Log specific error details
+                    console.error('Error details:', {
+                        code: event.detail.error.code,
+                        message: event.detail.error.message
+                    });
+                }
+                
+                // Attempt to reconnect
+                setTimeout(() => {
+                    dfMessenger.setAttribute('refresh', Date.now().toString());
+                }, 1000);
+            });
+
+            // Add successful connection handling
+            dfMessenger.addEventListener('df-messenger-connected', function(event) {
+                console.log('Dialogflow connected successfully');
+            });
+        }
+    } catch (error) {
+        console.error('Failed to initialize Dialogflow:', error);
+    }
+});
 
 // Fallback in case the page loads before the API
 window.initMap = initMap;
