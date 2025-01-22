@@ -122,29 +122,41 @@ window.addEventListener('load', async function() {
     }
 });
 document.addEventListener('df-messenger-loaded', function() {
-    console.log('Dialogflow CX Messenger loaded successfully');
-    
     const dfMessenger = document.querySelector('df-messenger');
     if (dfMessenger) {
-        // Log successful initialization
-        console.log('Messenger component found, initializing...');
-        
-        // Add error handling with detailed logging
+        // Set conversational agent configurations
+        dfMessenger.renderConfig = {
+            openChatByDefault: false,
+            showMinButton: true,
+            enableFullscreen: true,
+            enableVoice: false
+        };
+
+        // Set welcome event
+        dfMessenger.startFlowEvent = {
+            name: "DefaultWelcomeIntent",
+            languageCode: "en"
+        };
+
+        // Add error handling specific to conversational agent
         dfMessenger.addEventListener('df-messenger-error', function(event) {
-            console.error('Dialogflow Error:', event.detail);
-            const error = event.detail.error || {};
-            console.error('Error details:', {
-                code: error.code,
-                message: error.message,
-                status: error.status,
-                intent: dfMessenger.getAttribute('intent')
-            });
+            console.error('Dialogflow CX Error:', event.detail);
+            // Attempt to reinitialize conversation
+            dfMessenger.restartConversation();
         });
 
-        // Add successful connection handling
+        // Handle successful connection
         dfMessenger.addEventListener('df-messenger-connected', function(event) {
-            console.log('Successfully connected to Dialogflow');
-            console.log('Current intent:', dfMessenger.getAttribute('intent'));
+            console.log('Conversational Agent Connected');
+        });
+
+        // Handle message events
+        dfMessenger.addEventListener('df-message-sent', function(event) {
+            console.log('User message sent:', event.detail);
+        });
+
+        dfMessenger.addEventListener('df-response-received', function(event) {
+            console.log('Bot response:', event.detail);
         });
     }
 });
