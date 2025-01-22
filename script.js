@@ -1,35 +1,43 @@
-// Global variables
-let isSubmitting = false;
-let sectionHistory = []; // Initialize sectionHistory
-let currentEditRow = null;
-// Centralized API configuration
-
-const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
-const SHEET_NAME = "Form Responses";
-const DIALOGFLOW_CONFIG = {
-    PROJECT_ID: 'ipr-roof-estimate-form-review',
-    LOCATION: 'us',
-    AGENT_ID: '5343493c-e057-445c-a767-86216ae1862d'
+// ===========================================
+// Configuration and Constants
+// ===========================================
+const CONFIG = {
+    SHEETS: {
+        ID: "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw",
+        NAME: "Form Responses"
+    },
+    DIALOGFLOW: {
+        PROJECT_ID: 'ipr-roof-estimate-form-review',
+        LOCATION: 'us',
+        AGENT_ID: '5343493c-e057-445c-a767-86216ae1862d'
+    },
+    API: {
+        GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwjjzqXnmM1wuw83CU6ZBr0zm1IhkrtlK8DEHHXeIurwf4J9jmCFcu6AUEWEx0zjTjK5Q/exec',
+        API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
+        CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
+        REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
+        SCOPES: ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/spreadsheets'].join(' ')
+    }
 };
 
-const API_CONFIG = {
-    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwjjzqXnmM1wuw83CU6ZBr0zm1IhkrtlK8DEHHXeIurwf4J9jmCFcu6AUEWEx0zjTjK5Q/exec',
-    API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
-    CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
-    REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
-    SHEET_ID: SHEET_ID,
-    SHEET_NAME: SHEET_NAME,
-    API_ENDPOINT: `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}`,
-    SCOPES: [
-        'https://www.googleapis.com/auth/drive',
-        'https://www.googleapis.com/auth/spreadsheets'
-    ].join(' ')
+// ===========================================
+// Global State Variables
+// ===========================================
+const state = {
+    isSubmitting: false,
+    sectionHistory: [],
+    currentEditRow: null
 };
-// Initialize Dialogflow messenger
-   document.addEventListener('DOMContentLoaded', () => {
-    const dfMessenger = document.querySelector('df-messenger');
-    if (dfMessenger) {
-        // Set conversational agent configurations
+
+// ===========================================
+// Dialogflow Messenger Configuration
+// ===========================================
+const DialogflowMessenger = {
+    init() {
+        const dfMessenger = document.querySelector('df-messenger');
+        if (!dfMessenger) return;
+
+        // Configure messenger settings
         dfMessenger.renderConfig = {
             openChatByDefault: false,
             showMinButton: true,
@@ -43,102 +51,127 @@ const API_CONFIG = {
             languageCode: "en"
         };
 
+        this.setupEventListeners();
+    },
 
-        // Handle bot events
-      document.addEventListener('df-messenger-loaded', function(event) {
-  const dfMessenger = document.querySelector('df-messenger');
-  const dfPlaybook = document.querySelector('df-messenger-playbook');
-  
-  if (dfMessenger && dfPlaybook) {
-    // Ensure messenger is ready before triggering playbook
-    dfMessenger.addEventListener('df-messenger-connected', () => {
-      // Short delay to ensure everything is initialized
-      setTimeout(() => {
-        dfPlaybook.setAttribute('auto-trigger', 'true');
-        dfPlaybook.setAttribute('playbook', 'Mia - Initial Contact');
-      }, 1000);
-    });
-  }
-});
+    setupEventListeners() {
+        // Messenger loaded event
+        document.addEventListener('df-messenger-loaded', this.handleMessengerLoaded);
+        
+        // Error handling
+        document.addEventListener('df-messenger-error', this.handleError);
+        
+        // Connection handling
+        document.addEventListener('df-messenger-connected', this.handleConnection);
+        
+        // Message events
+        document.addEventListener('df-message-sent', this.handleMessageSent);
+        document.addEventListener('df-response-received', this.handleResponseReceived);
+    },
 
-// Add better error handling
-document.addEventListener('df-messenger-error', function(event) {
-  console.log('Dialogflow CX Error:', event.detail);
-  // Try to recover from error
-  const dfMessenger = document.querySelector('df-messenger');
-  if (dfMessenger) {
-    dfMessenger.setAttribute('refresh', 'true');
-  }
-});
+    handleMessengerLoaded(event) {
+        const dfMessenger = document.querySelector('df-messenger');
+        const dfPlaybook = document.querySelector('df-messenger-playbook');
+        
+        if (dfMessenger && dfPlaybook) {
+            dfMessenger.addEventListener('df-messenger-connected', () => {
+                setTimeout(() => {
+                    dfPlaybook.setAttribute('auto-trigger', 'true');
+                    dfPlaybook.setAttribute('playbook', 'Mia - Initial Contact');
+                }, 1000);
+            });
+        }
+    },
 
-// Add successful connection handling
-document.addEventListener('df-messenger-connected', function(event) {
-    console.log('Conversational Agent Connected');
-    const dfMessenger = document.querySelector('df-messenger');
-    if (dfMessenger) {
-        dfMessenger.setAttribute('playbook', 'Mia - Initial Contact');
+    handleError(event) {
+        console.log('Dialogflow CX Error:', event.detail);
+        const dfMessenger = document.querySelector('df-messenger');
+        if (dfMessenger) {
+            dfMessenger.setAttribute('refresh', 'true');
+        }
+    },
+
+    handleConnection(event) {
+        console.log('Conversational Agent Connected');
+        const dfMessenger = document.querySelector('df-messenger');
+        if (dfMessenger) {
+            dfMessenger.setAttribute('playbook', 'Mia - Initial Contact');
+        }
+    },
+
+    handleMessageSent(event) {
+        console.log('User message sent:', event.detail);
+    },
+
+    handleResponseReceived(event) {
+        console.log('Bot response:', event.detail);
+    },
+
+    refresh() {
+        const dfMessenger = document.querySelector('df-messenger');
+        if (dfMessenger) {
+            dfMessenger.setAttribute('refresh', Date.now().toString());
+            console.log('Chatbot refresh triggered');
+        }
     }
-});
+};
 
+// ===========================================
+// Navigation Functions
+// ===========================================
+const Navigation = {
+    toggleMenu() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        menuToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    },
 
-        fMessenger.addEventListener('df-message-sent', function(event) {
-            console.log('User message sent:', event.detail);
+    setupClickOutside() {
+        document.addEventListener('click', (event) => {
+            const navMenu = document.querySelector('.nav-menu');
+            const menuToggle = document.querySelector('.menu-toggle');
+            if (navMenu && navMenu.classList.contains('active') && 
+                !event.target.closest('.nav-container')) {
+                navMenu.classList.remove('active');
+                menuToggle.classList.remove('active');
+            }
         });
+    },
 
-        dfMessenger.addEventListener('df-response-received', function(event) {
-            console.log('Bot response:', event.detail);
-        });
+    preventMenuClose() {
+        const navContainer = document.querySelector('.nav-container');
+        if (navContainer) {
+            navContainer.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+        }
     }
-   });
+};
 
-
-
-
-// Make sure initMap is defined globally
+// ===========================================
+// Google Maps Integration
+// ===========================================
 window.initMap = function() {
     console.log('Google Maps API loaded successfully');
     initializeAutocomplete();
 };
 
-// nav.js
-function toggleMenu() {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    menuToggle.classList.toggle('active');
-    navMenu.classList.toggle('active');
-}
-function refreshChatbot() {
-    const dfMessenger = document.querySelector('df-messenger');
-    if (dfMessenger) {
-        // Force a refresh by updating the refresh attribute
-        dfMessenger.setAttribute('refresh', Date.now().toString());
-        console.log('Chatbot refresh triggered');
-    }
-}
-
-// Add this to your window load event
-window.addEventListener('load', refreshChatbot);
-
-// Close menu when clicking outside
-document.addEventListener('click', function(event) {
-    const navMenu = document.querySelector('.nav-menu');
-    const menuToggle = document.querySelector('.menu-toggle');
-    if (navMenu && navMenu.classList.contains('active') && 
-        !event.target.closest('.nav-container')) {
-        navMenu.classList.remove('active');
-        menuToggle.classList.remove('active');
-    }
+// ===========================================
+// Event Listeners
+// ===========================================
+document.addEventListener('DOMContentLoaded', () => {
+    DialogflowMessenger.init();
+    Navigation.preventMenuClose();
 });
 
-// Prevent menu from closing when clicking inside
-document.addEventListener('DOMContentLoaded', function() {
-    const navContainer = document.querySelector('.nav-container');
-    if (navContainer) {
-        navContainer.addEventListener('click', function(event) {
-            event.stopPropagation();
-        });
-    }
+window.addEventListener('load', () => {
+    DialogflowMessenger.refresh();
 });
+
+// Export any necessary functions or objects
+window.toggleMenu = Navigation.toggleMenu;
+window.refreshChatbot = DialogflowMessenger.refresh;
 
 
 
