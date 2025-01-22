@@ -850,14 +850,12 @@
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // Get and parse the service account credentials
         const credentials = await getDecodedServiceAccountCredentials();
         
-        // Create the messenger configuration object
         const messengerConfig = {
             credentials: credentials,
             playbook: {
-                name: "Mia - Initial Contact",
+                name: "Mia - Initial Contact",  // Keeping the correct playbook name
                 trigger: "WELCOME",
                 autoStart: true
             }
@@ -865,30 +863,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const dfMessenger = document.querySelector('df-messenger');
         if (dfMessenger) {
-            // Set the configuration as a properly encoded JSON string
             dfMessenger.setAttribute('configuration', JSON.stringify(messengerConfig));
             
-            // Error handling
             dfMessenger.addEventListener('df-messenger-error', (event) => {
                 console.error('Dialogflow Error:', event.detail);
             });
             
-            // Connection success handling
             dfMessenger.addEventListener('df-messenger-connected', () => {
                 console.log('Dialogflow connected successfully');
             });
 
-            // Add loaded event listener
             dfMessenger.addEventListener('df-messenger-loaded', () => {
                 console.log('Messenger loaded successfully');
-                // Trigger playbook after load
-                dfMessenger.triggerPlaybook("Mia - Initial Contact");
+                dfMessenger.triggerPlaybook("Mia - Initial Contact");  // Keeping the correct playbook name
             });
         }
     } catch (error) {
         console.error('Error initializing Dialogflow:', error);
     }
 });
+</script>
 
 // Update getDecodedServiceAccountCredentials to ensure proper JSON formatting
 async function getDecodedServiceAccountCredentials() {
