@@ -43,15 +43,54 @@ const API_CONFIG = {
         };
 
         // Handle bot events
-        dfMessenger.addEventListener('df-messenger-error', function(event) {
-            console.error('Dialogflow CX Error:', event.detail);
-            // Attempt to reinitialize conversation
-            dfMessenger.restartConversation();
-        });
+        document.addEventListener('df-messenger-error', function(event) {
+    console.error('Dialogflow CX Error:', event.detail);
+    
+    const dfMessenger = document.querySelector('df-messenger');
+    if (dfMessenger) {
+        // Instead of calling restartConversation, refresh the messenger
+        dfMessenger.setAttribute('refresh', Date.now().toString());
+        
+        // Attempt to trigger the initial playbook again
+        setTimeout(() => {
+            dfMessenger.setAttribute('playbook', 'Mia - Initial Contact');
+        }, 1000);
+    }
+});
+        document.addEventListener('df-messenger-loaded', function() {
+    const dfMessenger = document.querySelector('df-messenger');
+    if (dfMessenger) {
+        // Set initial configurations
+        dfMessenger.renderConfig = {
+            openChatByDefault: false,
+            showMinButton: true,
+            enableFullscreen: true,
+            enableVoice: false
+        };
 
-        dfMessenger.addEventListener('df-messenger-connected', function(event) {
-            console.log('Conversational Agent Connected');
-        });
+        // Set language and playbook
+        dfMessenger.setAttribute('language-code', 'en');
+        dfMessenger.setAttribute('playbook', 'Mia - Initial Contact');
+    }
+});
+        // Remove any duplicate error listeners
+const existingListeners = window.getEventListeners && 
+    window.getEventListeners(document)['df-messenger-error'] || [];
+if (existingListeners.length > 1) {
+    existingListeners.slice(1).forEach(listener => {
+        document.removeEventListener('df-messenger-error', listener.listener);
+    });
+}
+
+// Add successful connection handling
+document.addEventListener('df-messenger-connected', function(event) {
+    console.log('Conversational Agent Connected');
+    const dfMessenger = document.querySelector('df-messenger');
+    if (dfMessenger) {
+        dfMessenger.setAttribute('playbook', 'Mia - Initial Contact');
+    }
+});
+
 
         dfMessenger.addEventListener('df-message-sent', function(event) {
             console.log('User message sent:', event.detail);
