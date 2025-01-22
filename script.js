@@ -26,7 +26,7 @@ const API_CONFIG = {
     ].join(' ')
 };
 // Initialize Dialogflow messenger
-    document.addEventListener('DOMContentLoaded', () => {
+   document.addEventListener('DOMContentLoaded', () => {
     const dfMessenger = document.querySelector('df-messenger');
     if (dfMessenger) {
         // Set conversational agent configurations
@@ -43,10 +43,8 @@ const API_CONFIG = {
             languageCode: "en"
         };
 
+
         // Handle bot events
-      document.addEventListener('df-messenger-error', function(event) {
-    console.error('Dialogflow CX Error:', event.detail);
-});
       document.addEventListener('df-messenger-loaded', function(event) {
   const dfMessenger = document.querySelector('df-messenger');
   const dfPlaybook = document.querySelector('df-messenger-playbook');
@@ -83,7 +81,7 @@ document.addEventListener('df-messenger-connected', function(event) {
 });
 
 
-        dfMessenger.addEventListener('df-message-sent', function(event) {
+        fMessenger.addEventListener('df-message-sent', function(event) {
             console.log('User message sent:', event.detail);
         });
 
@@ -91,6 +89,9 @@ document.addEventListener('df-messenger-connected', function(event) {
             console.log('Bot response:', event.detail);
         });
     }
+   });
+
+
 
 
 // Make sure initMap is defined globally
