@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
     <title>Iron Peak Roofing - Estimate Form</title>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="styles.css">
@@ -837,13 +839,18 @@
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 <!-- Dialogflow CX Messenger Element -->
 <df-messenger
-  agent-id="5343493c-e057-445c-a767-86216ae1862d"
+  oauth-client-id="900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com"
+  access-token-name="YOUR_ACCESS_TOKEN_NAME"
   location="us"
   project-id="ipr-roof-estimate-form-review"
+  agent-id="5343493c-e057-445c-a767-86216ae1862d"
   language-code="en"
-  chat-title="Mia - Pro Assist"
-  chat-icon="https://i.imgur.com/kj09wS4.png">
+  max-query-length="-1">
+  <df-messenger-chat-bubble
+   chat-title="Mia">
+  </df-messenger-chat-bubble>
 </df-messenger>
+
 <style>
   df-messenger {
     z-index: 999;
