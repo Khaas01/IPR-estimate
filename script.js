@@ -26,6 +26,7 @@ const API_CONFIG = {
     ].join(' ')
 };
 // Initialize Dialogflow messenger
+    document.addEventListener('DOMContentLoaded', () => {
     const dfMessenger = document.querySelector('df-messenger');
     if (dfMessenger) {
         // Set conversational agent configurations
@@ -43,9 +44,9 @@ const API_CONFIG = {
         };
 
         // Handle bot events
-        document.addEventListener('df-messenger-error', function(event) {
+      document.addEventListener('df-messenger-error', function(event) {
     console.error('Dialogflow CX Error:', event.detail);
-    
+});
       document.addEventListener('df-messenger-loaded', function(event) {
   const dfMessenger = document.querySelector('df-messenger');
   const dfPlaybook = document.querySelector('df-messenger-playbook');
@@ -375,13 +376,6 @@ function fillInAddress(place) {
 // Initialize autocomplete when page loads
 document.addEventListener('DOMContentLoaded', initializeAutocomplete);
 // Function to hide all sections - keep it simple and efficient
-function hideAllSections() {
-    console.log('Hiding all sections');
-    document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
-        section.style.display = 'none';
-        console.log('Hidden section:', section.id);
-    });
-}
 document.addEventListener('DOMContentLoaded', function() {
     // Function to properly capitalize words
     function capitalizeWords(str) {
@@ -1307,6 +1301,3 @@ async function getDecodedServiceAccountCredentials() {
         console.error('Service account credentials error:', error);
         throw new Error('Failed to initialize service account credentials');
     }
-
-
-
