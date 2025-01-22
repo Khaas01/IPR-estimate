@@ -847,15 +847,15 @@
   chat-trigger="WELCOME">
 </df-messenger>
 
+<!-- In index.html -->
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const credentials = await getDecodedServiceAccountCredentials();
-        
         const messengerConfig = {
             credentials: credentials,
             playbook: {
-                name: "Mia - Initial Contact",  // Keeping the correct playbook name
+                name: "Mia - Initial Contact",
                 trigger: "WELCOME",
                 autoStart: true
             }
@@ -875,30 +875,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             dfMessenger.addEventListener('df-messenger-loaded', () => {
                 console.log('Messenger loaded successfully');
-                dfMessenger.triggerPlaybook("Mia - Initial Contact");  // Keeping the correct playbook name
+                dfMessenger.triggerPlaybook("Mia - Initial Contact");
             });
         }
     } catch (error) {
         console.error('Error initializing Dialogflow:', error);
     }
 });
-</script>
-
-// Update getDecodedServiceAccountCredentials to ensure proper JSON formatting
-async function getDecodedServiceAccountCredentials() {
-    try {
-        const response = await fetch('service-account-base64.txt');
-        if (!response.ok) {
-            throw new Error(`Failed to fetch credentials: ${response.status} ${response.statusText}`);
-        }
-        const base64Content = await response.text();
-        const jsonContent = atob(base64Content);
-        return JSON.parse(jsonContent.trim()); // Added trim() to remove any whitespace
-    } catch (error) {
-        console.error('Service account credentials error:', error);
-        throw error;
-    }
-}
 </script>
 <style>
   df-messenger {
