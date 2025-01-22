@@ -61,7 +61,7 @@ const API_CONFIG = {
             console.log('Bot response:', event.detail);
         });
     }
-});
+
 
 // Make sure initMap is defined globally
 window.initMap = function() {
