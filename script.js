@@ -46,17 +46,6 @@ const API_CONFIG = {
         document.addEventListener('df-messenger-error', function(event) {
     console.error('Dialogflow CX Error:', event.detail);
     
-    const dfMessenger = document.querySelector('df-messenger');
-    if (dfMessenger) {
-        // Instead of calling restartConversation, refresh the messenger
-        dfMessenger.setAttribute('refresh', Date.now().toString());
-        
-        // Attempt to trigger the initial playbook again
-        setTimeout(() => {
-            dfMessenger.setAttribute('playbook', 'Mia - Initial Contact');
-        }, 1000);
-    }
-});
       document.addEventListener('df-messenger-loaded', function(event) {
   const dfMessenger = document.querySelector('df-messenger');
   const dfPlaybook = document.querySelector('df-messenger-playbook');
