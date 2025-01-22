@@ -121,6 +121,33 @@ window.addEventListener('load', async function() {
         console.error('Failed to initialize Dialogflow:', error);
     }
 });
+document.addEventListener('df-messenger-loaded', function() {
+    console.log('Dialogflow CX Messenger loaded successfully');
+    
+    const dfMessenger = document.querySelector('df-messenger');
+    if (dfMessenger) {
+        // Log successful initialization
+        console.log('Messenger component found, initializing...');
+        
+        // Add error handling with detailed logging
+        dfMessenger.addEventListener('df-messenger-error', function(event) {
+            console.error('Dialogflow Error:', event.detail);
+            const error = event.detail.error || {};
+            console.error('Error details:', {
+                code: error.code,
+                message: error.message,
+                status: error.status,
+                intent: dfMessenger.getAttribute('intent')
+            });
+        });
+
+        // Add successful connection handling
+        dfMessenger.addEventListener('df-messenger-connected', function(event) {
+            console.log('Successfully connected to Dialogflow');
+            console.log('Current intent:', dfMessenger.getAttribute('intent'));
+        });
+    }
+});
 
 // Fallback in case the page loads before the API
 window.initMap = initMap;
