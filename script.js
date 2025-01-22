@@ -89,7 +89,6 @@ document.addEventListener('df-messenger-connected', function(event) {
         dfMessenger.addEventListener('df-response-received', function(event) {
             console.log('Bot response:', event.detail);
         });
-    }
 
 
 // Make sure initMap is defined globally
