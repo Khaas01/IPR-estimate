@@ -836,6 +836,7 @@
 </form>
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 <!-- Dialogflow CX Messenger Element -->
+<!-- Keep your df-messenger element as is -->
 <df-messenger
   agent-id="5343493c-e057-445c-a767-86216ae1862d"
   location="us"
@@ -847,9 +848,9 @@
   chat-trigger="WELCOME">
 </df-messenger>
 
-<!-- In index.html -->
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
+// Move the configuration to after the messenger is loaded
+document.addEventListener('df-messenger-loaded', async () => {
     try {
         const credentials = await getDecodedServiceAccountCredentials();
         const messengerConfig = {
@@ -864,24 +865,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         const dfMessenger = document.querySelector('df-messenger');
         if (dfMessenger) {
             dfMessenger.setAttribute('configuration', JSON.stringify(messengerConfig));
-            
-            dfMessenger.addEventListener('df-messenger-error', (event) => {
-                console.error('Dialogflow Error:', event.detail);
-            });
-            
-            dfMessenger.addEventListener('df-messenger-connected', () => {
-                console.log('Dialogflow connected successfully');
-            });
-
-            dfMessenger.addEventListener('df-messenger-loaded', () => {
-                console.log('Messenger loaded successfully');
-                dfMessenger.triggerPlaybook("Mia - Initial Contact");
-            });
         }
     } catch (error) {
         console.error('Error initializing Dialogflow:', error);
     }
 });
+
+// Add event listeners separately
+const dfMessenger = document.querySelector('df-messenger');
+if (dfMessenger) {
+    dfMessenger.addEventListener('df-messenger-error', (event) => {
+        console.error('Dialogflow Error:', event.detail);
+    });
+    
+    dfMessenger.addEventListener('df-messenger-connected', () => {
+        console.log('Dialogflow connected successfully');
+    });
+}
 </script>
 <style>
   df-messenger {
