@@ -844,9 +844,17 @@
   chat-title="Mia - Pro Assist"
   chat-icon="https://i.imgur.com/kj09wS4.png"
   expand="true"
-  chat-trigger="WELCOME"
-  start-trigger="WELCOME"
-  playbook-trigger="Mia - Initial Contact">
+  intent="WELCOME">
+  <!-- Using intent="WELCOME" to trigger initial conversation -->
+  <df-messenger-chat-bubble
+    chat-title="Mia - Pro Assist"
+    bot-writing-text="..."
+    placeholder-text="Type your message">
+  </df-messenger-chat-bubble>
+  <df-messenger-playbook
+    playbook="Mia - Initial Contact"
+    auto-trigger="true">
+  </df-messenger-playbook>
 </df-messenger>
 <style>
   df-messenger {
