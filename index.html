@@ -844,8 +844,10 @@
   chat-title="Mia - Pro Assist"
   chat-icon="https://i.imgur.com/kj09wS4.png"
   expand="true"
-  intent="WELCOME">
-  <!-- Using intent="WELCOME" to trigger initial conversation -->
+  auth="service-account"
+  chat-trigger="WELCOME"
+  playbook-trigger="WELCOME"
+  playbook="Mia - Initial Contact">
   <df-messenger-chat-bubble
     chat-title="Mia - Pro Assist"
     bot-writing-text="..."
@@ -853,9 +855,43 @@
   </df-messenger-chat-bubble>
   <df-messenger-playbook
     playbook="Mia - Initial Contact"
-    auto-trigger="true">
+    auto-trigger="true"
+    trigger-type="welcome">
   </df-messenger-playbook>
 </df-messenger>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const credentials = await getDecodedServiceAccountCredentials();
+        const dfMessenger = document.querySelector('df-messenger');
+        
+        if (dfMessenger) {
+            dfMessenger.setAttribute('service-account', JSON.stringify(credentials));
+            
+            // Add error handling
+            dfMessenger.addEventListener('df-messenger-error', (event) => {
+                console.error('Dialogflow Error:', event.detail);
+            });
+            
+            // Add connection success handling
+            dfMessenger.addEventListener('df-messenger-connected', () => {
+                console.log('Dialogflow connected successfully');
+                
+                // Trigger the playbook after connection
+                const dfPlaybook = document.querySelector('df-messenger-playbook');
+                if (dfPlaybook) {
+                    dfPlaybook.setAttribute('auto-trigger', 'true');
+                    dfPlaybook.setAttribute('playbook', 'Mia - Initial Contact');
+                    console.log('Playbook triggered');
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error initializing Dialogflow:', error);
+    }
+});
+</script>
 <style>
   df-messenger {
     z-index: 999;
