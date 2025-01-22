@@ -844,53 +844,67 @@
   chat-title="Mia - Pro Assist"
   chat-icon="https://i.imgur.com/kj09wS4.png"
   expand="true"
-  auth="service-account"
-  chat-trigger="WELCOME"
-  playbook-trigger="WELCOME"
-  playbook="Mia - Initial Contact">
-  <df-messenger-chat-bubble
-    chat-title="Mia - Pro Assist"
-    bot-writing-text="..."
-    placeholder-text="Type your message">
-  </df-messenger-chat-bubble>
-  <df-messenger-playbook
-    playbook="Mia - Initial Contact"
-    auto-trigger="true"
-    trigger-type="welcome">
-  </df-messenger-playbook>
+  chat-trigger="WELCOME">
 </df-messenger>
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        // Get and parse the service account credentials
         const credentials = await getDecodedServiceAccountCredentials();
-        const dfMessenger = document.querySelector('df-messenger');
         
+        // Create the messenger configuration object
+        const messengerConfig = {
+            credentials: credentials,
+            playbook: {
+                name: "Mia - Initial Contact",
+                trigger: "WELCOME",
+                autoStart: true
+            }
+        };
+
+        const dfMessenger = document.querySelector('df-messenger');
         if (dfMessenger) {
-            dfMessenger.setAttribute('service-account', JSON.stringify(credentials));
+            // Set the configuration as a properly encoded JSON string
+            dfMessenger.setAttribute('configuration', JSON.stringify(messengerConfig));
             
-            // Add error handling
+            // Error handling
             dfMessenger.addEventListener('df-messenger-error', (event) => {
                 console.error('Dialogflow Error:', event.detail);
             });
             
-            // Add connection success handling
+            // Connection success handling
             dfMessenger.addEventListener('df-messenger-connected', () => {
                 console.log('Dialogflow connected successfully');
-                
-                // Trigger the playbook after connection
-                const dfPlaybook = document.querySelector('df-messenger-playbook');
-                if (dfPlaybook) {
-                    dfPlaybook.setAttribute('auto-trigger', 'true');
-                    dfPlaybook.setAttribute('playbook', 'Mia - Initial Contact');
-                    console.log('Playbook triggered');
-                }
+            });
+
+            // Add loaded event listener
+            dfMessenger.addEventListener('df-messenger-loaded', () => {
+                console.log('Messenger loaded successfully');
+                // Trigger playbook after load
+                dfMessenger.triggerPlaybook("Mia - Initial Contact");
             });
         }
     } catch (error) {
         console.error('Error initializing Dialogflow:', error);
     }
 });
+
+// Update getDecodedServiceAccountCredentials to ensure proper JSON formatting
+async function getDecodedServiceAccountCredentials() {
+    try {
+        const response = await fetch('service-account-base64.txt');
+        if (!response.ok) {
+            throw new Error(`Failed to fetch credentials: ${response.status} ${response.statusText}`);
+        }
+        const base64Content = await response.text();
+        const jsonContent = atob(base64Content);
+        return JSON.parse(jsonContent.trim()); // Added trim() to remove any whitespace
+    } catch (error) {
+        console.error('Service account credentials error:', error);
+        throw error;
+    }
+}
 </script>
 <style>
   df-messenger {
