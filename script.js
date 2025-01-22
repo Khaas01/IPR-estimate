@@ -1303,15 +1303,15 @@ async function getLatestPdfId() {
 }
 async function getDecodedServiceAccountCredentials() {
     try {
-        // Fetch the encoded credentials file
-        const response = await fetch('service-account-base64.txt');
+        // Use the correct path to your credentials file
+        const response = await fetch('./service-account-base64.txt');
         if (!response.ok) {
             throw new Error(`Failed to fetch credentials: ${response.status} ${response.statusText}`);
         }
 
         // Decode the content
         const base64Content = await response.text();
-        const jsonContent = atob(base64Content);
+        const jsonContent = atob(base64Content.trim()); // Added trim() to remove any whitespace
         
         // Parse and return the credentials
         return JSON.parse(jsonContent);
