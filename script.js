@@ -57,30 +57,31 @@ const API_CONFIG = {
         }, 1000);
     }
 });
-        document.addEventListener('df-messenger-loaded', function() {
-    const dfMessenger = document.querySelector('df-messenger');
-    if (dfMessenger) {
-        // Set initial configurations
-        dfMessenger.renderConfig = {
-            openChatByDefault: false,
-            showMinButton: true,
-            enableFullscreen: true,
-            enableVoice: false
-        };
-
-        // Set language and playbook
-        dfMessenger.setAttribute('language-code', 'en');
-        dfMessenger.setAttribute('playbook', 'Mia - Initial Contact');
-    }
-});
-        // Remove any duplicate error listeners
-const existingListeners = window.getEventListeners && 
-    window.getEventListeners(document)['df-messenger-error'] || [];
-if (existingListeners.length > 1) {
-    existingListeners.slice(1).forEach(listener => {
-        document.removeEventListener('df-messenger-error', listener.listener);
+      document.addEventListener('df-messenger-loaded', function(event) {
+  const dfMessenger = document.querySelector('df-messenger');
+  const dfPlaybook = document.querySelector('df-messenger-playbook');
+  
+  if (dfMessenger && dfPlaybook) {
+    // Ensure messenger is ready before triggering playbook
+    dfMessenger.addEventListener('df-messenger-connected', () => {
+      // Short delay to ensure everything is initialized
+      setTimeout(() => {
+        dfPlaybook.setAttribute('auto-trigger', 'true');
+        dfPlaybook.setAttribute('playbook', 'Mia - Initial Contact');
+      }, 1000);
     });
-}
+  }
+});
+
+// Add better error handling
+document.addEventListener('df-messenger-error', function(event) {
+  console.log('Dialogflow CX Error:', event.detail);
+  // Try to recover from error
+  const dfMessenger = document.querySelector('df-messenger');
+  if (dfMessenger) {
+    dfMessenger.setAttribute('refresh', 'true');
+  }
+});
 
 // Add successful connection handling
 document.addEventListener('df-messenger-connected', function(event) {
