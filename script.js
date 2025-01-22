@@ -25,6 +25,50 @@ const API_CONFIG = {
         'https://www.googleapis.com/auth/spreadsheets'
     ].join(' ')
 };
+// Initialize Dialogflow messenger
+    const dfMessenger = document.querySelector('df-messenger');
+    if (dfMessenger) {
+        // Set conversational agent configurations
+        dfMessenger.renderConfig = {
+            openChatByDefault: false,
+            showMinButton: true,
+            enableFullscreen: true,
+            enableVoice: false
+        };
+
+        // Set welcome event
+        dfMessenger.startFlowEvent = {
+            name: "DefaultWelcomeIntent",
+            languageCode: "en"
+        };
+
+        // Handle bot events
+        dfMessenger.addEventListener('df-messenger-error', function(event) {
+            console.error('Dialogflow CX Error:', event.detail);
+            // Attempt to reinitialize conversation
+            dfMessenger.restartConversation();
+        });
+
+        dfMessenger.addEventListener('df-messenger-connected', function(event) {
+            console.log('Conversational Agent Connected');
+        });
+
+        dfMessenger.addEventListener('df-message-sent', function(event) {
+            console.log('User message sent:', event.detail);
+        });
+
+        dfMessenger.addEventListener('df-response-received', function(event) {
+            console.log('Bot response:', event.detail);
+        });
+    }
+});
+
+// Make sure initMap is defined globally
+window.initMap = function() {
+    console.log('Google Maps API loaded successfully');
+    initializeAutocomplete();
+};
+
 // nav.js
 function toggleMenu() {
     const menuToggle = document.querySelector('.menu-toggle');
@@ -65,68 +109,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-document.addEventListener('df-messenger-error', function(event) {
-    console.error('Dialogflow CX Messenger Error:', event.detail);
-    if (event.detail && event.detail.error) {
-        console.log('Error details:', {
-            code: event.detail.error.code,
-            message: event.detail.error.message
-        });
-    }
-});
 
-// Optional: Add this if you want to handle specific responses
-document.addEventListener('df-response-received', function(event) {
-    const response = event.detail.response;
-    console.log('Bot response:', response);
-});
+
 // Initialize map function (required for callback)
-function initMap() {
-    // This function will be called when the Maps API is loaded
-    console.log('Google Maps API loaded successfully');
-}
 
-    const dfMessenger = document.querySelector('df-messenger');
-    if (dfMessenger) {
-        // Set conversational agent configurations
-        dfMessenger.renderConfig = {
-            openChatByDefault: false,
-            showMinButton: true,
-            enableFullscreen: true,
-            enableVoice: false
-        };
-
-        // Set welcome event
-        dfMessenger.startFlowEvent = {
-            name: "DefaultWelcomeIntent",
-            languageCode: "en"
-        };
-
-        // Add error handling specific to conversational agent
-        dfMessenger.addEventListener('df-messenger-error', function(event) {
-            console.error('Dialogflow CX Error:', event.detail);
-            // Attempt to reinitialize conversation
-            dfMessenger.restartConversation();
-        });
-
-        // Handle successful connection
-        dfMessenger.addEventListener('df-messenger-connected', function(event) {
-            console.log('Conversational Agent Connected');
-        });
-
-        // Handle message events
-        dfMessenger.addEventListener('df-message-sent', function(event) {
-            console.log('User message sent:', event.detail);
-        });
-
-        dfMessenger.addEventListener('df-response-received', function(event) {
-            console.log('Bot response:', event.detail);
-        });
-    }
-});
-
-// Fallback in case the page loads before the API
-window.initMap = initMap;
 async function initializeGoogleAPIs() {
     try {
         if (typeof gapi === 'undefined') {
