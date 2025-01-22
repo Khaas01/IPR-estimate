@@ -1302,3 +1302,4 @@ async function getDecodedServiceAccountCredentials() {
         throw new Error('Failed to initialize service account credentials');
     }
 }
+    }
