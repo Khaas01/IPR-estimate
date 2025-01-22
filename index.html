@@ -12,8 +12,7 @@
     <script async
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254&libraries=places&loading=async&callback=initMap">
 </script>
-    <link rel="stylesheet" href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css">
-    <script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 </head>
     
 <body>
@@ -839,26 +838,37 @@
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 <!-- Dialogflow CX Messenger Element -->
 <df-messenger
-  intent="WELCOME"
-  chat-title="Mia"
-  agent-id="5343493c-e057-445c-a767-86216ae1862d"
-  language-code="en"
-  project-id="ipr-roof-estimate-form-review"
-  location="us">
+    intent="WELCOME"
+    location="us"
+    project-id="ipr-roof-estimate-form-review"
+    agent-id="5343493c-e057-445c-a767-86216ae1862d"
+    language-code="en"
+    chat-title="Mia - Iron Peak Roofing - Pro Assist"
+    chat-icon="https://i.imgur.com/kj09wS4.png">
 </df-messenger>
 
 <style>
-  df-messenger {
-    z-index: 999;
-    position: fixed;
-    --df-messenger-font-color: #000;
-    --df-messenger-font-family: Google Sans;
-    --df-messenger-chat-background: #f3f6fc;
-    --df-messenger-message-user-background: #d3e3fd;
-    --df-messenger-message-bot-background: #fff;
-    bottom: 16px;
-    right: 16px;
-  }
+    df-messenger {
+        z-index: 999;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        --df-messenger-bot-message: #878fac;
+        --df-messenger-button-titlebar-color: #0056b3;
+        --df-messenger-chat-background-color: #fafafa;
+        --df-messenger-font-color: rgba(0, 0, 0, 0.87);
+        --df-messenger-send-icon: #0056b3;
+        --df-messenger-user-message: #0056b3;
+    }
+    /* Ensure chat doesn't interfere with form elements */
+df-messenger-chat {
+    z-index: 1000;
+}
+
+/* Add margin to form to prevent chat from covering buttons */
+#navigationButtons {
+    margin-bottom: 80px;
+}
 </style>
 </body>
 </html>
