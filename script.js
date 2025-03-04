@@ -1,181 +1,25 @@
-// ===========================================
-// Configuration and Constants
-// ===========================================
-const CONFIG = {
-    SHEETS: {
-        ID: "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw",
-        NAME: "Form Responses"
-    },
-    DIALOGFLOW: {
-        PROJECT_ID: 'ipr-roof-estimate-form-review',
-        LOCATION: 'us',
-        AGENT_ID: '5343493c-e057-445c-a767-86216ae1862d'
-    },
-    API: {
-        GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwjjzqXnmM1wuw83CU6ZBr0zm1IhkrtlK8DEHHXeIurwf4J9jmCFcu6AUEWEx0zjTjK5Q/exec',
-        API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
-        CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
-        REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
-        SCOPES: ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/spreadsheets'].join(' ')
-    }
+// Global variables
+let isSubmitting = false;
+let sectionHistory = []; // Initialize sectionHistory
+let currentEditRow = null;
+// Centralized API configuration
+
+const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
+const SHEET_NAME = "Form Responses";
+
+const API_CONFIG = {
+    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwjjzqXnmM1wuw83CU6ZBr0zm1IhkrtlK8DEHHXeIurwf4J9jmCFcu6AUEWEx0zjTjK5Q/exec',
+    API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
+    CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
+    REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
+    SHEET_ID: SHEET_ID,
+    SHEET_NAME: SHEET_NAME,
+    API_ENDPOINT: `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}`,
+    SCOPES: [
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/spreadsheets'
+    ].join(' ')
 };
-
-// ===========================================
-// Global State Variables
-// ===========================================
-const state = {
-    isSubmitting: false,
-    sectionHistory: [],
-    currentEditRow: null
-};
-
-// ===========================================
-// Dialogflow Messenger Configuration
-// ===========================================
-const DialogflowMessenger = {
-    init() {
-        const dfMessenger = document.querySelector('df-messenger');
-        if (!dfMessenger) return;
-
-        // Configure messenger settings
-        dfMessenger.renderConfig = {
-            openChatByDefault: false,
-            showMinButton: true,
-            enableFullscreen: true,
-            enableVoice: false
-        };
-
-        // Set welcome event
-        dfMessenger.startFlowEvent = {
-            name: "DefaultWelcomeIntent",
-            languageCode: "en"
-        };
-
-        this.setupEventListeners();
-    },
-
-    setupEventListeners() {
-        // Messenger loaded event
-        document.addEventListener('df-messenger-loaded', this.handleMessengerLoaded);
-        
-        // Error handling
-        document.addEventListener('df-messenger-error', this.handleError);
-        
-        // Connection handling
-        document.addEventListener('df-messenger-connected', this.handleConnection);
-        
-        // Message events
-        document.addEventListener('df-message-sent', this.handleMessageSent);
-        document.addEventListener('df-response-received', this.handleResponseReceived);
-    },
-
-    handleMessengerLoaded(event) {
-        const dfMessenger = document.querySelector('df-messenger');
-        const dfPlaybook = document.querySelector('df-messenger-playbook');
-        
-        if (dfMessenger && dfPlaybook) {
-            dfMessenger.addEventListener('df-messenger-connected', () => {
-                setTimeout(() => {
-                    dfPlaybook.setAttribute('auto-trigger', 'true');
-                    dfPlaybook.setAttribute('playbook', 'Mia - Initial Contact');
-                }, 1000);
-            });
-        }
-    },
-
-    handleError(event) {
-        console.log('Dialogflow CX Error:', event.detail);
-        const dfMessenger = document.querySelector('df-messenger');
-        if (dfMessenger) {
-            dfMessenger.setAttribute('refresh', 'true');
-        }
-    },
-
-    handleConnection(event) {
-        console.log('Conversational Agent Connected');
-        const dfMessenger = document.querySelector('df-messenger');
-        if (dfMessenger) {
-            dfMessenger.setAttribute('playbook', 'Mia - Initial Contact');
-        }
-    },
-
-    handleMessageSent(event) {
-        console.log('User message sent:', event.detail);
-    },
-
-    handleResponseReceived(event) {
-        console.log('Bot response:', event.detail);
-    },
-
-    refresh() {
-        const dfMessenger = document.querySelector('df-messenger');
-        if (dfMessenger) {
-            dfMessenger.setAttribute('refresh', Date.now().toString());
-            console.log('Chatbot refresh triggered');
-        }
-    }
-};
-
-// ===========================================
-// Navigation Functions
-// ===========================================
-const Navigation = {
-    toggleMenu() {
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navMenu = document.querySelector('.nav-menu');
-        menuToggle.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    },
-
-    setupClickOutside() {
-        document.addEventListener('click', (event) => {
-            const navMenu = document.querySelector('.nav-menu');
-            const menuToggle = document.querySelector('.menu-toggle');
-            if (navMenu && navMenu.classList.contains('active') && 
-                !event.target.closest('.nav-container')) {
-                navMenu.classList.remove('active');
-                menuToggle.classList.remove('active');
-            }
-        });
-    },
-
-    preventMenuClose() {
-        const navContainer = document.querySelector('.nav-container');
-        if (navContainer) {
-            navContainer.addEventListener('click', (event) => {
-                event.stopPropagation();
-            });
-        }
-    }
-};
-
-// ===========================================
-// Google Maps Integration
-// ===========================================
-window.initMap = function() {
-    console.log('Google Maps API loaded successfully');
-    initializeAutocomplete();
-};
-
-// ===========================================
-// Event Listeners
-// ===========================================
-document.addEventListener('DOMContentLoaded', () => {
-    DialogflowMessenger.init();
-    Navigation.preventMenuClose();
-});
-
-window.addEventListener('load', () => {
-    DialogflowMessenger.refresh();
-});
-
-// Export any necessary functions or objects
-window.toggleMenu = Navigation.toggleMenu;
-window.refreshChatbot = DialogflowMessenger.refresh;
-
-
-
-// Initialize map function (required for callback)
 
 async function initializeGoogleAPIs() {
     try {
@@ -205,19 +49,126 @@ async function initializeGoogleAPIs() {
         return false;
     }
 }
-document.addEventListener('df-messenger-error', function(event) {
-    console.error('Dialogflow CX Messenger Error:', event.detail);
-    
-    // Attempt to recover from error
-    const dfMessenger = document.querySelector('df-messenger');
-    if (dfMessenger) {
-        dfMessenger.setAttribute('refresh', Date.now().toString());
+function initMap() {
+    // Wait for DOM to be ready
+    if (document.readyState !== 'complete') {
+        window.addEventListener('load', initMap);
+        return;
     }
-});
 
-// Add response handling
-document.addEventListener('df-response-received', function(event) {
-    console.log('Bot response received:', event.detail.response);
+    const addressInput = document.getElementById('ownerAddress');
+    if (!addressInput) {
+        console.warn('Address input not found');
+        return;
+    }
+
+    try {
+        const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+            types: ['address'],
+            componentRestrictions: { country: 'us' },
+            fields: ['address_components', 'formatted_address', 'geometry']
+        });
+
+        autocomplete.addListener('place_changed', function() {
+            const place = autocomplete.getPlace();
+            if (!place.address_components) {
+                console.warn('No address details available');
+                return;
+            }
+
+            let streetNumber = '';
+            let streetName = '';
+            
+            // Extract address components
+            for (const component of place.address_components) {
+                const type = component.types[0];
+                
+                switch(type) {
+                    case 'street_number':
+                        streetNumber = component.long_name;
+                        break;
+                    case 'route':
+                        streetName = component.long_name;
+                        break;
+                    case 'locality':
+                        document.getElementById('ownerCity').value = component.long_name;
+                        break;
+                    case 'administrative_area_level_1':
+                        document.getElementById('ownerState').value = component.short_name;
+                        break;
+                    case 'postal_code':
+                        document.getElementById('ownerZip').value = component.short_name;
+                        break;
+                }
+            }
+
+            // Format street name with abbreviations
+            streetName = streetName
+                // Directionals at start
+                .replace(/^North /i, 'N ')
+                .replace(/^South /i, 'S ')
+                .replace(/^East /i, 'E ')
+                .replace(/^West /i, 'W ')
+                // Directionals within name
+                .replace(/ North /i, ' N ')
+                .replace(/ South /i, ' S ')
+                .replace(/ East /i, ' E ')
+                .replace(/ West /i, ' W ')
+                // Street types
+                .replace(/ Street$/i, ' St')
+                .replace(/ Avenue$/i, ' Ave')
+                .replace(/ Road$/i, ' Rd')
+                .replace(/ Boulevard$/i, ' Blvd')
+                .replace(/ Lane$/i, ' Ln')
+                .replace(/ Drive$/i, ' Dr')
+                .replace(/ Court$/i, ' Ct')
+                .replace(/ Circle$/i, ' Cir')
+                .replace(/ Place$/i, ' Pl')
+                .replace(/ Square$/i, ' Sq')
+                .replace(/ Parkway$/i, ' Pkwy')
+                .replace(/ Highway$/i, ' Hwy')
+                .trim();
+
+            // Set only the street address in the address field
+            document.getElementById('ownerAddress').value = `${streetNumber} ${streetName}`.trim();
+        });
+
+    } catch (error) {
+        console.error('Failed to initialize Places Autocomplete:', error);
+        handleMapError();
+    }
+}
+
+// Make initMap available globally
+window.initMap = initMap;
+function toggleMenu() {
+    const navMenu = document.querySelector('.nav-menu');
+    const menuToggle = document.querySelector('.menu-toggle');
+    
+    if (navMenu && menuToggle) {
+        navMenu.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+        
+        // Toggle ARIA-expanded state
+        const isExpanded = navMenu.classList.contains('active');
+        menuToggle.setAttribute('aria-expanded', isExpanded);
+    }
+}
+
+// Add click outside listener to close menu when clicking outside
+document.addEventListener('click', function(event) {
+    const navMenu = document.querySelector('.nav-menu');
+    const menuToggle = document.querySelector('.menu-toggle');
+    
+    if (navMenu && menuToggle) {
+        const isClickInside = navMenu.contains(event.target) || menuToggle.contains(event.target);
+        
+        if (!isClickInside && navMenu.classList.contains('active')) {
+            navMenu.classList.remove('active');
+            menuToggle.classList.remove('active');
+            menuToggle.setAttribute('aria-expanded', 'false');
+        }
+    }
 });
 function adjustIframeHeight() {
     const container = document.querySelector('.estimate-preview-container');
@@ -325,54 +276,14 @@ solarRadios.forEach(radio => {
         }
     });
 });
-function initializeAutocomplete() {
-    const addressInput = document.getElementById('ownerAddress');
-    const autocomplete = new google.maps.places.Autocomplete(addressInput, {
-        // Restrict to getting just address components
-        types: ['address'],
-        // Restrict to USA addresses
-        componentRestrictions: { country: 'us' }
-    });
-    
-    autocomplete.addListener('place_changed', function() {
-        const place = autocomplete.getPlace();
-        if (!place.geometry) {
-            return;
-        }
-        
-        // Get only street address components
-        let streetNumber = '';
-        let streetName = '';
-        
-        for (const component of place.address_components) {
-            const type = component.types[0];
-            
-            if (type === 'street_number') {
-                streetNumber = component.long_name;
-            }
-            if (type === 'route') {
-                streetName = component.long_name;
-            }
-            // Still fill in the other fields
-            if (type === 'locality') {
-                document.getElementById('ownerCity').value = component.long_name;
-            }
-            if (type === 'administrative_area_level_1') {
-                document.getElementById('ownerState').value = component.short_name;
-            }
-            if (type === 'postal_code') {
-                document.getElementById('ownerZip').value = component.long_name;
-            }
-        }
-        
-        // Set only the street address in the address field
-        const streetAddress = `${streetNumber} ${streetName}`.trim();
-        addressInput.value = streetAddress;
-    });
-}
 
-// Initialize when the page loads
-document.addEventListener('DOMContentLoaded', initializeAutocomplete);
+function handleMapError() {
+    const addressInput = document.getElementById('ownerAddress');
+    if (addressInput) {
+        addressInput.setAttribute('placeholder', 'Enter address manually');
+        addressInput.setAttribute('autocomplete', 'off');
+    }
+}
 
 // Helper function to fill in address components
 function fillInAddress(place) {
@@ -408,9 +319,13 @@ function fillInAddress(place) {
     }
 }
 
-// Initialize autocomplete when page loads
-document.addEventListener('DOMContentLoaded', initializeAutocomplete);
-// Function to hide all sections - keep it simple and efficient
+function hideAllSections() {
+    console.log('Hiding all sections');
+    document.querySelectorAll('div[id$="Section"], div[id*="-section"]').forEach(section => {
+        section.style.display = 'none';
+        console.log('Hidden section:', section.id);
+    });
+}
 document.addEventListener('DOMContentLoaded', function() {
     // Function to properly capitalize words
     function capitalizeWords(str) {
@@ -829,7 +744,7 @@ function submitForm() {
     
     try {
         isSubmitting = true;
-        showLoading('Submitting form...');
+        showLoading('Creating your estimate, hang on......');
 
         const formData = collectFormData();
         
@@ -1336,4 +1251,4 @@ async function getDecodedServiceAccountCredentials() {
         console.error('Service account credentials error:', error);
         throw new Error('Failed to initialize service account credentials');
     }
-} 
+}
