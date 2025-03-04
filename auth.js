@@ -253,17 +253,47 @@ async function checkUserExists(username, email) {
 /**
  * Check authentication status by querying the sheet for the user
  */
+/**
+ * Check authentication status by querying the sheet for the user
+ */
 async function checkAuthStatus(username) {
-    // In a real implementation, this would check against the Google Sheet
-    // For now, we'll simulate a successful login
-    
-    // Simulate successful login for testing
-    return {
-        success: true,
-        username: username,
-        name: 'Test User',
-        email: 'test@example.com'
-    };
+    try {
+        // Make a request to the Google Apps Script endpoint
+        const response = await fetch(API_CONFIG.GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'authenticate',
+                username: username
+            })
+        });
+
+        // Parse the response
+        const data = await response.json();
+        
+        if (data.success) {
+            return {
+                success: true,
+                username: data.username,
+                name: data.name || username, // Fallback to username if name isn't set
+                email: data.email
+            };
+        } else {
+            return {
+                success: false,
+                message: data.message || 'Authentication failed'
+            };
+        }
+    } catch (error) {
+        console.error('Authentication error:', error);
+        return {
+            success: false,
+            message: 'Authentication failed. Please try again.'
+        };
+    }
 }
 
 /**
