@@ -33,14 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // If logged in, add user info and logout button to header
   const header = document.querySelector('header');
-  if (header) {
-    const userDiv = document.createElement('div');
-    userDiv.className = 'user-info';
-    userDiv.innerHTML = `
-      <span>Welcome, ${user.name || user.username}</span>
-      <button id="logoutBtn" class="logout-button">Logout</button>
-    `;
-    header.appendChild(userDiv);
     
     // Add logout functionality
     document.getElementById('logoutBtn').addEventListener('click', function() {
@@ -59,11 +51,17 @@ document.addEventListener('DOMContentLoaded', function() {
         <button class="menu-toggle" aria-label="Toggle Menu">
             <span class="hamburger"></span>
         </button>
-        <ul class="nav-menu">
-            <li><a href="#" onclick="showSection('salesRepSection'); return false;">Home</a></li>
-            <li><a href="#" onclick="showSection('measureRoofSection'); return false;">Measurement</a></li>
-             <li><a href="#" onclick="showSection('financeSection'); return false;">Finance</a></li>
-        </ul>
+      <ul class="nav-menu">
+    <li class="user-info-menu-item">
+        <span>Welcome, <span id="userNameSpan"></span></span>
+    </li>
+    <li><a href="#" onclick="showSection('salesRepSection'); return false;">Home</a></li>
+    <li><a href="#" onclick="showSection('measureRoofSection'); return false;">Measurement</a></li>
+    <li><a href="#" onclick="showSection('financeSection'); return false;">Finance</a></li>
+    <li class="logout-menu-item">
+        <a href="#" id="logoutBtn" class="logout-button">Logout</a>
+    </li>
+</ul>
     </nav>
 </header>
 <form id="estimateForm">
