@@ -6,7 +6,30 @@
 form {
     padding-top: 60px; /* Add space at top for header and menu */
 }
+.user-info {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
 
+.logout-button {
+  background-color: #f44336;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  width: auto;
+}
+
+.logout-button:hover {
+  background-color: #d32f2f;
+}
 /* Adjust header and nav container positioning */
 header {
     position: relative;
