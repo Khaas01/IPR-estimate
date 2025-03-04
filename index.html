@@ -3,34 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iron Peak Roofing - Estimate Form</title>
-    <!-- Move Google Maps API script here, before other scripts -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254&libraries=places&loading=async"></script>
+    <link rel="icon" type="image/png" href="assets/favicon/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="assets/favicon/favicon.png">
+</head>
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
-    <script src="script.js" defer></script>
+    <title>Iron Peak Roofing - Estimate Form</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1">
-    <link rel="stylesheet" href="https://www.gstatic.com/dialogflow-console/fast/messenger/df-messenger.css">
-    <script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
-</head>
-    
+    <script src="script.js" defer></script>
+    <script>
+    // Define the callback function
+    function initMap() {
+        console.log('Google Maps API loaded');
+        initializeAutocomplete();
+    }
+</script>
+</head>  
 <body>
 <header>
-    <img src="https://i.imgur.com/kj09wS4.png" alt="Iron Peak Roofing Logo" class="logo">
-    <h1>Roofing Estimate Form</h1>
-
-<nav class="nav-container">
-    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle Menu">
-        <span class="hamburger"></span>
-    </button>
-    <ul class="nav-menu">
-        <li><a href="#" onclick="showSection('salesRepSection'); return false;">Home</a></li>
-        <li><a href="#" onclick="showSection('measureRoofSection'); return false;">Measurement</a></li>
-    </ul>
-</nav>
+    <div class="logo-title">
+        <img src="assets/images/logo (1).png" alt="Iron Peak Roofing Logo" class="logo">
+        <h1>Roofing Estimate Form</h1>
+    </div>
+    <nav class="nav-container">
+        <button class="menu-toggle" aria-label="Toggle Menu">
+            <span class="hamburger"></span>
+        </button>
+        <ul class="nav-menu">
+            <li><a href="#" onclick="showSection('salesRepSection'); return false;">Home</a></li>
+            <li><a href="#" onclick="showSection('measureRoofSection'); return false;">Measurement</a></li>
+        </ul>
+    </nav>
 </header>
-
 <form id="estimateForm">
    <!--Sales Rep Section -->
    <div id="salesRepSection" style="display:block;">
@@ -836,66 +840,47 @@
 </div>
 </form>
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-<!-- Dialogflow CX Messenger Element -->
-<!-- Keep your df-messenger element as is -->
-<df-messenger
-  agent-id="5343493c-e057-445c-a767-86216ae1862d"
-  location="us"
-  project-id="ipr-roof-estimate-form-review"
-  language-code="en"
-  chat-title="Mia - Pro Assist"
-  chat-icon="https://i.imgur.com/kj09wS4.png"
-  expand="true"
-  chat-trigger="WELCOME">
-</df-messenger>
-
 <script>
-// Move the configuration to after the messenger is loaded
-document.addEventListener('df-messenger-loaded', async () => {
-    try {
-        const credentials = await getDecodedServiceAccountCredentials();
-        const messengerConfig = {
-            credentials: credentials,
-            playbook: {
-                name: "Mia - Initial Contact",
-                trigger: "WELCOME",
-                autoStart: true
-            }
-        };
-
-        const dfMessenger = document.querySelector('df-messenger');
-        if (dfMessenger) {
-            dfMessenger.setAttribute('configuration', JSON.stringify(messengerConfig));
-        }
-    } catch (error) {
-        console.error('Error initializing Dialogflow:', error);
+    // Handle authentication failures
+    function gm_authFailure() {
+        console.error('Google Maps API authentication failed');
+        handleMapError();
     }
-});
 
-// Add event listeners separately
-const dfMessenger = document.querySelector('df-messenger');
-if (dfMessenger) {
-    dfMessenger.addEventListener('df-messenger-error', (event) => {
-        console.error('Dialogflow Error:', event.detail);
-    });
-    
-    dfMessenger.addEventListener('df-messenger-connected', () => {
-        console.log('Dialogflow connected successfully');
-    });
-}
+    // Make initMap available globally
+    window.initMap = initMap;
 </script>
-<style>
-  df-messenger {
-    z-index: 999;
-    position: fixed;
-    --df-messenger-font-color: #000;
-    --df-messenger-font-family: Google Sans;
-    --df-messenger-chat-background: #f3f6fc;
-    --df-messenger-message-user-background: #d3e3fd;
-    --df-messenger-message-bot-background: #fff;
-    bottom: 16px;
-    right: 16px;
-  }
-</style>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set up hamburger menu click handler
+    const menuToggle = document.querySelector('.menu-toggle');
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+    }
+
+    // Set up click outside to close menu
+    document.addEventListener('click', function(event) {
+        const navMenu = document.querySelector('.nav-menu');
+        const menuToggle = document.querySelector('.menu-toggle');
+        if (navMenu && navMenu.classList.contains('active') && 
+            !event.target.closest('.nav-container')) {
+            navMenu.classList.remove('active');
+            menuToggle.classList.remove('active');
+        }
+    });
+});
+</script>
+
+<!-- Load Google Maps API with proper callback -->
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254&libraries=places&callback=initMap&v=weekly"
+    async
+    defer
+    onerror="handleMapError()"
+></script>
 </body>
 </html>
