@@ -43,18 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
         sessionStorage.removeItem('user');
         window.location.href = 'login.html';
     });
+}
 });
   
-  // If logged in, add user info and logout button to header
-  const header = document.querySelector('header');
-    
-    // Add logout functionality
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-      sessionStorage.removeItem('user');
-      window.location.href = 'login.html';
-    });
-  }
-});
 </script>
 <header>
     <div class="logo-title">
