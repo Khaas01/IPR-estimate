@@ -305,8 +305,7 @@ async function checkAuthStatus(username) {
         };
     }
 }
- * Validate email format
- */
+
 function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
