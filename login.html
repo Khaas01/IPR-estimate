@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/favicon/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="assets/favicon/favicon.png">
+    <title>Iron Peak Roofing - Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth-styles.css">
+    <script src="auth.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo-title">
+            <img src="assets/images/logo.png" alt="Iron Peak Roofing Logo" class="logo">
+            <h1>Roofing Estimate Login</h1>
+        </div>
+    </header>
+    
+    <div class="auth-container">
+        <form id="loginForm" class="auth-form">
+            <h2>Login to Your Account</h2>
+            
+            <div id="loginMessage" class="message-box" style="display: none;"></div>
+            
+            <label for="username">Username or Email:</label>
+            <input type="text" class="uniform-input" id="username" name="username" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" class="uniform-input" id="password" name="password" required>
+            
+            <div class="remember-me">
+                <input type="checkbox" id="rememberMe" name="rememberMe">
+                <label for="rememberMe">Remember me</label>
+            </div>
+            
+            <button type="submit" id="loginButton">Login</button>
+            
+            <div class="auth-links">
+                <p>Don't have an account? <a href="register.html">Register</a></p>
+                <p><a href="#" id="forgotPassword">Forgot Password?</a></p>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Overlay for loading/processing -->
+    <div id="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loading-message">Processing...</p>
+        </div>
+    </div>
+</body>
+</html>
