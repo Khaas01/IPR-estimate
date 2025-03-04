@@ -74,11 +74,12 @@ header {
     cursor: pointer;
     position: absolute;
     right: 1rem;
-    top: 1rem;
+    top: 3rem;  /* Changed from 1rem to 3rem to lower the position */
     z-index: 1000;
     width: 40px;
     height: 40px;
 }
+
 
 .hamburger {
     display: block;
@@ -124,9 +125,8 @@ header {
 }
 
 .nav-menu {
-    display: none;
     position: absolute;
-    top: 100%;
+    top: calc(3rem + 45px); /* Adjust based on new menu toggle position */
     right: 0;
     background: white;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -136,7 +136,6 @@ header {
     min-width: 200px;
     z-index: 999;
 }
-
 .nav-menu.active {
     display: block;
 }
