@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/favicon/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="assets/favicon/favicon.png">
+    <title>Iron Peak Roofing - Register</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth-styles.css">
+    <script src="auth.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo-title">
+            <img src="assets/images/logo.png" alt="Iron Peak Roofing Logo" class="logo">
+            <h1>Roofing Estimate Registration</h1>
+        </div>
+    </header>
+    
+    <div class="auth-container">
+        <form id="registerForm" class="auth-form">
+            <h2>Create New Account</h2>
+            
+            <div id="registerMessage" class="message-box" style="display: none;"></div>
+            
+            <label for="fullName">Full Name:</label>
+            <input type="text" class="uniform-input" id="fullName" name="fullName" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" class="uniform-input" id="email" name="email" required>
+            
+            <label for="newUsername">Username:</label>
+            <input type="text" class="uniform-input" id="newUsername" name="newUsername" required>
+            
+            <label for="newPassword">Password:</label>
+            <input type="password" class="uniform-input" id="newPassword" name="newPassword" required>
+            
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" class="uniform-input" id="confirmPassword" name="confirmPassword" required>
+            
+            <div class="password-strength">
+                <div class="strength-meter" id="passwordStrength"></div>
+                <p id="passwordFeedback">Password must be at least 8 characters with letters and numbers</p>
+            </div>
+            
+            <button type="submit" id="registerButton">Create Account</button>
+            
+            <div class="auth-links">
+                <p>Already have an account? <a href="login.html">Login</a></p>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Overlay for loading/processing -->
+    <div id="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loading-message">Processing...</p>
+        </div>
+    </div>
+</body>
+</html>
