@@ -3,8 +3,7 @@ const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
 const USERS_SHEET_NAME = "Users";
 
 const API_CONFIG = {
-    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwjjzqXnmM1wuw83CU6ZBr0zm1IhkrtlK8DEHHXeIurwf4J9jmCFcu6AUEWEx0zjTjK5Q/exec',
-    API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
+    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzMH6BkoZ-RlBaXLa0q-KiZqhC1IoW_k032jwt915q-IvybymelujRvHgCaHMoD6bAp/exec',
     CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
     SHEET_ID: SHEET_ID,
     USERS_SHEET_NAME: USERS_SHEET_NAME
