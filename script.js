@@ -434,6 +434,7 @@ function hideAllSections() {
     console.groupEnd();
 }
 // Main section display function - restored to working version with added logging
+// Update your showSection function to include iframe resets
 function showSection(sectionId) {
     console.group('Section Navigation');
     console.log('Current section:', sectionId);
@@ -447,6 +448,20 @@ function showSection(sectionId) {
         if (sectionHistory[sectionHistory.length - 1] !== sectionId) {
             sectionHistory.push(sectionId);
         }
+        
+        // Reset specific iframe when its section is shown
+        if (sectionId === 'measureRoofSection') {
+            const measurementFrame = document.getElementById('measurementToolIframe');
+            if (measurementFrame) {
+                measurementFrame.src = measurementFrame.src;
+            }
+        } else if (sectionId === 'financeSection') {
+            const financeFrame = document.getElementById('financeMarketplaceIframe');
+            if (financeFrame) {
+                financeFrame.src = financeFrame.src;
+            }
+        }
+        
         console.log('Section history after:', [...sectionHistory]);
         console.log('Target section visibility:', targetSection.style.display);
     } else {
