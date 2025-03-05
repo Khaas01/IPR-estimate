@@ -20,6 +20,33 @@ const API_CONFIG = {
         'https://www.googleapis.com/auth/spreadsheets'
     ].join(' ')
 };
+// Add this function at the top of your script.js file with other functions
+function resetIframes() {
+    // Reset measurement tool iframe
+    const measurementFrame = document.getElementById('measurementToolIframe');
+    if (measurementFrame) {
+        measurementFrame.src = measurementFrame.src;
+    }
+    
+    // Reset finance tool iframe
+    const financeFrame = document.getElementById('financeMarketplaceIframe');
+    if (financeFrame) {
+        financeFrame.src = financeFrame.src;
+    }
+}
+
+// Modify your existing DOMContentLoaded event listener to include the reset
+document.addEventListener('DOMContentLoaded', function() {
+    // Existing code
+    sectionHistory.push('salesRepSection');
+    showSection('salesRepSection');
+    
+    // Add the iframe reset
+    resetIframes();
+});
+
+// Add event listener for page refresh/load
+window.addEventListener('load', resetIframes);
 
 async function initializeGoogleAPIs() {
     try {
