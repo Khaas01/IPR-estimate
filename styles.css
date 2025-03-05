@@ -1,43 +1,51 @@
-/* Reset and Base Styles */
+/* -----------------------------
+   1. Reset and Base Styles
+----------------------------- */
 * {
     box-sizing: border-box;
 }
-/* Add padding to account for menu */
-form {
-    padding-top: 60px; /* Add space at top for header and menu */
-}
-.user-info {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Increased from 10px */
-    font-size: 0.9rem;
-    padding: 10px 15px; /* Added padding */
-    background-color: rgba(255, 255, 255, 0.9); /* Optional: adds a slight background */
-    border-radius: 4px; /* Optional: rounds the corners */
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    color: #333;
+    line-height: 1.6;
 }
 
-.logout-button {
-    background-color: #f44336;
-    color: white;
-    padding: 8px 15px; /* Increased from 6px 10px */
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    width: auto;
-    margin-left: 5px; /* Added margin */
+/* -----------------------------
+   2. Typography
+----------------------------- */
+h1 {
+    color: #0056b3;
+    font-size: 1.5em;
+    margin: 0;
+    font-weight: normal;
 }
 
-.logout-button:hover {
-  background-color: #d32f2f;
+h2 {
+    color: #333;
+    border-bottom: 2px solid #0056b3;
+    padding-bottom: 10px;
+    font-weight: normal;
 }
-/* Adjust header and nav container positioning */
+
+/* -----------------------------
+   3. Header and Navigation
+----------------------------- */
 header {
     position: relative;
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
     margin-bottom: 20px;
+}
+
+header .logo {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 10px;
 }
 
 .nav-container {
@@ -48,7 +56,7 @@ header {
 }
 
 .nav-menu {
-    display: none; /* Add this line to hide menu by default */
+    display: none;
     position: absolute;
     top: 45px;
     right: 0;
@@ -61,37 +69,28 @@ header {
     z-index: 999;
 }
 
-.nav-menu .user-info-menu-item {
+.nav-menu.active {
+    display: block;
+}
+
+.nav-menu li {
+    margin: 0;
+    padding: 0;
+}
+
+.nav-menu a {
+    display: block;
     padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.nav-menu a:hover {
     background-color: #f5f5f5;
-    border-bottom: 1px solid #eee;
-    font-weight: bold;
 }
 
-.nav-menu .logout-menu-item {
-    border-top: 1px solid #eee;
-}
-
-.nav-menu .logout-button {
-    width: 100%;
-    text-align: left;
-    background: none;
-    color: #f44336;
-    box-shadow: none;
-    padding: 12px 20px;
-    font-size: 1rem;
-}
-
-.nav-menu .logout-button:hover {
-    background-color: #f5f5f5;
-    transform: none;
-}
-/* Adjust section containers */
-[id$="Section"] {
-    position: relative;
-    margin-top: 20px;
-}
-
+/* Hamburger Menu */
 .menu-toggle {
     display: block;
     background: none;
@@ -100,12 +99,11 @@ header {
     cursor: pointer;
     position: absolute;
     right: 1rem;
-    top: 1rem;  /* Changed from 1rem to 3rem to lower the position */
+    top: 3rem;
     z-index: 1000;
     width: 40px;
     height: 40px;
 }
-
 
 .hamburger {
     display: block;
@@ -150,31 +148,90 @@ header {
     bottom: 0;
 }
 
-.nav-menu.active {
-    display: block;
+/* -----------------------------
+   4. Form Styles
+----------------------------- */
+form {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 60px 15px 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.nav-menu li {
-    margin: 0;
-    padding: 0;
+.uniform-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+    background-color: #fff;
+    font-size: 16px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
-.nav-menu a {
-    display: block;
-    padding: 12px 20px;
-    color: #333;
-    text-decoration: none;
-    transition: background-color 0.3s;
+.uniform-input:focus {
+    border-color: #0056b3;
+    outline: none;
+    box-shadow: 0 0 15px rgba(0, 86, 179, 0.5);
 }
 
-.nav-menu a:hover {
-    background-color: #f5f5f5;
+/* -----------------------------
+   5. Section Containers
+----------------------------- */
+[id$="Section"] {
+    position: relative;
+    margin-top: 20px;
 }
+
+/* -----------------------------
+   6. Buttons
+----------------------------- */
+.logout-button {
+    background-color: #f44336;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    width: auto;
+}
+
+.logout-button:hover {
+    background-color: #d32f2f;
+}
+
 .edit-button {
     background-color: #2ea44f;
     color: white;
 }
-/* Review Section Container */
+
+#navigationButtons {
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+#navigationButtons button {
+    margin: 0;
+    padding: 10px 20px;
+    width: 48%;
+}
+
+/* -----------------------------
+   7. Preview Container
+----------------------------- */
 #review-section {
     display: flex;
     flex-direction: column;
@@ -182,23 +239,21 @@ header {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    padding: 0; /* Remove padding */
+    padding: 0;
 }
 
-/* Preview Container */
 .estimate-preview-container {
     position: relative;
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    padding: 0; /* Remove padding */
+    padding: 0;
     aspect-ratio: 8.5/11;
     overflow: hidden;
     height: calc(100vh - 200px);
-    background-color: #ffffff; /* Match page background */
+    background-color: #ffffff;
 }
 
-/* Preview Frame */
 #estimatePreviewFrame {
     position: absolute;
     top: 0;
@@ -211,34 +266,12 @@ header {
     display: block;
     visibility: visible;
     opacity: 1;
-    background-color: transparent; /* Make background transparent */
+    background-color: transparent;
 }
 
-/* Media queries */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-    .estimate-preview-container {
-        height: calc(70vh - 100px);
-        margin: 0 auto;
-        width: 100%;
-    }
-}
-
-@media screen and (min-width: 667px) and (max-width: 926px) and (orientation: landscape) {
-    .estimate-preview-container {
-        height: calc(80vh - 40px);
-        max-width: 90vw;
-        margin: 0 auto;
-    }
-}
-
-@media screen and (min-width: 1024px) and (max-height: 834px) and (orientation: landscape) {
-    .estimate-preview-container {
-        height: calc(85vh - 40px);
-        max-width: 85vw;
-        margin: 0 auto;
-    }
-}
-/* Loading Spinner */
+/* -----------------------------
+   8. Loading States
+----------------------------- */
 .loading-spinner {
     border: 4px solid #f3f3f3;
     border-top: 4px solid #3498db;
@@ -254,276 +287,28 @@ header {
     100% { transform: rotate(360deg); }
 }
 
-body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #ffffff;
-    color: #333;
-    line-height: 1.6;
-}
-
-/* Header Styles */
-header {
-    text-align: center;
-    padding: 20px;
-    background-color: #f9f9f9;
-}
-
-header .logo {
-    max-width: 150px;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-/* Typography */
-h1 {
-    color: #0056b3;
-    font-size: 1.5em;
-    margin: 0;
-    font-weight: normal;
-}
-
-h2 {
-    color: #333;
-    border-bottom: 2px solid #0056b3;
-    padding-bottom: 10px;
-    font-weight: normal;
-}
-
-/* Form Container */
-form {
-    max-width: 600px;  /* Set a fixed max-width */
-    width: 100%;       /* Keep full width up to max-width */
-    margin: 0 auto;    /* Center the form */
-    padding: 15px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Input Fields */
-.uniform-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.3s ease;
-    background-color: #fff;
-    font-size: 16px;
-}
-
-.uniform-input:focus {
-    border-color: #0056b3;
-    outline: none;
-    box-shadow: 0 0 15px rgba(0, 86, 179, 0.5);
-}
-
-/* Select Input Styling */
-select.uniform-input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"%3E%3Cpath fill="none" stroke="%23333" stroke-width="2" d="M3 6l4 4 4-4"%3E%3C/path%3E%3C/svg%3E');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 12px 8px;
-}
-
-/* Date Input Styling */
-input[type="date"].uniform-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
-    font-size: 16px;
-}
-#navigationButtons {
-    margin-top: 20px;
-    text-align: center;
-    width: 100%;
-    max-width: 600px; /* Match the form max-width */
-    padding: 20px 0;
-    display: flex;
-    justify-content: space-between;
-}
-
-#navigationButtons button {
-    margin: 0;
-    padding: 10px 20px;
-    width: 48%; /* Instead of 100% */
-}
-/* Button Styles */
-button {
-    display: inline-block;
-    background-color: #0056b3;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    width: 100%;
-}
-
-button:hover {
-    background-color: #004494;
-    transform: translateY(-1px);
-}
-
-button:active {
-    transform: translateY(0);
-}
-
-
-/* Radio Button Styles */
-input[type="radio"] {
-    margin-right: 10px;
-    vertical-align: middle;
-    cursor: pointer;
-}
-
-label {
-    display: inline-block;
-    margin: 5px 0;
-    font-weight: normal;
-}
-
-.radio-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.radio-group label {
-    margin-bottom: 10px;
-}
-
-/* Form Section Styles */
-.form-section {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-}
-
-.form-section .section-title {
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.form-section .form-label {
-    font-size: 1.1em;
-    font-weight: normal;
-    display: block;
-    margin-bottom: 8px;
-}
-
-.form-section .form-options {
-    margin-top: 10px;
-}
-
-.form-section .form-radio {
-    margin-right: 10px;
-}
-
-.form-section .form-option-label {
-    font-size: 1em;
-}
-
-/* Mobile-first Media Queries */
-@media (max-width: 600px) {
-    h1 {
-        font-size: 1.5em;
+/* -----------------------------
+   9. Media Queries
+----------------------------- */
+@media screen and (max-width: 768px) {
+    .estimate-preview-container {
+        height: calc(70vh - 100px);
+        width: 100%;
     }
-
-    form {
-        padding: 15px;
-    }
-
-    button {
-        padding: 10px;
-    }
-
+    
     #navigationButtons {
         flex-direction: row;
         justify-content: space-between;
     }
-
+    
     #navigationButtons button {
         width: 48%;
-        margin-bottom: 0;
-    }
-
-    #backButton {
-        display: block;
-    }
-
-   @media (forced-colors: active) {
-            .preview-fallback {
-                text-align: center;
-                padding: 20px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                margin: 10px 0;
-            }
-            
-            .pdf-link {
-                display: inline-block;
-                padding: 10px 20px;
-                background-color: #007bff;
-                color: white;
-                text-decoration: none;
-                border-radius: 4px;
-                margin: 10px 0;
-            }
-            
-            .pdf-link:hover {
-                background-color: #0056b3;
-            }
-@media (forced-colors: active) {
-    /* Add forced colors mode styles */
-    button {
-        forced-color-adjust: none;
-        background-color: ButtonFace;
-        color: ButtonText;
-    }
-    
-    input[type="radio"] {
-        forced-color-adjust: none;
-    }
-    
-/* Larger Screen Media Queries */
-@media (min-width: 601px) {
-    header .logo {
-        max-width: 200px;
-    }
-
-    h1 {
-        font-size: 1.8em;
-    }
-
-    form {
-        max-width: 600px;
-    }
-
-    #navigationButtons {
-        flex-direction: row;
-    }
-
-    #navigationButtons button {
-        width: 48%;
-    }
-
-    #backButton {
-        display: inline-block;
     }
 }
 
+@media (min-width: 1024px) {
+    .estimate-preview-container {
+        height: calc(85vh - 40px);
+        max-width: 85vw;
+    }
+}
