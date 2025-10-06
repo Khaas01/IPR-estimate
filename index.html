@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <header>
     <div class="logo-title">
         <img src="assets/images/logo.png" alt="Prairie Ridge Exteriors Logo" class="logo">
-        <h1>Roofing Estimate Form Version 5</h1>
+        <h1>Roofing Estimate Form Version 6</h1>
     </div>
     <nav class="nav-container">
         <button class="menu-toggle" aria-label="Toggle Menu">
@@ -352,117 +352,60 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 
-<!-- ───────── CUSTOMER SIGNATURE MODAL + ACK, DRAW ONLY, RESPONSIVE ───────── -->
-
-<style>
-  /* Modal base */
-  #sigModal, #sigAccepted { position: fixed; inset: 0; z-index: 9999; display: none; }
-  #sigAccepted { z-index: 10000; }
-  .sig-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
-
-  .sig-dialog {
-    position: relative;
-    width: min(92vw, 760px);
-    margin: 6vh auto;
-    background: #fff;
-    border-radius: 16px;
-    padding: 18px;
-    box-shadow: 0 20px 50px rgba(0,0,0,.25);
-  }
-  .sig-ack { width: min(92vw, 520px); margin: 20vh auto; text-align: center; }
-
-  /* Header, centered title, no ghost box */
-  .sig-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
-  .sig-title { grid-column: 2; text-align: center; margin: 0; }
-  .sig-close-wrap { grid-column: 3; text-align: right; }
-  .sig-close { font-size: 22px; background: none; border: 0; cursor: pointer; line-height: 1; }
-
-  /* Canvas frame */
-  .sig-frame { background: #fff; border: 1px solid #ccd; border-radius: 12px; padding: 8px; }
-  .sig-stage { width: 100%; display: block; height: var(--sig-canvas-h, 220px); }
-
-  /* Buttons */
-  .sig-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
-  .sig-spacer { flex: 1; }
-  .sig-btn { padding: 10px 14px; border-radius: 10px; border: 0; cursor: pointer; }
-  .sig-btn.primary { background: #1f54b0; color: #fff; }
-  .sig-btn.muted { background: #eceff3; color: #111; }
-
-  /* Responsive canvas height, adapts to orientation */
-  @media (orientation: portrait)  { :root { --sig-canvas-h: 34vh; } }
-  @media (orientation: landscape) { :root { --sig-canvas-h: 28vh; } }
-  @media (max-width: 420px)       { :root { --sig-canvas-h: 30vh; } }
-</style>
-
-<!-- Signature Modal (Draw only) -->
-<div id="sigModal">
-  <div class="sig-backdrop"></div>
-  <div class="sig-dialog" role="dialog" aria-modal="true" aria-labelledby="sigTitle">
-    <header class="sig-head">
-      <h3 id="sigTitle" class="sig-title">Client Signature</h3>
-      <div class="sig-close-wrap">
-      </div>
-    </header>
-
-    <section>
-      <div class="sig-frame">
-        <canvas id="sigCanvas" class="sig-stage"></canvas>
-      </div>
-      <div class="sig-row">
-        <button id="sigClear" type="button" class="sig-btn muted">Clear</button>
-        <div class="sig-spacer"></div>
-        <button id="sigCancel" type="button" class="sig-btn muted">Cancel</button>
-        <button id="sigSave" type="button" class="sig-btn primary">Save signature</button>
-      </div>
-    </section>
-  </div>
-</div>
-
-<!-- Accepted Modal -->
-<div id="sigAccepted">
-  <div class="sig-backdrop"></div>
-  <div class="sig-dialog sig-ack" role="dialog" aria-modal="true">
-    <h3 style="margin:0 0 8px;">Signature accepted</h3>
-    <p style="margin:0 0 16px;">Thank you. Click OK to continue.</p>
-    <button id="sigAcceptedOk" type="button" class="sig-btn primary">OK</button>
-  </div>
-</div>
-
-<!-- Signature Pad lib -->
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
-
 <script>
-  // Call this from your Terms Next button
+  // Public entry point called from the Terms "Next" button
   window.startClientSignatureFlow = async function () {
-    const result = await openClientSignatureModal();    // { dataUrl, signedAt }
-    if (!result) return;
-    await showClientAccepted();
-    await persistSignature('Client Signature', result); // replace with real API if needed
+    // 1) Client signs
+    const client = await openSignatureModal('Client Signature');
+    if (!client) return;
+
+    // 2) Ack, then Contractor signs
+    await showAcceptedThen(async () => {
+      await persistSignature('Client Signature', client);
+      const contractor = await openSignatureModal('Contractor Signature');
+      if (!contractor) return;
+
+      // 3) Ack, then go to review
+      await showAcceptedThen(async () => {
+        await persistSignature('Contractor Signature', contractor);
+        if (typeof showSection === 'function') {
+          showSection('review-section');
+        } else {
+          console.warn('showSection not found, staying on page');
+        }
+      });
+    });
   };
 
-  function openClientSignatureModal() {
+  // Reusable signature modal, draw only
+  function openSignatureModal(titleText) {
     return new Promise(resolve => {
-      const modal = document.getElementById('sigModal');
+      const modal  = document.getElementById('sigModal');
+      const title  = document.getElementById('sigTitle');
       const canvas = document.getElementById('sigCanvas');
-      const closeBtn = document.getElementById('sigClose');
-      const cancelBtn = document.getElementById('sigCancel');
-      const clearBtn  = document.getElementById('sigClear');
-      const saveBtn   = document.getElementById('sigSave');
+      const cancel = document.getElementById('sigCancel');
+      const clear  = document.getElementById('sigClear');
+      const save   = document.getElementById('sigSave');
 
+      // optional close button, guard if not present
+      const closeBtn = document.getElementById('sigClose');
+
+      title.textContent = titleText;
       modal.style.display = 'block';
+
       const teardown = [];
 
-      // High DPI fit, re-fit on resize or orientation change while open
       const fit = () => {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
         const rect = canvas.getBoundingClientRect();
         const cssH = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
-        canvas.width = Math.max(1, Math.floor(rect.width  * ratio));
-        canvas.height= Math.max(1, Math.floor(cssH       * ratio));
+        canvas.width  = Math.max(1, Math.floor(rect.width  * ratio));
+        canvas.height = Math.max(1, Math.floor(cssH       * ratio));
         const ctx = canvas.getContext('2d');
         ctx.setTransform(1,0,0,1,0,0);
         ctx.scale(ratio, ratio);
-        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,rect.width,cssH);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0,0,rect.width,cssH);
       };
       fit();
       const onResize = () => { fit(); pad.clear(); };
@@ -471,19 +414,16 @@ document.addEventListener('DOMContentLoaded', function() {
       teardown.push(() => window.removeEventListener('resize', onResize));
       teardown.push(() => window.removeEventListener('orientationchange', onResize));
 
-      // Init signature pad
       const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
-      clearBtn.onclick = () => pad.clear();
+      clear.onclick = () => pad.clear();
 
-      // Close helpers
-       const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
-       if (closeBtn) closeBtn.onclick = close;   // guard
-       cancelBtn.onclick = close;
+      const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
+      if (closeBtn) closeBtn.onclick = close;
+      cancel.onclick = close;
 
-      // Save
-      saveBtn.onclick = () => {
+      save.onclick = () => {
         if (pad.isEmpty()) { alert('Please sign first'); return; }
-        const dataUrl = canvas.toDataURL('image/png');
+        const dataUrl  = canvas.toDataURL('image/png');
         const signedAt = new Date().toISOString();
         modal.style.display = 'none';
         teardown.forEach(fn => fn());
@@ -492,32 +432,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  function showClientAccepted() {
+  // Show "Signature accepted", then run next() when OK is clicked
+  function showAcceptedThen(next) {
     return new Promise(resolve => {
-      const m = document.getElementById('sigAccepted');
-      m.style.display = 'block';
+      const m  = document.getElementById('sigAccepted');
       const ok = document.getElementById('sigAcceptedOk');
-      const done = () => { m.style.display = 'none'; ok.removeEventListener('click', done); resolve(); };
+      const done = async () => {
+        m.style.display = 'none';
+        ok.removeEventListener('click', done);
+        if (typeof next === 'function') { await next(); }
+        resolve();
+      };
+      m.style.display = 'block';
       ok.addEventListener('click', done);
     });
   }
 
-  // Replace with your real API
+  // Stub, swap for your real API
   async function persistSignature(header, sig) {
     try {
       await fetch('/api/signatures', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          header,              // "Client Signature"
+          header,              // "Client Signature" or "Contractor Signature"
           imageBase64: sig.dataUrl,
           signedAt: sig.signedAt,
-          method: sig.method   // draw
+          method: sig.method   // 'draw'
         })
       });
     } catch (e) {
       console.error('Failed to save signature', e);
-      alert('Signature saved locally but failed to save to server.');
+      // non blocking for now
     }
   }
 </script>
