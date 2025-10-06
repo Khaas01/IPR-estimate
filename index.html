@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,1336 +29,898 @@
   </script>
 </head>
 <body>
-    <script>
+<script>
 // Check if user is logged in
 document.addEventListener('DOMContentLoaded', function() {
-    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-    
-    // If user is not logged in, redirect to login page
-    if (!user.isLoggedIn) {
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    // Set the username in the menu
-    const userNameSpan = document.getElementById('userNameSpan');
-    if (userNameSpan) {
-        userNameSpan.textContent = user.name || user.username;
-    }
-    
-    // Add logout functionality
-    document.getElementById('logoutBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        sessionStorage.removeItem('user');
-        window.location.href = 'login.html';
-    });
+  const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+  if (!user.isLoggedIn) {
+    window.location.href = 'login.html';
+    return;
+  }
+  const userNameSpan = document.getElementById('userNameSpan');
+  if (userNameSpan) userNameSpan.textContent = user.name || user.username;
 
+  document.getElementById('logoutBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    sessionStorage.removeItem('user');
+    window.location.href = 'login.html';
+  });
 });
-  
 </script>
+
 <header>
-    <div class="logo-title">
-        <img src="assets/images/logo.png" alt="Prairie Ridge Exteriors Logo" class="logo">
-        <h1>Roofing Estimate Form Version 12</h1>
-    </div>
-    <nav class="nav-container">
-        <button class="menu-toggle" aria-label="Toggle Menu">
-            <span class="hamburger"></span>
-        </button>
-      <ul class="nav-menu">
-    <li class="user-info-menu-item">
+  <div class="logo-title">
+    <img src="assets/images/logo.png" alt="Prairie Ridge Exteriors Logo" class="logo">
+    <h1>Roofing Estimate Form Version 12</h1>
+  </div>
+  <nav class="nav-container">
+    <button class="menu-toggle" aria-label="Toggle Menu">
+      <span class="hamburger"></span>
+    </button>
+    <ul class="nav-menu">
+      <li class="user-info-menu-item">
         <span>Welcome, <span id="userNameSpan"></span></span>
-    </li>
-    <li><a href="#" onclick="showSection('salesRepSection'); return false;">Home</a></li>
-    <li><a href="#" onclick="showSection('measureRoofSection'); return false;">Measurement</a></li>
-    <li><a href="#" onclick="showSection('financeSection'); return false;">Finance</a></li>
-    <li class="logout-menu-item">
+      </li>
+      <li><a href="#" onclick="showSection('salesRepSection'); return false;">Home</a></li>
+      <li><a href="#" onclick="showSection('measureRoofSection'); return false;">Measurement</a></li>
+      <li><a href="#" onclick="showSection('financeSection'); return false;">Finance</a></li>
+      <li class="logout-menu-item">
         <a href="#" id="logoutBtn" class="logout-button">Logout</a>
-    </li>
-</ul>
-    </nav>
+      </li>
+    </ul>
+  </nav>
 </header>
+
 <form id="estimateForm">
-   <!--Sales Rep Section -->
-   <div id="salesRepSection" style="display:block;">
+  <!-- NEW: Hidden field to indicate which sheet/template to use on submit -->
+  <input type="hidden" id="sheetName" name="sheetName" value="Estimate">
+
+  <!--Sales Rep Section -->
+  <div id="salesRepSection" style="display:block;">
     <h2>Sales Rep Information</h2>
-    
-    <!-- Name field -->
+
     <label for="salesRepName">Sales Rep's Name:</label>
-    <input type="text" 
-        class="uniform-input" 
-        id="salesRepName" 
-        name="salesRepName" 
-        style="text-transform: capitalize;"
-        required>
-    
-    <!-- Phone field -->
+    <input type="text" class="uniform-input" id="salesRepName" name="salesRepName" style="text-transform: capitalize;" required>
+
     <label for="salesRepPhone">Sales Rep's Phone:</label>
-   <input type="tel" 
-    class="uniform-input" 
-    id="salesRepPhone" 
-    name="salesRepPhone" 
-    placeholder="0000000000"
-    required>
+    <input type="tel" class="uniform-input" id="salesRepPhone" name="salesRepPhone" placeholder="0000000000" required>
 
-    
-    <!-- Email field -->
     <label for="salesRepEmail">Sales Rep's Email:</label>
-    <input type="email" 
-        class="uniform-input" 
-        id="salesRepEmail" 
-        name="salesRepEmail" 
-        required>
-    
-    <!-- Navigation buttons should be last -->
+    <input type="email" class="uniform-input" id="salesRepEmail" name="salesRepEmail" required>
+
     <div id="navigationButtons">
-        <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
+      <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
     </div>
-</div>
+  </div>
 
+  <!-- companySection removed for Prairie Ridge single-brand usage -->
 
-   
-   <!-- companySection removed for Prairie Ridge single-brand usage
-   <div id="companySection" style="display:none;">
-        <h2>Company Information</h2>
-        <label for="companyName">What Company are we providing this estimate for?</label><br>
-        <select id="companyName" name="companyName" class="uniform-input" required>
-            <option value="Iron Peak Roofing">Iron Peak Roofing</option>
-            <option value="Capitol Energy">Capitol Energy</option>
-        </select>
-        
-        <div id="navigationButtons">
-            <button type="button" onclick="goBack()">Back</button>
-            <button type="button" onclick="showSection('propertyOwnerSection')">Next</button>
-        </div>
-    </div>
-   -->
+  <div id="propertyOwnerSection" style="display:none;">
+    <h2>Property Owner Information</h2>
+    <label for="ownerName">Owner's Name:</label>
+    <input type="text" class="uniform-input" id="ownerName" name="ownerName" style="text-transform: capitalize;" required>
 
-    
-    <div id="propertyOwnerSection" style="display:none;">
-        <h2>Property Owner Information</h2>
-        <label for="ownerName">Owner's Name:</label>
-        <input type="text" 
-    class="uniform-input" 
-    id="ownerName" 
-    name="ownerName" 
-    style="text-transform: capitalize;"
-    required>
-     <div class="address-container">
-    <label for="ownerAddress">
+    <div class="address-container">
+      <label for="ownerAddress">
         Address <span class="hint-text">(Hint - Copy the address to paste into the measurement tool)</span>
-    </label>
-    <input type="text" 
-        class="uniform-input" 
-        id="ownerAddress" 
-        name="ownerAddress" 
-        placeholder="Start typing address..." 
-        required>
-</div>
-        <label for="ownerCity">City:</label>
-        <!-- Update the City input -->
-<input type="text" 
-    class="uniform-input" 
-    id="ownerCity" 
-    name="ownerCity" 
-    style="text-transform: capitalize;"
-    required>
-        <label for="ownerState">State:</label>
-        <!-- Update the State input -->
-<input type="text" 
-    class="uniform-input" 
-    id="ownerState" 
-    name="ownerState" 
-    style="text-transform: uppercase;"
-    maxlength="2"
-    required>
-        <label for="ownerZip">Zip Code:</label>
-        <input type="number" 
-    class="uniform-input" 
-    id="ownerZip" 
-    name="ownerZip" 
-    pattern="[0-9]*" 
-    inputmode="numeric" 
-    maxlength="5" 
-    minlength="5"
-    placeholder="ZIP Code"
-    required>
-        <label for="ownerPhone">Phone:</label>
-       <input type="tel" 
-    class="uniform-input" 
-    id="ownerPhone" 
-    name="ownerPhone" 
-    placeholder="0000000000"
-    required>
-        <label for="ownerEmail">Email:</label>
-        <input type="email" class="uniform-input" id="ownerEmail" name="ownerEmail" required>
-       
-        <div id="navigationButtons">
-            <button type="button" onclick="goBack()">Back</button>
-            <button type="button" onclick="showSection('projectTypeSection')">Next</button>
-        </div>
+      </label>
+      <input type="text" class="uniform-input" id="ownerAddress" name="ownerAddress" placeholder="Start typing address..." required>
     </div>
-  
-   
-    <div id="measureRoofSection" style="display:none;">
-        <h2>Measure the Roof</h2>
-        <p>
-            Use the tool below to measure the roof area. Follow the instructions on the website to accurately outline and calculate the roof dimensions.<br>
-            Click "get started" below.
-        </p>
- <iframe 
-    src="https://www.oneclickestimate.com" 
-    style="width:100%; height:800px; border:0;" 
-    title="Roof Measurement Tool" 
-    id="measurementToolIframe"
-    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-top-navigation-by-user-activation"
-    allow="geolocation; camera; fullscreen"
-    crossorigin="anonymous"
-    loading="lazy"
-    onload="this.setAttribute('data-loaded', 'true')">
-</iframe>
-      <div id="navigationButtons">
+
+    <label for="ownerCity">City:</label>
+    <input type="text" class="uniform-input" id="ownerCity" name="ownerCity" style="text-transform: capitalize;" required>
+
+    <label for="ownerState">State:</label>
+    <input type="text" class="uniform-input" id="ownerState" name="ownerState" style="text-transform: uppercase;" maxlength="2" required>
+
+    <label for="ownerZip">Zip Code:</label>
+    <input type="number" class="uniform-input" id="ownerZip" name="ownerZip" pattern="[0-9]*" inputmode="numeric" maxlength="5" minlength="5" placeholder="ZIP Code" required>
+
+    <label for="ownerPhone">Phone:</label>
+    <input type="tel" class="uniform-input" id="ownerPhone" name="ownerPhone" placeholder="0000000000" required>
+
+    <label for="ownerEmail">Email:</label>
+    <input type="email" class="uniform-input" id="ownerEmail" name="ownerEmail" required>
+
+    <div id="navigationButtons">
       <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('roofingTypeSection')">Next</button>
+      <button type="button" onclick="showSection('projectTypeSection')">Next</button>
     </div>
+  </div>
+
+  <div id="measureRoofSection" style="display:none;">
+    <h2>Measure the Roof</h2>
+    <p>
+      Use the tool below to measure the roof area. Follow the instructions on the website to accurately outline and calculate the roof dimensions.<br>
+      Click "get started" below.
+    </p>
+    <iframe
+      src="https://www.oneclickestimate.com"
+      style="width:100%; height:800px; border:0;"
+      title="Roof Measurement Tool"
+      id="measurementToolIframe"
+      sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-top-navigation-by-user-activation"
+      allow="geolocation; camera; fullscreen"
+      crossorigin="anonymous"
+      loading="lazy"
+      onload="this.setAttribute('data-loaded', 'true')">
+    </iframe>
+    <div id="navigationButtons">
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('roofingTypeSection')">Next</button>
     </div>
-    
-    <div id="financeSection" style="display:block;">
-            <h2>Finance Marketplace</h2>
-            <p>
-                Use the tool below to explore finance options for your roofing project. Enter the amount you need below to get started.
-            </p>
-            <iframe 
-    src="https://apply.hfsfinancial.net/prequalification" 
-    style="width:100%; height:800px; border:0;" 
-    title="Finance Marketplace" 
-    id="financeMarketplaceIframe"
-    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-top-navigation-by-user-activation"
-    allow="geolocation; camera; fullscreen"
-    crossorigin="anonymous"
-    loading="lazy"
-    onload="this.setAttribute('data-loaded', 'true')">
-</iframe>
-            <div id="navigationButtons">
-                <button type="button" onclick="goBack()">Back</button>
-                <button type="button" onclick="showSection('review-section')">Estimate</button>
-            </div>
-        </div>
- 
-<div id="projectTypeSection" style="display:none;">
+  </div>
+
+  <div id="financeSection" style="display:block;">
+    <h2>Finance Marketplace</h2>
+    <p>Use the tool below to explore finance options for your roofing project. Enter the amount you need below to get started.</p>
+    <iframe
+      src="https://apply.hfsfinancial.net/prequalification"
+      style="width:100%; height:800px; border:0;"
+      title="Finance Marketplace"
+      id="financeMarketplaceIframe"
+      sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-top-navigation-by-user-activation"
+      allow="geolocation; camera; fullscreen"
+      crossorigin="anonymous"
+      loading="lazy"
+      onload="this.setAttribute('data-loaded', 'true')">
+    </iframe>
+    <div id="navigationButtons">
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('review-section')">Estimate</button>
+    </div>
+  </div>
+
+  <!-- Project Type (controls which SHEET/TEMPLATE is used) -->
+  <div id="projectTypeSection" style="display:none;">
     <h2>Project Type</h2>
     <label>Project Type:</label><br>
     <label>
-        <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required>
-        Cash
+      <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required>
+      Cash
     </label><br>
     <label>
-        <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required>
-        Insurance
+      <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required>
+      Insurance
     </label>
     <div id="navigationButtons">
-       <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="nextProjectTypeSection()">Next</button>
-    </div>
-</div>
-    
-   
-    <div id="insuranceInfoSection" style="display:none;">
-        <h2>Insurance Information</h2>
-        <label for="insuranceCompany">Insurance Company:</label>
-        <input type="text" 
-    class="uniform-input" 
-    id="insuranceCompany" 
-    name="insuranceCompany" 
-    style="text-transform: capitalize;"
-    required>
-        <label for="insurancePhone">Insurance Phone:</label>
-        <input type="tel" 
-    class="uniform-input" 
-    id="insurancePhone" 
-    name="insurancePhone" 
-    placeholder="0000000000"
-    required>
-
-        <label for="claimNumber">Claim Number:</label>
-        <input type="text" 
-    class="uniform-input" 
-    id="claimNumber" 
-    name="claimNumber" 
-    pattern="[A-Za-z0-9\-_]+"
-    placeholder="Enter claim number"
-    required>
-
-        <label for="policyNumber">Policy Number:</label>
-        <input type="text" 
-    class="uniform-input" 
-    id="policyNumber" 
-    name="policyNumber" 
-    pattern="[A-Za-z0-9\-_]+"
-    placeholder="Enter policy number"
-    required>
-
-        <label for="dateOfLoss">Date of Loss:</label>
-       <input type="date" 
-    class="uniform-input" 
-    id="dateOfLoss" 
-    name="dateOfLoss" 
-    required>
-            <div id="navigationButtons">
       <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('insuranceTermsSection')">Next</button>
+      <button type="button" onclick="nextProjectTypeSection()">Next</button>
     </div>
+  </div>
+
+  <div id="insuranceInfoSection" style="display:none;">
+    <h2>Insurance Information</h2>
+    <label for="insuranceCompany">Insurance Company:</label>
+    <input type="text" class="uniform-input" id="insuranceCompany" name="insuranceCompany" style="text-transform: capitalize;" required>
+
+    <label for="insurancePhone">Insurance Phone:</label>
+    <input type="tel" class="uniform-input" id="insurancePhone" name="insurancePhone" placeholder="0000000000" required>
+
+    <label for="claimNumber">Claim Number:</label>
+    <input type="text" class="uniform-input" id="claimNumber" name="claimNumber" pattern="[A-Za-z0-9\-_]+" placeholder="Enter claim number" required>
+
+    <label for="policyNumber">Policy Number:</label>
+    <input type="text" class="uniform-input" id="policyNumber" name="policyNumber" pattern="[A-Za-z0-9\-_]+" placeholder="Enter policy number" required>
+
+    <label for="dateOfLoss">Date of Loss:</label>
+    <input type="date" class="uniform-input" id="dateOfLoss" name="dateOfLoss" required>
+
+    <div id="navigationButtons">
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('insuranceTermsSection')">Next</button>
     </div>
-<!-- Insurance Terms Section -->
-<div id="insuranceTermsSection" style="display:none;">
-  <h2>Terms and Conditions</h2>
-  <ol>
-    <li>
-      If the property owner’s insurance carrier (carrier) fails to approve payment for the repairs covered by this
-      agreement or otherwise denies payment for the claim after appraisal proceedings, this agreement shall void on its own.
-    </li>
-    <li>
-      Should the carrier approve payment for claim related repairs, the property owner agrees to provide Prairie Ridge Exteriors
-      with any claim related documentation, including but not limited to the carrier's report, and release all claim payments
-      to Prairie Ridge Exteriors upon receipt.
-    </li>
-    <li>
-      Property owner authorizes Prairie Ridge Exteriors, its representatives, their affiliates, and or its attorney(s) to access
-      the property as needed, execute work authorizations on property owner’s behalf, furnish materials, supply equipment, and
-      perform labor necessary to complete the claim related repairs within the scope of loss provided by the carrier for the
-      insurance proceeds.
-    </li>
-    <li>
-      Property owners understand and agree that pricing is subject to increase without notice to accommodate for inflation,
-      material pricing increases and or labor pricing increases. Any pricing increases are subject to carrier approval prior
-      to final invoicing. Property owners agree that any portion of work, deductible, betterment, non recoverable depreciation,
-      non insured code upgrades or additional work requested but not covered by the carrier is ultimately their responsibility
-      above the carrier proceeds.
-    </li>
-    <li>
-      Property owner hereby directs insurance and or mortgage company, including their claims representatives, to release any
-      and all information or documents requested by Prairie Ridge Exteriors including but not limited to the scheduling of
-      inspections, estimates for repairs, payments or drafts and or financial arrangements of any kind regarding this claim on
-      property owner’s behalf for the purpose of obtaining actual benefits to be paid by the carrier for services rendered or
-      to be rendered.
-    </li>
-    <li>
-      Property owner hereby assigns any and all insurance rights, post loss benefits, proceeds and causes of action under any
-      applicable insurance policies to Prairie Ridge Exteriors and authorizes and directs insurance and or mortgage company to
-      name “Prairie Ridge Exteriors” as an additional payee on any and all payments for repairs. Property owner makes this
-      assignment in consideration for Prairie Ridge Exteriors to furnish materials, supply equipment and perform labor to
-      complete its obligations under their agreement.
-    </li>
-    <li>
-      In the event property owner fails to fulfill their obligations or otherwise terminates this agreement after any
-      applicable statutory waiting period for any reason other than the denial of coverage by the carrier, property owner
-      agrees to pay Prairie Ridge Exteriors twenty percent of the current “Replacement Cost Value” specified by the carrier,
-      not as a penalty, but rather as payment for services rendered.
-    </li>
-  </ol>
-  <div id="navigationButtons">
-    <button type="button" onclick="goBack()">Back</button>
-    <button type="button" onclick="startClientSignatureFlow()">Next</button>
   </div>
-</div>
 
-<!-- ───────── CUSTOMER SIGNATURE MODAL + ACK, DRAW ONLY, RESPONSIVE ───────── -->
-
-<style>
-  /* Modal base */
-  #sigModal, #sigAccepted { position: fixed; inset: 0; z-index: 9999; display: none; }
-  #sigAccepted { z-index: 10000; }
-  .sig-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
-
-  .sig-dialog {
-    position: relative;
-    width: min(92vw, 760px);
-    margin: 6vh auto;
-    background: #fff;
-    border-radius: 16px;
-    padding: 18px;
-    box-shadow: 0 20px 50px rgba(0,0,0,.25);
-  }
-  .sig-ack { width: min(92vw, 520px); margin: 20vh auto; text-align: center; }
-
-  /* Header, centered title, no ghost box */
-  .sig-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
-  .sig-title { grid-column: 2; text-align: center; margin: 0; }
-  .sig-close-wrap { grid-column: 3; text-align: right; }
-  .sig-close { font-size: 22px; background: none; border: 0; cursor: pointer; line-height: 1; }
-
-  /* Canvas frame */
-  .sig-frame { background: #fff; border: 1px solid #ccd; border-radius: 12px; padding: 8px; }
-  .sig-stage { width: 100%; display: block; height: var(--sig-canvas-h, 220px); }
-
-  /* Buttons */
-  .sig-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
-  .sig-spacer { flex: 1; }
-  .sig-btn { padding: 10px 14px; border-radius: 10px; border: 0; cursor: pointer; }
-  .sig-btn.primary { background: #1f54b0; color: #fff; }
-  .sig-btn.muted { background: #eceff3; color: #111; }
-
-  /* Responsive canvas height, adapts to orientation */
-  @media (orientation: portrait)  { :root { --sig-canvas-h: 34vh; } }
-  @media (orientation: landscape) { :root { --sig-canvas-h: 28vh; } }
-  @media (max-width: 420px)       { :root { --sig-canvas-h: 30vh; } }
-</style>
-
-<!-- Signature Modal (Draw only) -->
-<div id="sigModal">
-  <div class="sig-backdrop"></div>
-  <div class="sig-dialog" role="dialog" aria-modal="true" aria-labelledby="sigTitle">
-    <header class="sig-head">
-      <h3 id="sigTitle" class="sig-title">Client Signature</h3>
-      <div class="sig-close-wrap">
-      </div>
-    </header>
-
-    <section>
-      <div class="sig-frame">
-        <canvas id="sigCanvas" class="sig-stage"></canvas>
-      </div>
-      <div class="sig-row">
-        <button id="sigClear" type="button" class="sig-btn muted">Clear</button>
-        <div class="sig-spacer"></div>
-        <button id="sigCancel" type="button" class="sig-btn muted">Cancel</button>
-        <button id="sigSave" type="button" class="sig-btn primary">Save signature</button>
-      </div>
-    </section>
+  <!-- Insurance Terms Section -->
+  <div id="insuranceTermsSection" style="display:none;">
+    <h2>Terms and Conditions</h2>
+    <ol>
+      <li>If the property owner’s insurance carrier (carrier) fails to approve payment for the repairs covered by this agreement or otherwise denies payment for the claim after appraisal proceedings, this agreement shall void on its own.</li>
+      <li>Should the carrier approve payment for claim related repairs, the property owner agrees to provide Prairie Ridge Exteriors with any claim related documentation, including but not limited to the carrier's report, and release all claim payments to Prairie Ridge Exteriors upon receipt.</li>
+      <li>Property owner authorizes Prairie Ridge Exteriors, its representatives, their affiliates, and or its attorney(s) to access the property as needed, execute work authorizations on property owner’s behalf, furnish materials, supply equipment, and perform labor necessary to complete the claim related repairs within the scope of loss provided by the carrier for the insurance proceeds.</li>
+      <li>Property owners understand and agree that pricing is subject to increase without notice to accommodate for inflation, material pricing increases and or labor pricing increases. Any pricing increases are subject to carrier approval prior to final invoicing. Property owners agree that any portion of work, deductible, betterment, non recoverable depreciation, non insured code upgrades or additional work requested but not covered by the carrier is ultimately their responsibility above the carrier proceeds.</li>
+      <li>Property owner hereby directs insurance and or mortgage company, including their claims representatives, to release any and all information or documents requested by Prairie Ridge Exteriors including but not limited to the scheduling of inspections, estimates for repairs, payments or drafts and or financial arrangements of any kind regarding this claim on property owner’s behalf for the purpose of obtaining actual benefits to be paid by the carrier for services rendered or to be rendered.</li>
+      <li>Property owner hereby assigns any and all insurance rights, post loss benefits, proceeds and causes of action under any applicable insurance policies to Prairie Ridge Exteriors and authorizes and directs insurance and or mortgage company to name “Prairie Ridge Exteriors” as an additional payee on any and all payments for repairs. Property owner makes this assignment in consideration for Prairie Ridge Exteriors to furnish materials, supply equipment and perform labor to complete its obligations under their agreement.</li>
+      <li>In the event property owner fails to fulfill their obligations or otherwise terminates this agreement after any applicable statutory waiting period for any reason other than the denial of coverage by the carrier, property owner agrees to pay Prairie Ridge Exteriors twenty percent of the current “Replacement Cost Value” specified by the carrier, not as a penalty, but rather as payment for services rendered.</li>
+    </ol>
+    <div id="navigationButtons">
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="startClientSignatureFlow()">Next</button>
+    </div>
   </div>
-</div>
 
-<!-- Accepted Modal -->
-<div id="sigAccepted">
-  <div class="sig-backdrop"></div>
-  <div class="sig-dialog sig-ack" role="dialog" aria-modal="true">
-    <h3 style="margin:0 0 8px;">Signature accepted</h3>
-    <p style="margin:0 0 16px;">Thank you. Click OK to continue.</p>
-    <button id="sigAcceptedOk" type="button" class="sig-btn primary">OK</button>
+  <!-- ───────── CUSTOMER SIGNATURE MODAL + ACK ───────── -->
+  <style>
+    #sigModal, #sigAccepted { position: fixed; inset: 0; z-index: 9999; display: none; }
+    #sigAccepted { z-index: 10000; }
+    .sig-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
+    .sig-dialog { position: relative; width: min(92vw, 760px); margin: 6vh auto; background: #fff; border-radius: 16px; padding: 18px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+    .sig-ack { width: min(92vw, 520px); margin: 20vh auto; text-align: center; }
+    .sig-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+    .sig-title { grid-column: 2; text-align: center; margin: 0; }
+    .sig-close-wrap { grid-column: 3; text-align: right; }
+    .sig-close { font-size: 22px; background: none; border: 0; cursor: pointer; line-height: 1; }
+    .sig-frame { background: #fff; border: 1px solid #ccd; border-radius: 12px; padding: 8px; }
+    .sig-stage { width: 100%; display: block; height: var(--sig-canvas-h, 220px); }
+    .sig-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+    .sig-spacer { flex: 1; }
+    .sig-btn { padding: 10px 14px; border-radius: 10px; border: 0; cursor: pointer; }
+    .sig-btn.primary { background: #1f54b0; color: #fff; }
+    .sig-btn.muted { background: #eceff3; color: #111; }
+    @media (orientation: portrait){ :root { --sig-canvas-h: 34vh; } }
+    @media (orientation: landscape){ :root { --sig-canvas-h: 28vh; } }
+    @media (max-width: 420px){ :root { --sig-canvas-h: 30vh; } }
+  </style>
+
+  <div id="sigModal">
+    <div class="sig-backdrop"></div>
+    <div class="sig-dialog" role="dialog" aria-modal="true" aria-labelledby="sigTitle">
+      <header class="sig-head">
+        <h3 id="sigTitle" class="sig-title">Client Signature</h3>
+        <div class="sig-close-wrap"></div>
+      </header>
+      <section>
+        <div class="sig-frame">
+          <canvas id="sigCanvas" class="sig-stage"></canvas>
+        </div>
+        <div class="sig-row">
+          <button id="sigClear" type="button" class="sig-btn muted">Clear</button>
+          <div class="sig-spacer"></div>
+          <button id="sigCancel" type="button" class="sig-btn muted">Cancel</button>
+          <button id="sigSave" type="button" class="sig-btn primary">Save signature</button>
+        </div>
+      </section>
+    </div>
   </div>
-</div>
 
-<!-- Signature Pad lib -->
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <div id="sigAccepted">
+    <div class="sig-backdrop"></div>
+    <div class="sig-dialog sig-ack" role="dialog" aria-modal="true">
+      <h3 style="margin:0 0 8px;">Signature accepted</h3>
+      <p style="margin:0 0 16px;">Thank you. Click OK to continue.</p>
+      <button id="sigAcceptedOk" type="button" class="sig-btn primary">OK</button>
+    </div>
+  </div>
 
-<script>
-  // Call this from your Terms Next button
-  window.startClientSignatureFlow = async function () {
-    const result = await openClientSignatureModal();    // { dataUrl, signedAt }
-    if (!result) return;
-    await showClientAccepted();
-    await persistSignature('Client Signature', result); // replace with real API if needed
-  };
-
-  function openClientSignatureModal() {
-    return new Promise(resolve => {
-      const modal = document.getElementById('sigModal');
-      const canvas = document.getElementById('sigCanvas');
-      const closeBtn = document.getElementById('sigClose');
-      const cancelBtn = document.getElementById('sigCancel');
-      const clearBtn  = document.getElementById('sigClear');
-      const saveBtn   = document.getElementById('sigSave');
-
-      modal.style.display = 'block';
-      const teardown = [];
-
-      // High DPI fit, re-fit on resize or orientation change while open
-      const fit = () => {
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        const rect = canvas.getBoundingClientRect();
-        const cssH = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
-        canvas.width = Math.max(1, Math.floor(rect.width  * ratio));
-        canvas.height= Math.max(1, Math.floor(cssH       * ratio));
-        const ctx = canvas.getContext('2d');
-        ctx.setTransform(1,0,0,1,0,0);
-        ctx.scale(ratio, ratio);
-        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,rect.width,cssH);
-      };
-      fit();
-      const onResize = () => { fit(); pad.clear(); };
-      window.addEventListener('resize', onResize);
-      window.addEventListener('orientationchange', onResize);
-      teardown.push(() => window.removeEventListener('resize', onResize));
-      teardown.push(() => window.removeEventListener('orientationchange', onResize));
-
-      // Init signature pad
-      const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
-      clearBtn.onclick = () => pad.clear();
-
-      // Close helpers
-       const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
-       if (closeBtn) closeBtn.onclick = close;   // guard
-       cancelBtn.onclick = close;
-
-      // Save
-      saveBtn.onclick = () => {
-        if (pad.isEmpty()) { alert('Please sign first'); return; }
-        const dataUrl = canvas.toDataURL('image/png');
-        const signedAt = new Date().toISOString();
-        modal.style.display = 'none';
-        teardown.forEach(fn => fn());
-        resolve({ dataUrl, signedAt, method: 'draw' });
-      };
-    });
-  }
-
- function showClientAccepted() {
-  return new Promise(resolve => {
-    const m  = document.getElementById('sigAccepted');
-    const ok = document.getElementById('sigAcceptedOk');
-
-    const done = async () => {
-      ok.removeEventListener('click', done);
-      m.style.display = 'none';
-      resolve();
-      // chain contractor right here
-      startContractorSignatureFlow();
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <script>
+    // Client signature flow
+    window.startClientSignatureFlow = async function () {
+      const result = await openClientSignatureModal();
+      if (!result) return;
+      await showClientAccepted();
+      await persistSignature('Client Signature', result);
     };
 
-    m.style.display = 'block';
-    ok.addEventListener('click', done);
-  });
-}
+    function openClientSignatureModal() {
+      return new Promise(resolve => {
+        const modal = document.getElementById('sigModal');
+        const canvas = document.getElementById('sigCanvas');
+        const cancelBtn = document.getElementById('sigCancel');
+        const clearBtn  = document.getElementById('sigClear');
+        const saveBtn   = document.getElementById('sigSave');
 
-  // Replace with your real API
-  async function persistSignature(header, sig) {
-    try {
-      await fetch('/api/signatures', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          header,              // "Client Signature"
-          imageBase64: sig.dataUrl,
-          signedAt: sig.signedAt,
-          method: sig.method   // draw
-        })
+        modal.style.display = 'block';
+        const teardown = [];
+
+        const fit = () => {
+          const ratio = Math.max(window.devicePixelRatio || 1, 1);
+          const rect = canvas.getBoundingClientRect();
+          const cssH = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
+          canvas.width  = Math.max(1, Math.floor(rect.width  * ratio));
+          canvas.height = Math.max(1, Math.floor(cssH       * ratio));
+          const ctx = canvas.getContext('2d');
+          ctx.setTransform(1,0,0,1,0,0);
+          ctx.scale(ratio, ratio);
+          ctx.fillStyle = '#fff'; ctx.fillRect(0,0,rect.width,cssH);
+        };
+        fit();
+        const onResize = () => { fit(); pad.clear(); };
+        window.addEventListener('resize', onResize);
+        window.addEventListener('orientationchange', onResize);
+        teardown.push(() => window.removeEventListener('resize', onResize));
+        teardown.push(() => window.removeEventListener('orientationchange', onResize));
+
+        const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
+        clearBtn.onclick = () => pad.clear();
+
+        const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
+        cancelBtn.onclick = close;
+
+        saveBtn.onclick = () => {
+          if (pad.isEmpty()) { alert('Please sign first'); return; }
+          const dataUrl = canvas.toDataURL('image/png');
+          const signedAt = new Date().toISOString();
+          modal.style.display = 'none';
+          teardown.forEach(fn => fn());
+          resolve({ dataUrl, signedAt, method: 'draw' });
+        };
       });
-    } catch (e) {
-      console.error('Failed to save signature', e);
-      alert('Signature saved locally but failed to save to server.');
     }
-  }
-</script>
 
-    
-<!-- ───────── CONTRACTOR SIGNATURE MODAL + ACK, DRAW ONLY, RESPONSIVE ───────── -->
+    function showClientAccepted() {
+      return new Promise(resolve => {
+        const m  = document.getElementById('sigAccepted');
+        const ok = document.getElementById('sigAcceptedOk');
 
-    <style>
-  /* Modal base */
-  #sigModalContractor, #sigAcceptedContractor { position: fixed; inset: 0; z-index: 9999; display: none; }
-  #sigAcceptedContractor { z-index: 10000; }
-  .sig-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
+        const done = async () => {
+          ok.removeEventListener('click', done);
+          m.style.display = 'none';
+          resolve();
+          startContractorSignatureFlow();
+        };
 
-  .sig-dialog {
-    position: relative;
-    width: min(92vw, 760px);
-    margin: 6vh auto;
-    background: #fff;
-    border-radius: 16px;
-    padding: 18px;
-    box-shadow: 0 20px 50px rgba(0,0,0,.25);
-  }
-  .sig-ack { width: min(92vw, 520px); margin: 20vh auto; text-align: center; }
-
-  /* Header, centered title, no ghost box */
-  .sig-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
-  .sig-title { grid-column: 2; text-align: center; margin: 0; }
-  .sig-close-wrap { grid-column: 3; text-align: right; }
-
-  /* Canvas frame */
-  .sig-frame { background: #fff; border: 1px solid #ccd; border-radius: 12px; padding: 8px; }
-  .sig-stage { width: 100%; display: block; height: var(--sig-canvas-h, 220px); }
-
-  /* Buttons */
-  .sig-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
-  .sig-spacer { flex: 1; }
-  .sig-btn { padding: 10px 14px; border-radius: 10px; border: 0; cursor: pointer; }
-  .sig-btn.primary { background: #1f54b0; color: #fff; }
-  .sig-btn.muted { background: #eceff3; color: #111; }
-
-  /* Responsive canvas height, adapts to orientation */
-  @media (orientation: portrait)  { :root { --sig-canvas-h: 34vh; } }
-  @media (orientation: landscape) { :root { --sig-canvas-h: 28vh; } }
-  @media (max-width: 420px)       { :root { --sig-canvas-h: 30vh; } }
-</style>
-
-<!-- Signature Modal (Draw only) -->
-<div id="sigModalContractor">
-  <div class="sig-backdrop"></div>
-  <div class="sig-dialog" role="dialog" aria-modal="true" aria-labelledby="sigTitleContractor">
-    <header class="sig-head">
-      <h3 id="sigTitleContractor" class="sig-title">Contractor Signature</h3>
-      <div class="sig-close-wrap"></div>
-    </header>
-
-    <section>
-      <div class="sig-frame">
-        <canvas id="sigCanvasContractor" class="sig-stage"></canvas>
-      </div>
-      <div class="sig-row">
-        <button id="sigClearContractor" type="button" class="sig-btn muted">Clear</button>
-        <div class="sig-spacer"></div>
-        <button id="sigCancelContractor" type="button" class="sig-btn muted">Cancel</button>
-        <button id="sigSaveContractor" type="button" class="sig-btn primary">Save signature</button>
-      </div>
-    </section>
-  </div>
-</div>
-
-<!-- Accepted Modal -->
-<div id="sigAcceptedContractor">
-  <div class="sig-backdrop"></div>
-  <div class="sig-dialog sig-ack" role="dialog" aria-modal="true">
-    <h3 style="margin:0 0 8px;">Signature accepted</h3>
-    <p style="margin:0 0 16px;">Thank you. Click OK to continue.</p>
-    <button id="sigAcceptedOkContractor" type="button" class="sig-btn primary">OK</button>
-  </div>
-</div>
-
-<script>
-  // If SignaturePad is not present yet, load it once
-  (function ensureSigPad(){
-    if (window.SignaturePad) return;
-    var s = document.createElement('script');
-    s.src = "https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js";
-    document.head.appendChild(s);
-  })();
-
-  // Call this to capture the contractor signature (identical behavior to client)
-  window.startContractorSignatureFlow = async function () {
-    const result = await openContractorSignatureModal();   // { dataUrl, signedAt, method:'draw' }
-    if (!result) return;
-    await showContractorAccepted();
-    if (typeof persistSignature === 'function') {
-      await persistSignature('Contractor Signature', result);
+        m.style.display = 'block';
+        ok.addEventListener('click', done);
+      });
     }
-    if (typeof showSection === 'function') {
-      showSection('review-section');
-    }
-  };
 
-  function openContractorSignatureModal() {
-    return new Promise(resolve => {
-      const modal   = document.getElementById('sigModalContractor');
-      const canvas  = document.getElementById('sigCanvasContractor');
-      const cancel  = document.getElementById('sigCancelContractor');
-      const clear   = document.getElementById('sigClearContractor');
-      const save    = document.getElementById('sigSaveContractor');
-
-      modal.style.display = 'block';
-      const teardown = [];
-
-      // High DPI fit, re-fit on resize or orientation change while open
-      const fit = () => {
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        const rect  = canvas.getBoundingClientRect();
-        const cssH  = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
-        canvas.width  = Math.max(1, Math.floor(rect.width  * ratio));
-        canvas.height = Math.max(1, Math.floor(cssH       * ratio));
-        const ctx = canvas.getContext('2d');
-        ctx.setTransform(1,0,0,1,0,0);
-        ctx.scale(ratio, ratio);
-        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,rect.width,cssH);
-      };
-      fit();
-      const onResize = () => { fit(); pad.clear(); };
-      window.addEventListener('resize', onResize);
-      window.addEventListener('orientationchange', onResize);
-      teardown.push(() => window.removeEventListener('resize', onResize));
-      teardown.push(() => window.removeEventListener('orientationchange', onResize));
-
-      // Init signature pad
-      const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
-      clear.onclick  = () => pad.clear();
-
-      // Close helpers
-      const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
-      cancel.onclick = close;
-
-      // Save
-      save.onclick = () => {
-        if (pad.isEmpty()) { alert('Please sign first'); return; }
-        const dataUrl  = canvas.toDataURL('image/png');
-        const signedAt = new Date().toISOString();
-        modal.style.display = 'none';
-        teardown.forEach(fn => fn());
-        resolve({ dataUrl, signedAt, method: 'draw' });
-      };
-    });
-  }
-
-function showContractorAccepted() {
-  return new Promise(resolve => {
-    const modal = document.getElementById('sigAcceptedContractor');
-    const okBtn = document.getElementById('sigAcceptedOkContractor');
-
-    const onOk = async () => {
-      okBtn.removeEventListener('click', onOk);
-      modal.style.display = 'none';
-
-      // 1) SUBMIT TO SHEET using your existing solar submit function
-      //    (this is the one that writes to the database and builds the review)
+    async function persistSignature(header, sig) {
       try {
-        if (typeof nextFromSolarDetachReset === 'function') {
-          // In case it's synchronous, Promise.resolve makes it awaitable
-          await Promise.resolve(nextFromSolarDetachReset());
-        } else {
-          console.error('nextFromSolarDetachReset() not found');
-        }
+        await fetch('/api/signatures', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            header,
+            imageBase64: sig.dataUrl,
+            signedAt: sig.signedAt,
+            method: sig.method
+          })
+        });
       } catch (e) {
-        console.error('Submit failed in nextFromSolarDetachReset()', e);
+        console.error('Failed to save signature', e);
+        alert('Signature saved locally but failed to save to server.');
       }
+    }
+  </script>
 
-      // 2) Ensure we are on the review section (in case the submit didn’t navigate)
-      if (typeof showSection === 'function') {
-        showSection('review-section');
+  <!-- ───────── CONTRACTOR SIGNATURE MODAL + ACK ───────── -->
+  <style>
+    #sigModalContractor, #sigAcceptedContractor { position: fixed; inset: 0; z-index: 9999; display: none; }
+    #sigAcceptedContractor { z-index: 10000; }
+    .sig-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
+    .sig-dialog { position: relative; width: min(92vw, 760px); margin: 6vh auto; background: #fff; border-radius: 16px; padding: 18px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+    .sig-ack { width: min(92vw, 520px); margin: 20vh auto; text-align: center; }
+    .sig-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+    .sig-title { grid-column: 2; text-align: center; margin: 0; }
+    .sig-close-wrap { grid-column: 3; text-align: right; }
+    .sig-frame { background: #fff; border: 1px solid #ccd; border-radius: 12px; padding: 8px; }
+    .sig-stage { width: 100%; display: block; height: var(--sig-canvas-h, 220px); }
+    .sig-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+    .sig-spacer { flex: 1; }
+    .sig-btn { padding: 10px 14px; border-radius: 10px; border: 0; cursor: pointer; }
+    .sig-btn.primary { background: #1f54b0; color: #fff; }
+    .sig-btn.muted { background: #eceff3; color: #111; }
+    @media (orientation: portrait){ :root { --sig-canvas-h: 34vh; } }
+    @media (orientation: landscape){ :root { --sig-canvas-h: 28vh; } }
+    @media (max-width: 420px){ :root { --sig-canvas-h: 30vh; } }
+  </style>
+
+  <div id="sigModalContractor">
+    <div class="sig-backdrop"></div>
+    <div class="sig-dialog" role="dialog" aria-modal="true" aria-labelledby="sigTitleContractor">
+      <header class="sig-head">
+        <h3 id="sigTitleContractor" class="sig-title">Contractor Signature</h3>
+        <div class="sig-close-wrap"></div>
+      </header>
+      <section>
+        <div class="sig-frame">
+          <canvas id="sigCanvasContractor" class="sig-stage"></canvas>
+        </div>
+        <div class="sig-row">
+          <button id="sigClearContractor" type="button" class="sig-btn muted">Clear</button>
+          <div class="sig-spacer"></div>
+          <button id="sigCancelContractor" type="button" class="sig-btn muted">Cancel</button>
+          <button id="sigSaveContractor" type="button" class="sig-btn primary">Save signature</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="sigAcceptedContractor">
+    <div class="sig-backdrop"></div>
+    <div class="sig-dialog sig-ack" role="dialog" aria-modal="true">
+      <h3 style="margin:0 0 8px;">Signature accepted</h3>
+      <p style="margin:0 0 16px;">Thank you. Click OK to continue.</p>
+      <button id="sigAcceptedOkContractor" type="button" class="sig-btn primary">OK</button>
+    </div>
+  </div>
+
+  <script>
+    (function ensureSigPad(){
+      if (window.SignaturePad) return;
+      var s = document.createElement('script');
+      s.src = "https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js";
+      document.head.appendChild(s);
+    })();
+
+    window.startContractorSignatureFlow = async function () {
+      const result = await openContractorSignatureModal();
+      if (!result) return;
+      await showContractorAccepted(); // will submit and navigate to review
+      if (typeof persistSignature === 'function') {
+        await persistSignature('Contractor Signature', result);
       }
-
-      resolve();
     };
 
-    modal.style.display = 'block';
-    okBtn.addEventListener('click', onOk);
-  });
-}
-</script>
- 
-<div id="roofingTypeSection" style="display:none;">
+    function openContractorSignatureModal() {
+      return new Promise(resolve => {
+        const modal   = document.getElementById('sigModalContractor');
+        const canvas  = document.getElementById('sigCanvasContractor');
+        const cancel  = document.getElementById('sigCancelContractor');
+        const clear   = document.getElementById('sigClearContractor');
+        const save    = document.getElementById('sigSaveContractor');
+
+        modal.style.display = 'block';
+        const teardown = [];
+
+        const fit = () => {
+          const ratio = Math.max(window.devicePixelRatio || 1, 1);
+          const rect  = canvas.getBoundingClientRect();
+          const cssH  = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
+          canvas.width  = Math.max(1, Math.floor(rect.width  * ratio));
+          canvas.height = Math.max(1, Math.floor(cssH       * ratio));
+          const ctx = canvas.getContext('2d');
+          ctx.setTransform(1,0,0,1,0,0);
+          ctx.scale(ratio, ratio);
+          ctx.fillStyle = '#fff'; ctx.fillRect(0,0,rect.width,cssH);
+        };
+        fit();
+        const onResize = () => { fit(); pad.clear(); };
+        window.addEventListener('resize', onResize);
+        window.addEventListener('orientationchange', onResize);
+        teardown.push(() => window.removeEventListener('resize', onResize));
+        teardown.push(() => window.removeEventListener('orientationchange', onResize));
+
+        const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
+        clear.onclick  = () => pad.clear();
+
+        const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
+        cancel.onclick = close;
+
+        save.onclick = () => {
+          if (pad.isEmpty()) { alert('Please sign first'); return; }
+          const dataUrl  = canvas.toDataURL('image/png');
+          const signedAt = new Date().toISOString();
+          modal.style.display = 'none';
+          teardown.forEach(fn => fn());
+          resolve({ dataUrl, signedAt, method: 'draw' });
+        };
+      });
+    }
+
+    // UPDATED: On contractor "OK" -> submit to sheet FIRST, then navigate to review
+    function showContractorAccepted() {
+      return new Promise(resolve => {
+        const modal = document.getElementById('sigAcceptedContractor');
+        const okBtn = document.getElementById('sigAcceptedOkContractor');
+
+        const onOk = async () => {
+          okBtn.removeEventListener('click', onOk);
+          modal.style.display = 'none';
+
+          // Submit the data (existing solar submit path that populates DB and builds review)
+          try {
+            if (typeof nextFromSolarDetachReset === 'function') {
+              await Promise.resolve(nextFromSolarDetachReset());
+            } else {
+              console.warn('nextFromSolarDetachReset() not found; skipping submit.');
+            }
+          } catch (e) {
+            console.error('Submit failed in nextFromSolarDetachReset()', e);
+          }
+
+          // Then navigate to Review
+          if (typeof showSection === 'function') showSection('review-section');
+          resolve();
+        };
+
+        modal.style.display = 'block';
+        okBtn.addEventListener('click', onOk);
+      });
+    }
+  </script>
+
+  <div id="roofingTypeSection" style="display:none;">
     <h2>Predominant Roofing Type</h2>
     <label>What is the predominant roofing type?</label><br>
-    <label>
-        <input type="radio" id="roofingTypeAsphalt" name="roofingType" value="Asphalt Shingles" required>
-        Asphalt Shingles
-    </label><br>
-    <label>
-        <input type="radio" id="roofingTypeTile" name="roofingType" value="Tile" required>
-        Tile
-    </label><br>
-    <label>
-        <input type="radio" id="roofingTypeModified" name="roofingType" value="Modified Bitumen (Flat roof rolled roofing)" required>
-        Modified Bitumen (Flat roof rolled roofing)
-    </label><br>
-    <label>
-        <input type="radio" id="roofingTypeCoating" name="roofingType" value="Flat Roof Coating" required>
-        Flat Roof Coating
-    </label>
+    <label><input type="radio" id="roofingTypeAsphalt" name="roofingType" value="Asphalt Shingles" required> Asphalt Shingles</label><br>
+    <label><input type="radio" id="roofingTypeTile" name="roofingType" value="Tile" required> Tile</label><br>
+    <label><input type="radio" id="roofingTypeModified" name="roofingType" value="Modified Bitumen (Flat roof rolled roofing)" required> Modified Bitumen (Flat roof rolled roofing)</label><br>
+    <label><input type="radio" id="roofingTypeCoating" name="roofingType" value="Flat Roof Coating" required> Flat Roof Coating</label>
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="navigateFromRoofingType()">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="navigateFromRoofingType()">Next</button>
     </div>
-</div>
+  </div>
 
-
-
- 
-<div id="asphalt-shingle-section" style="display:none;">
+  <div id="asphalt-shingle-section" style="display:none;">
     <h2>Asphalt Shingle Roof</h2>
     <label>Select the type of work needed:</label><br>
-    <label>
-        <input type="radio" name="shingleType" value="Shingle Roof Repair" required>
-        Shingle Roof Repair
-    </label><br>
-    <label>
-        <input type="radio" name="shingleType" value="Shingle Roof Replacement" required>
-        Shingle Roof Replacement
-    </label>
+    <label><input type="radio" name="shingleType" value="Shingle Roof Repair" required> Shingle Roof Repair</label><br>
+    <label><input type="radio" name="shingleType" value="Shingle Roof Replacement" required> Shingle Roof Replacement</label>
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="navigateFromShingleType()">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="navigateFromShingleType()">Next</button>
     </div>
-</div>
+  </div>
 
- 
-<div id="shingle-repair-section" style="display:none;">
+  <div id="shingle-repair-section" style="display:none;">
     <h2>Shingle Repair Details</h2>
     <label for="shingles-repaired">How many shingles are we repairing?</label>
-<input type="number" 
-    id="shingles-repaired" 
-    name="shingles-repaired" 
-    class="uniform-input" 
-    placeholder="Enter number of shingles"
-    inputmode="numeric"
-    pattern="[0-9]*">
-    
+    <input type="number" id="shingles-repaired" name="shingles-repaired" class="uniform-input" placeholder="Enter number of shingles" inputmode="numeric" pattern="[0-9]*">
     <label for="repair-anything-else">Are we repairing anything else?</label>
     <input type="text" id="repair-anything-else" name="repair-anything-else" class="uniform-input" placeholder="Describe any additional repairs">
-    
-   <label for="additional-charges">Additional shingle repair charges?</label>
-<input type="number" 
-    id="additional-charges" 
-    name="additional-charges" 
-    class="uniform-input" 
-    placeholder="Enter any additional charges"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
-
-  <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+    <label for="additional-charges">Additional shingle repair charges?</label>
+    <input type="number" id="additional-charges" name="additional-charges" class="uniform-input" placeholder="Enter any additional charges" inputmode="numeric" pattern="[0-9]*" step="0.01">
+    <div id="navigationButtons">
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
     </div>
-</div>
-    
-        
-       
-<div id="shingle-replacement-section" style="display:none;">
+  </div>
+
+  <div id="shingle-replacement-section" style="display:none;">
     <h2>Shingle Replacement Details</h2>
     <label for="shingle-replacement">How many squares of shingles are we replacing?</label>
-    <input type="number" 
-        id="shingle-replacement" 
-        name="shingle-replacement" 
-        class="uniform-input" 
-        placeholder="Enter number of squares of shingles"
-        inputmode="numeric"
-        pattern="[0-9]*"
-        step="0.01">
+    <input type="number" id="shingle-replacement" name="shingle-replacement" class="uniform-input" placeholder="Enter number of squares of shingles" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
     </div>
-</div>
-        
-<div id="tile-roofing-section" style="display:none;">
+  </div>
+
+  <div id="tile-roofing-section" style="display:none;">
     <h2>Tile Roof Options</h2>
-    <label>
-        <input type="radio" id="tile-repair" name="tile-roofing-type" value="Repair/Partial Roof">
-        Repair/Partial Roof
-    </label><br>
-    <label>
-        <input type="radio" id="tile-underlayment-replacement" name="tile-roofing-type" value="Underlayment Replacement">
-        Underlayment Replacement
-    </label><br>
-    <label>
-        <input type="radio" id="tile-remove-replace" name="tile-roofing-type" value="Remove and Replace">
-        Remove and Replace
-    </label>
-    
+    <label><input type="radio" id="tile-repair" name="tile-roofing-type" value="Repair/Partial Roof"> Repair/Partial Roof</label><br>
+    <label><input type="radio" id="tile-underlayment-replacement" name="tile-roofing-type" value="Underlayment Replacement"> Underlayment Replacement</label><br>
+    <label><input type="radio" id="tile-remove-replace" name="tile-roofing-type" value="Remove and Replace"> Remove and Replace</label>
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="navigateFromTileRoofingType()">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="navigateFromTileRoofingType()">Next</button>
     </div>
-</div>
+  </div>
 
-<div id="tile-repair-section" style="display:none;">
+  <div id="tile-repair-section" style="display:none;">
     <h2>Tile Repair</h2>
-<label for="tile-repair-sq">How many Sq of tile are we repairing?</label>
-<input type="number" 
-    id="tile-repair-sq" 
-    name="tile-repair-sq" 
-    class="uniform-input" 
-    placeholder="Enter the number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
-    
+    <label for="tile-repair-sq">How many Sq of tile are we repairing?</label>
+    <input type="number" id="tile-repair-sq" name="tile-repair-sq" class="uniform-input" placeholder="Enter the number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="tile-underlayment-section" style="display:none;">
+  <div id="tile-underlayment-section" style="display:none;">
     <h2>Tile Underlayment</h2>
     <label for="tile-underlayment-sq">How many Sq of tile are we repairing?</label>
-<input type="number" 
-    id="tile-underlayment-sq" 
-    name="tile-underlayment-sq" 
-    class="uniform-input" 
-    placeholder="How many Sq of tile are we repairing?"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <input type="number" id="tile-underlayment-sq" name="tile-underlayment-sq" class="uniform-input" placeholder="How many Sq of tile are we repairing?" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
     </div>
-</div>
-<div id="tile-remove-replace-section" style="display:none;">
+  </div>
+
+  <div id="tile-remove-replace-section" style="display:none;">
     <h2>Tile Remove and Replace</h2>
-   
     <label for="tile-type">What type of tile are we replacing?</label>
     <div>
-        <label>
-            <input type="radio" id="tile-concrete" name="tile-type" value="Concrete">
-            Concrete
-        </label><br>
-        <label>
-            <input type="radio" id="tile-clay" name="tile-type" value="Clay">
-            Clay
-        </label><br>
-        <label>
-            <input type="radio" id="tile-sandcast" name="tile-type" value="SandCast">
-            SandCast
-        </label>
- <div id="navigationButtons">
-    <button type="button" onclick="goBack()">Back</button>
-    <button type="button" onclick="showSection('tile-roof-rr-section')">Next</button>
-</div>
+      <label><input type="radio" id="tile-concrete" name="tile-type" value="Concrete"> Concrete</label><br>
+      <label><input type="radio" id="tile-clay" name="tile-type" value="Clay"> Clay</label><br>
+      <label><input type="radio" id="tile-sandcast" name="tile-type" value="SandCast"> SandCast</label>
+      <div id="navigationButtons">
+        <button type="button" onclick="goBack()">Back</button>
+        <button type="button" onclick="showSection('tile-roof-rr-section')">Next</button>
+      </div>
     </div>
-</div>
+  </div>
 
-
-<div id="tile-roof-rr-section" style="display:none;">
+  <div id="tile-roof-rr-section" style="display:none;">
     <h2>Tile Roof R&R Amount</h2>
-  <label for="tile-roof-rr">How many squares of tile roofing are we removing and replacing?</label>
-<input type="number" 
-    id="tile-roof-rr" 
-    name="tile-roof-rr" 
-    class="uniform-input" 
-    placeholder="Enter number of squares of tile roofing"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <label for="tile-roof-rr">How many squares of tile roofing are we removing and replacing?</label>
+    <input type="number" id="tile-roof-rr" name="tile-roof-rr" class="uniform-input" placeholder="Enter number of squares of tile roofing" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="modified-bitumen-section" style="display:none;">
+  <div id="modified-bitumen-section" style="display:none;">
     <h2>Modified Bitumen</h2>
-  <label for="modified-bitumen-sq">How many square of modified bitumen are we replacing?</label>
-<input type="number" 
-    id="modified-bitumen-sq" 
-    name="modified-bitumen-sq" 
-    class="uniform-input" 
-    placeholder="Enter number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <label for="modified-bitumen-sq">How many square of modified bitumen are we replacing?</label>
+    <input type="number" id="modified-bitumen-sq" name="modified-bitumen-sq" class="uniform-input" placeholder="Enter number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-    
-<div id="coating-section" style="display:none;">
+  <div id="coating-section" style="display:none;">
     <h2>Coating</h2>
-  <label for="coating-squares">How many square of roof surface are we re-coating?</label>
-<input type="number" 
-    id="coating-squares" 
-    name="coating-squares" 
-    class="uniform-input" 
-    placeholder="Enter number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <label for="coating-squares">How many square of roof surface are we re-coating?</label>
+    <input type="number" id="coating-squares" name="coating-squares" class="uniform-input" placeholder="Enter number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('secondary-roof-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-
-<div id="secondary-roof-section" style="display:none;">
+  <div id="secondary-roof-section" style="display:none;">
     <h2>Secondary Roof Type</h2>
     <label>Is there a secondary type of roofing material we are replacing?</label>
     <div>
-        <label>
-            <input type="radio" id="secondary-roof-yes" name="secondary-roof" value="Yes">
-            Yes
-        </label><br>
-        <label>
-            <input type="radio" id="secondary-roof-no" name="secondary-roof" value="No">
-            No
-        </label>
+      <label><input type="radio" id="secondary-roof-yes" name="secondary-roof" value="Yes"> Yes</label><br>
+      <label><input type="radio" id="secondary-roof-no" name="secondary-roof" value="No"> No</label>
     </div>
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="navigateFromSecondaryRoof()">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="navigateFromSecondaryRoof()">Next</button>
     </div>
-</div>
+  </div>
 
-<div id="secondary-roofing-type-section" style="display:none;">
+  <div id="secondary-roofing-type-section" style="display:none;">
     <h2>Secondary Roofing Type</h2>
     <label>Secondary Roofing Type</label>
     <div>
-        <label>
-            <input type="radio" id="secondary-roof-shingles" name="secondary-roofing-type" value="Shingles">
-            Shingles
-        </label><br>
-        <label>
-            <input type="radio" id="secondary-roof-tiles" name="secondary-roofing-type" value="Tiles">
-            Tiles
-        </label><br>
-        <label>
-            <input type="radio" id="secondary-roof-modified-bitumen" name="secondary-roofing-type" value="Modified Bitumen">
-            Modified Bitumen
-        </label><br>
-        <label>
-            <input type="radio" id="secondary-roof-coating" name="secondary-roofing-type" value="Coating">
-            Coating
-        </label>
+      <label><input type="radio" id="secondary-roof-shingles" name="secondary-roofing-type" value="Shingles"> Shingles</label><br>
+      <label><input type="radio" id="secondary-roof-tiles" name="secondary-roofing-type" value="Tiles"> Tiles</label><br>
+      <label><input type="radio" id="secondary-roof-modified-bitumen" name="secondary-roofing-type" value="Modified Bitumen"> Modified Bitumen</label><br>
+      <label><input type="radio" id="secondary-roof-coating" name="secondary-roofing-type" value="Coating"> Coating</label>
     </div>
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="navigateFromSecondaryRoofingType()">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="navigateFromSecondaryRoofingType()">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="secondary-roof-type-shingles-section" style="display:none;">
+  <div id="secondary-roof-type-shingles-section" style="display:none;">
     <h2>Secondary Roof Type - Shingles</h2>
-  <label for="shingles-squares">How many squares of shingles are we replacing?</label>
-<input type="number" 
-    id="shingles-squares" 
-    name="shingles-squares" 
-    class="uniform-input" 
-    placeholder="Enter number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <label for="shingles-squares">How many squares of shingles are we replacing?</label>
+    <input type="number" id="shingles-squares" name="shingles-squares" class="uniform-input" placeholder="Enter number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="secondary-roof-type-tile-section" style="display:none;">
+  <div id="secondary-roof-type-tile-section" style="display:none;">
     <h2>Secondary Roof Type - Tile</h2>
- <label for="tile-underlayment-squares">How many squares of tile underlayment are we replacing?</label>
-<input type="number" 
-    id="tile-underlayment-squares" 
-    name="tile-underlayment-squares" 
-    class="uniform-input" 
-    placeholder="Enter number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <label for="tile-underlayment-squares">How many squares of tile underlayment are we replacing?</label>
+    <input type="number" id="tile-underlayment-squares" name="tile-underlayment-squares" class="uniform-input" placeholder="Enter number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="secondary-roof-type-modified-bitumen-section" style="display:none;">
-    <h2>Secondary Roof Type - Modified Bitumen</h2> 
+  <div id="secondary-roof-type-modified-bitumen-section" style="display:none;">
+    <h2>Secondary Roof Type - Modified Bitumen</h2>
     <label for="modified-bitumen-squares">How many squares of modified bitumen are we replacing?</label>
-<input type="number" 
-    id="modified-bitumen-squares" 
-    name="modified-bitumen-squares" 
-    class="uniform-input" 
-    placeholder="Enter number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
-    
+    <input type="number" id="modified-bitumen-squares" name="modified-bitumen-squares" class="uniform-input" placeholder="Enter number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="secondary-roof-type-coating-section" style="display:none;">
+  <div id="secondary-roof-type-coating-section" style="display:none;">
     <h2>Secondary Roof Type - Coating</h2>
- <label for="coating-squares">How many squares of roof coating are we applying?</label>
-<input type="number" 
-    id="coating-squares" 
-    name="coating-squares" 
-    class="uniform-input" 
-    placeholder="Enter number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <label for="coating-squares">How many squares of roof coating are we applying?</label>
+    <input type="number" id="coating-squares" name="coating-squares" class="uniform-input" placeholder="Enter number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('third-roof-type-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-
-<div id="third-roof-type-section" style="display:none;">
+  <div id="third-roof-type-section" style="display:none;">
     <h2>Third Roof Type</h2>
     <label>Is there a third type of roofing material we are replacing?</label>
     <div>
-        <label>
-            <input type="radio" id="third-roof-yes" name="third-roof" value="Yes">
-            Yes
-        </label><br>
-        <label>
-            <input type="radio" id="third-roof-no" name="third-roof" value="No">
-            No
-        </label>
+      <label><input type="radio" id="third-roof-yes" name="third-roof" value="Yes"> Yes</label><br>
+      <label><input type="radio" id="third-roof-no" name="third-roof" value="No"> No</label>
     </div>
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="navigateFromThirdRoof()">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="navigateFromThirdRoof()">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="third-roof-type-style-section" style="display:none;">
+  <div id="third-roof-type-style-section" style="display:none;">
     <h2>Third Roof Type Style</h2>
     <label>Third Roof Type Style</label>
     <div>
-        <label>
-            <input type="radio" id="third-roof-style-shingles" name="third-roof-style" value="Shingles">
-            Shingles
-        </label><br>
-        <label>
-            <input type="radio" id="third-roof-style-tile" name="third-roof-style" value="Tile">
-            Tile
-        </label><br>
-        <label>
-            <input type="radio" id="third-roof-style-modified" name="third-roof-style" value="Modified">
-            Modified
-        </label><br>
-        <label>
-            <input type="radio" id="third-roof-style-coating" name="third-roof-style" value="Coating">
-            Coating
-        </label>
+      <label><input type="radio" id="third-roof-style-shingles" name="third-roof-style" value="Shingles"> Shingles</label><br>
+      <label><input type="radio" id="third-roof-style-tile" name="third-roof-style" value="Tile"> Tile</label><br>
+      <label><input type="radio" id="third-roof-style-modified" name="third-roof-style" value="Modified"> Modified</label><br>
+      <label><input type="radio" id="third-roof-style-coating" name="third-roof-style" value="Coating"> Coating</label>
     </div>
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="navigateFromThirdRoofStyle()">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="navigateFromThirdRoofStyle()">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="third-roof-type-shingles-section" style="display:none;">
+  <div id="third-roof-type-shingles-section" style="display:none;">
     <h2>Third Roof Type - Shingles</h2>
- <label for="shingles-squares">How many squares of shingles are we replacing?</label>
-<input type="number" 
-    id="shingles-squares" 
-    name="shingles-squares" 
-    class="uniform-input" 
-    placeholder="Enter number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">  
+    <label for="shingles-squares">How many squares of shingles are we replacing?</label>
+    <input type="number" id="shingles-squares" name="shingles-squares" class="uniform-input" placeholder="Enter number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('additional-charges-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="third-roof-type-tiles-section" style="display:none;">
+  <div id="third-roof-type-tiles-section" style="display:none;">
     <h2>Third Roof Type - Tiles</h2>
- <label for="tiles-squares">How many squares of tile underlayment are we replacing?</label>
-<input type="number" 
-    id="tiles-squares" 
-    name="tiles-squares" 
-    class="uniform-input" 
-    placeholder="Enter number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
-    
+    <label for="tiles-squares">How many squares of tile underlayment are we replacing?</label>
+    <input type="number" id="tiles-squares" name="tiles-squares" class="uniform-input" placeholder="Enter number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('additional-charges-section')">Next</button>
     </div>
-</div>
+  </div>
 
-<div id="third-roof-type-modified-section" style="display:none;">
+  <div id="third-roof-type-modified-section" style="display:none;">
     <h2>Third Roof Type - Modified</h2>
-  <label for="modified-squares">How many squares of modified bitumen are we replacing?</label>
-<input type="number" 
-    id="modified-squares" 
-    name="modified-squares" 
-    class="uniform-input" 
-    placeholder="Enter number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <label for="modified-squares">How many squares of modified bitumen are we replacing?</label>
+    <input type="number" id="modified-squares" name="modified-squares" class="uniform-input" placeholder="Enter number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('additional-charges-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-
-<div id="third-roof-type-coatings-section" style="display:none;">
+  <div id="third-roof-type-coatings-section" style="display:none;">
     <h2>Third Roof Type - Coatings</h2>
-   
-   <label for="coatings-squares">How many squares of roof surface are we re-coating?</label>
-<input type="number" 
-    id="coatings-squares" 
-    name="coatings-squares" 
-    class="uniform-input" 
-    placeholder="Enter number of squares"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <label for="coatings-squares">How many squares of roof surface are we re-coating?</label>
+    <input type="number" id="coatings-squares" name="coatings-squares" class="uniform-input" placeholder="Enter number of squares" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('additional-charges-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('additional-charges-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="additional-charges-section" style="display:none;">
+  <div id="additional-charges-section" style="display:none;">
     <h2>Additional Charges</h2>
     <label>Are there any additional roofing charges that need to be added to this estimate?</label>
     <div>
-        <label>
-            <input type="radio" id="additional-charges-yes" name="additional-charges" value="Yes">
-            Yes
-        </label><br>
-        <label>
-            <input type="radio" id="additional-charges-no" name="additional-charges" value="No">
-            No
-        </label>
+      <label><input type="radio" id="additional-charges-yes" name="additional-charges" value="Yes"> Yes</label><br>
+      <label><input type="radio" id="additional-charges-no" name="additional-charges" value="No"> No</label>
     </div>
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="navigateFromAdditionalCharges()">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="navigateFromAdditionalCharges()">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="additional-charges-description-section" style="display:none;">
+  <div id="additional-charges-description-section" style="display:none;">
     <h2>Additional Charges - Description</h2>
-    
     <label for="additional-charges-description">What additional roofing related items require additional charges?</label>
     <textarea id="additional-charges-description" name="additional-charges-description" class="uniform-input" placeholder="Enter details"></textarea>
-  
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('additional-charges-price-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('additional-charges-price-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="additional-charges-price-section" style="display:none;">
+  <div id="additional-charges-price-section" style="display:none;">
     <h2>Additional Charges - Price</h2>
-   
     <label for="additional-charges-price">How much are we charging to complete these additional roofing related items?</label>
-  <input type="number" 
-    id="additional-charges-price" 
-    name="additional-charges-price" 
-    class="uniform-input" 
-    placeholder="Enter price"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <input type="number" id="additional-charges-price" name="additional-charges-price" class="uniform-input" placeholder="Enter price" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="showSection('solar-section')">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="showSection('solar-section')">Next</button>
     </div>
-</div>
+  </div>
 
-
-<div id="solar-section" style="display:none;">
+  <div id="solar-section" style="display:none;">
     <h2>Solar</h2>
     <label>Are there any solar panels that have to be removed to complete the repair?</label>
     <div>
-        <label>
-            <input type="radio" id="solar-yes" name="solar" value="yes">
-            Yes
-        </label><br>
-        <label>
-            <input type="radio" id="solar-no" name="solar" value="no">
-            No
-        </label>
+      <label><input type="radio" id="solar-yes" name="solar" value="yes"> Yes</label><br>
+      <label><input type="radio" id="solar-no" name="solar" value="no"> No</label>
     </div>
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="navigateFromSolar()">Next</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="navigateFromSolar()">Next</button>
     </div>
-</div>
+  </div>
 
-<div id="solar-detach-reset-section" style="display:none;">
+  <div id="solar-detach-reset-section" style="display:none;">
     <h2>Solar - Detach and Reset</h2>
     <label for="solar-detach-reset">How many solar panels are we detaching and resetting to complete the roof repair?</label>
-    <input type="number" 
-    id="solar-detach-reset" 
-    name="solar-detach-reset" 
-    class="uniform-input" 
-    placeholder="Enter number of panels"
-    inputmode="numeric"
-    pattern="[0-9]*"
-    step="0.01">
+    <input type="number" id="solar-detach-reset" name="solar-detach-reset" class="uniform-input" placeholder="Enter number of panels" inputmode="numeric" pattern="[0-9]*" step="0.01">
     <div id="navigationButtons">
-        <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="nextFromSolarDetachReset()">Submit</button>
+      <button type="button" onclick="goBack()">Back</button>
+      <button type="button" onclick="nextFromSolarDetachReset()">Submit</button>
     </div>
-</div>
-<div id="review-section" style="display:none;">
+  </div>
+
+  <div id="review-section" style="display:none;">
     <h2>Review Your Estimate</h2>
     <div class="review-instructions">
-        <p>Please review your estimate below.</p>
+      <p>Please review your estimate below.</p>
     </div>
     <div class="estimate-preview-container" style="position: relative;">
-       <iframe 
-    id="estimatePreviewFrame"
-    src="about:blank"
-    style="display: block !important; 
-           visibility: visible !important;
-           width: 100%; 
-           border: none; 
-           margin: 0 auto;
-           opacity: 1;">
-</iframe>
-      
-        <!-- Add loading overlay as a sibling to iframe -->
-        <div id="loading-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: none;">
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                <div class="loading-spinner"></div>
-                <p id="loading-message">Loading...</p>
-            </div>
+      <iframe id="estimatePreviewFrame" src="about:blank" style="display:block!important; visibility:visible!important; width:100%; border:none; margin:0 auto; opacity:1;"></iframe>
+      <div id="loading-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: none;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+          <div class="loading-spinner"></div>
+          <p id="loading-message">Loading...</p>
         </div>
+      </div>
     </div>
-    <!-- Moved navigationButtons inside review-section and fixed div nesting -->
-   <div id="navigationButtons">
-    <button type="button" onclick="editForm()" class="edit-button">Edit</button>
-    <button type="button" onclick="shareEstimate()" class="share-button">Share</button>
-</div>
-</div>
+    <div id="navigationButtons">
+      <button type="button" onclick="editForm()" class="edit-button">Edit</button>
+      <button type="button" onclick="shareEstimate()" class="share-button">Share</button>
+    </div>
+  </div>
 </form>
+
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
 <script>
-    // Handle authentication failures
-    function gm_authFailure() {
-        console.error('Google Maps API authentication failed');
-        handleMapError();
-    }
-
-    // Make initMap available globally
-    window.initMap = initMap;
+  function gm_authFailure() {
+    console.error('Google Maps API authentication failed');
+    handleMapError();
+  }
+  window.initMap = initMap;
 </script>
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Set up hamburger menu click handler
-    const menuToggle = document.querySelector('.menu-toggle');
-    if (menuToggle) {
-        menuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            this.classList.toggle('active');
-            document.querySelector('.nav-menu').classList.toggle('active');
-        });
-    }
 
-    // Set up click outside to close menu
-    document.addEventListener('click', function(event) {
-        const navMenu = document.querySelector('.nav-menu');
-        const menuToggle = document.querySelector('.menu-toggle');
-        if (navMenu && navMenu.classList.contains('active') && 
-            !event.target.closest('.nav-container')) {
-            navMenu.classList.remove('active');
-            menuToggle.classList.remove('active');
-        }
+<script>
+// Mobile nav
+document.addEventListener('DOMContentLoaded', function() {
+  const menuToggle = document.querySelector('.menu-toggle');
+  if (menuToggle) {
+    menuToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      this.classList.toggle('active');
+      document.querySelector('.nav-menu').classList.toggle('active');
     });
+  }
+  document.addEventListener('click', function(event) {
+    const navMenu = document.querySelector('.nav-menu');
+    const menuToggle = document.querySelector('.menu-toggle');
+    if (navMenu && navMenu.classList.contains('active') && !event.target.closest('.nav-container')) {
+      navMenu.classList.remove('active');
+      menuToggle.classList.remove('active');
+    }
+  });
 });
+
+// ======== NEW: Project Type -> choose sheet/template ========
+(function wireProjectTypeToSheet(){
+  function applySheetFromSelection() {
+    const selected = document.querySelector('input[name="projectType"]:checked')?.value || 'Cash';
+    // Cash -> "Estimate" | Insurance -> "Insurance Agreement"
+    document.getElementById('sheetName').value = (selected === 'Insurance') ? 'Insurance Agreement' : 'Estimate';
+    // Optional: keep a global hint for any preview logic
+    window.selectedTemplate = document.getElementById('sheetName').value;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('input[name="projectType"]').forEach(r => {
+      r.addEventListener('change', applySheetFromSelection);
+    });
+    // Ensure default on load
+    applySheetFromSelection();
+  });
+
+  // Hook existing "Next" to set the sheet and route appropriately
+  const prevNext = window.nextProjectTypeSection;
+  window.nextProjectTypeSection = function () {
+    applySheetFromSelection();
+    if (typeof prevNext === 'function') return prevNext();
+    const selected = document.querySelector('input[name="projectType"]:checked')?.value || 'Cash';
+    showSection(selected === 'Insurance' ? 'insuranceInfoSection' : 'roofingTypeSection');
+  };
+})();
 </script>
 
 <!-- Load Google Maps API with proper callback -->
 <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254&libraries=places&callback=initMap&v=weekly"
-    async
-    defer
-    onerror="handleMapError()"
-></script>
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254&libraries=places&callback=initMap&v=weekly"
+  async defer onerror="handleMapError()"></script>
 </body>
 </html>
