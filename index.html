@@ -249,22 +249,21 @@ document.addEventListener('DOMContentLoaded', function() {
   <h2>Project Type</h2>
   <label>Project Type:</label><br>
 
-  <!-- Values must match exactly the template names in your backend -->
   <label>
-    <input type="radio" id="projectTypeCash" name="projectType" 
-           value="Estimate" required
+    <input type="radio" id="projectTypeCash" name="Project Type"
+           value="Cash" required
            onchange="setTemplate(this.value)">
     Cash
   </label><br>
 
   <label>
-    <input type="radio" id="projectTypeInsurance" name="projectType" 
-           value="Insurance Agreement" required
+    <input type="radio" id="projectTypeInsurance" name="Project Type"
+           value="Insurance" required
            onchange="setTemplate(this.value)">
     Insurance
   </label>
 
-  <!-- Hidden field used by your backend to pick the right template -->
+  <!-- Hidden field used by your backend to pick the right sheet name -->
   <input type="hidden" id="pdfTemplate" name="pdfTemplate" value="Estimate">
 
   <div id="navigationButtons">
@@ -274,6 +273,12 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
+  // Map Project Type -> template sheet name
+  function setTemplate(projectType) {
+    document.getElementById('pdfTemplate').value =
+      projectType === 'Insurance' ? 'Insurance Agreement' : 'Estimate';
+  }
+</script>
   function setTemplate(template) {
     // update the hidden field
     document.getElementById('pdfTemplate').value = template;
