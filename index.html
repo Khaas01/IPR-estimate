@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <header>
     <div class="logo-title">
         <img src="assets/images/logo.png" alt="Prairie Ridge Exteriors Logo" class="logo">
-        <h1>Roofing Estimate Form Version 11</h1>
+        <h1>Roofing Estimate Form Version 12</h1>
     </div>
     <nav class="nav-container">
         <button class="menu-toggle" aria-label="Toggle Menu">
@@ -690,43 +690,29 @@ function showContractorAccepted() {
     const modal = document.getElementById('sigAcceptedContractor');
     const okBtn = document.getElementById('sigAcceptedOkContractor');
 
-    const onOk = () => {
+    const onOk = async () => {
       okBtn.removeEventListener('click', onOk);
       modal.style.display = 'none';
 
-      // 1) Go to Review
+      // 1) SUBMIT TO SHEET using your existing solar submit function
+      //    (this is the one that writes to the database and builds the review)
+      try {
+        if (typeof nextFromSolarDetachReset === 'function') {
+          // In case it's synchronous, Promise.resolve makes it awaitable
+          await Promise.resolve(nextFromSolarDetachReset());
+        } else {
+          console.error('nextFromSolarDetachReset() not found');
+        }
+      } catch (e) {
+        console.error('Submit failed in nextFromSolarDetachReset()', e);
+      }
+
+      // 2) Ensure we are on the review section (in case the submit didn’t navigate)
       if (typeof showSection === 'function') {
         showSection('review-section');
       }
 
-      // 2) Submit after the review section is shown
-      // give the DOM a tick to render the section before submitting
-      setTimeout(() => {
-        // Prefer your app specific submit functions if present
-        if (typeof submitEstimate === 'function') {
-          submitEstimate();
-        } else if (typeof finalizeEstimate === 'function') {
-          finalizeEstimate();
-        } else if (typeof generateEstimate === 'function') {
-          generateEstimate();
-        } else if (typeof shareEstimate === 'function') {
-          // if your "submit" actually generates and shows the doc
-          shareEstimate();
-        } else {
-          // Fallback to form submit
-          const form = document.getElementById('estimateForm');
-          if (form) {
-            if (form.reportValidity && !form.reportValidity()) {
-              // invalid fields will show native messages, do not submit
-            } else if (form.requestSubmit) {
-              form.requestSubmit();
-            } else {
-              form.submit();
-            }
-          }
-        }
-        resolve();
-      }, 0);
+      resolve();
     };
 
     modal.style.display = 'block';
