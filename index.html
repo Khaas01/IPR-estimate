@@ -522,6 +522,163 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 </script>
 
+    
+<!-- ───────── CONTRACTOR SIGNATURE MODAL + ACK, DRAW ONLY, RESPONSIVE ───────── -->
+
+    <style>
+  /* Modal base */
+  #sigModalContractor, #sigAcceptedContractor { position: fixed; inset: 0; z-index: 9999; display: none; }
+  #sigAcceptedContractor { z-index: 10000; }
+  .sig-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
+
+  .sig-dialog {
+    position: relative;
+    width: min(92vw, 760px);
+    margin: 6vh auto;
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.25);
+  }
+  .sig-ack { width: min(92vw, 520px); margin: 20vh auto; text-align: center; }
+
+  /* Header, centered title, no ghost box */
+  .sig-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+  .sig-title { grid-column: 2; text-align: center; margin: 0; }
+  .sig-close-wrap { grid-column: 3; text-align: right; }
+
+  /* Canvas frame */
+  .sig-frame { background: #fff; border: 1px solid #ccd; border-radius: 12px; padding: 8px; }
+  .sig-stage { width: 100%; display: block; height: var(--sig-canvas-h, 220px); }
+
+  /* Buttons */
+  .sig-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+  .sig-spacer { flex: 1; }
+  .sig-btn { padding: 10px 14px; border-radius: 10px; border: 0; cursor: pointer; }
+  .sig-btn.primary { background: #1f54b0; color: #fff; }
+  .sig-btn.muted { background: #eceff3; color: #111; }
+
+  /* Responsive canvas height, adapts to orientation */
+  @media (orientation: portrait)  { :root { --sig-canvas-h: 34vh; } }
+  @media (orientation: landscape) { :root { --sig-canvas-h: 28vh; } }
+  @media (max-width: 420px)       { :root { --sig-canvas-h: 30vh; } }
+</style>
+
+<!-- Signature Modal (Draw only) -->
+<div id="sigModalContractor">
+  <div class="sig-backdrop"></div>
+  <div class="sig-dialog" role="dialog" aria-modal="true" aria-labelledby="sigTitleContractor">
+    <header class="sig-head">
+      <h3 id="sigTitleContractor" class="sig-title">Contractor Signature</h3>
+      <div class="sig-close-wrap"></div>
+    </header>
+
+    <section>
+      <div class="sig-frame">
+        <canvas id="sigCanvasContractor" class="sig-stage"></canvas>
+      </div>
+      <div class="sig-row">
+        <button id="sigClearContractor" type="button" class="sig-btn muted">Clear</button>
+        <div class="sig-spacer"></div>
+        <button id="sigCancelContractor" type="button" class="sig-btn muted">Cancel</button>
+        <button id="sigSaveContractor" type="button" class="sig-btn primary">Save signature</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Accepted Modal -->
+<div id="sigAcceptedContractor">
+  <div class="sig-backdrop"></div>
+  <div class="sig-dialog sig-ack" role="dialog" aria-modal="true">
+    <h3 style="margin:0 0 8px;">Signature accepted</h3>
+    <p style="margin:0 0 16px;">Thank you. Click OK to continue.</p>
+    <button id="sigAcceptedOkContractor" type="button" class="sig-btn primary">OK</button>
+  </div>
+</div>
+
+<script>
+  // If SignaturePad is not present yet, load it once
+  (function ensureSigPad(){
+    if (window.SignaturePad) return;
+    var s = document.createElement('script');
+    s.src = "https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js";
+    document.head.appendChild(s);
+  })();
+
+  // Call this to capture the contractor signature (identical behavior to client)
+  window.startContractorSignatureFlow = async function () {
+    const result = await openContractorSignatureModal();   // { dataUrl, signedAt, method:'draw' }
+    if (!result) return;
+    await showContractorAccepted();
+    if (typeof persistSignature === 'function') {
+      await persistSignature('Contractor Signature', result);
+    }
+    if (typeof showSection === 'function') {
+      showSection('review-section');
+    }
+  };
+
+  function openContractorSignatureModal() {
+    return new Promise(resolve => {
+      const modal   = document.getElementById('sigModalContractor');
+      const canvas  = document.getElementById('sigCanvasContractor');
+      const cancel  = document.getElementById('sigCancelContractor');
+      const clear   = document.getElementById('sigClearContractor');
+      const save    = document.getElementById('sigSaveContractor');
+
+      modal.style.display = 'block';
+      const teardown = [];
+
+      // High DPI fit, re-fit on resize or orientation change while open
+      const fit = () => {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        const rect  = canvas.getBoundingClientRect();
+        const cssH  = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
+        canvas.width  = Math.max(1, Math.floor(rect.width  * ratio));
+        canvas.height = Math.max(1, Math.floor(cssH       * ratio));
+        const ctx = canvas.getContext('2d');
+        ctx.setTransform(1,0,0,1,0,0);
+        ctx.scale(ratio, ratio);
+        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,rect.width,cssH);
+      };
+      fit();
+      const onResize = () => { fit(); pad.clear(); };
+      window.addEventListener('resize', onResize);
+      window.addEventListener('orientationchange', onResize);
+      teardown.push(() => window.removeEventListener('resize', onResize));
+      teardown.push(() => window.removeEventListener('orientationchange', onResize));
+
+      // Init signature pad
+      const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
+      clear.onclick  = () => pad.clear();
+
+      // Close helpers
+      const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
+      cancel.onclick = close;
+
+      // Save
+      save.onclick = () => {
+        if (pad.isEmpty()) { alert('Please sign first'); return; }
+        const dataUrl  = canvas.toDataURL('image/png');
+        const signedAt = new Date().toISOString();
+        modal.style.display = 'none';
+        teardown.forEach(fn => fn());
+        resolve({ dataUrl, signedAt, method: 'draw' });
+      };
+    });
+  }
+
+  function showContractorAccepted() {
+    return new Promise(resolve => {
+      const m  = document.getElementById('sigAcceptedContractor');
+      const ok = document.getElementById('sigAcceptedOkContractor');
+      const done = () => { m.style.display = 'none'; ok.removeEventListener('click', done); resolve(); };
+      m.style.display = 'block';
+      ok.addEventListener('click', done);
+    });
+  }
+</script>
  
 <div id="roofingTypeSection" style="display:none;">
     <h2>Predominant Roofing Type</h2>
