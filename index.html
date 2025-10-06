@@ -685,15 +685,54 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  function showContractorAccepted() {
-    return new Promise(resolve => {
-      const m  = document.getElementById('sigAcceptedContractor');
-      const ok = document.getElementById('sigAcceptedOkContractor');
-      const done = () => { m.style.display = 'none'; ok.removeEventListener('click', done); resolve(); };
-      m.style.display = 'block';
-      ok.addEventListener('click', done);
-    });
-  }
+function showContractorAccepted() {
+  return new Promise(resolve => {
+    const modal = document.getElementById('sigAcceptedContractor');
+    const okBtn = document.getElementById('sigAcceptedOkContractor');
+
+    const onOk = () => {
+      okBtn.removeEventListener('click', onOk);
+      modal.style.display = 'none';
+
+      // 1) Go to Review
+      if (typeof showSection === 'function') {
+        showSection('review-section');
+      }
+
+      // 2) Submit after the review section is shown
+      // give the DOM a tick to render the section before submitting
+      setTimeout(() => {
+        // Prefer your app specific submit functions if present
+        if (typeof submitEstimate === 'function') {
+          submitEstimate();
+        } else if (typeof finalizeEstimate === 'function') {
+          finalizeEstimate();
+        } else if (typeof generateEstimate === 'function') {
+          generateEstimate();
+        } else if (typeof shareEstimate === 'function') {
+          // if your "submit" actually generates and shows the doc
+          shareEstimate();
+        } else {
+          // Fallback to form submit
+          const form = document.getElementById('estimateForm');
+          if (form) {
+            if (form.reportValidity && !form.reportValidity()) {
+              // invalid fields will show native messages, do not submit
+            } else if (form.requestSubmit) {
+              form.requestSubmit();
+            } else {
+              form.submit();
+            }
+          }
+        }
+        resolve();
+      }, 0);
+    };
+
+    modal.style.display = 'block';
+    okBtn.addEventListener('click', onOk);
+  });
+}
 </script>
  
 <div id="roofingTypeSection" style="display:none;">
