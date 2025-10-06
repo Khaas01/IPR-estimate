@@ -349,10 +349,80 @@ document.addEventListener('DOMContentLoaded', function() {
   </ol>
   <div id="navigationButtons">
     <button type="button" onclick="goBack()">Back</button>
-    <button type="button" onclick="showSection('roofingTypeSection')">Next</button>
+    <button type="button" onclick="showSection('sigBlock')">Next</button>
   </div>
 </div>
-    
+
+    <!-- Signature UI -->
+<div class="card" id="sigBlock">
+  <h3>Customer signature</h3>
+  <canvas id="sigCanvas" width="500" height="180" style="border:1px solid #ccc; background:#fff"></canvas>
+  <div style="margin-top:8px;">
+    <button id="sigClear">Clear</button>
+    <button id="sigPlace">Place signature on PDF</button>
+  </div>
+</div>
+
+<!-- Libs -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+<script src="https://cdn.skypack.dev/pdf-lib@1.17.1"></script>
+
+<script>
+  // 1) Init Signature Pad
+  const canvas = document.getElementById('sigCanvas');
+  const signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
+
+  document.getElementById('sigClear').addEventListener('click', () => signaturePad.clear());
+
+  // 2) Click to place signature into an existing PDF
+  document.getElementById('sigPlace').addEventListener('click', async () => {
+    if (signaturePad.isEmpty()) { alert('Please sign first'); return }
+
+    // Get signature image
+    const dataUrl = signaturePad.toDataURL('image/png');
+
+    // Load your existing PDF template as an ArrayBuffer
+    // Replace this path with your template path, for example /assets/pdfs/AgreementTemplate.pdf
+    const pdfBytes = await fetch('/assets/pdfs/AgreementTemplate.pdf').then(r => r.arrayBuffer());
+
+    // 3) Use pdf lib to embed PNG and draw on a page
+    const { PDFDocument } = window.pdfLib;
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+
+    const pngImage = await pdfDoc.embedPng(dataUrl);
+
+    // choose the page you want
+    const page = pdfDoc.getPage(0);
+
+    // page size
+    const { width, height } = page.getSize();
+
+    // Set desired display size for the signature in PDF points
+    const sigWidth  = 200;      // adjust as needed
+    const sigHeight = (pngImage.height / pngImage.width) * sigWidth;
+
+    // Choose where to place it, from bottom left origin
+    // Example, bottom right signature block
+    const x = width - sigWidth - 72;   // 1 inch margin
+    const y = 72;                      // 1 inch from bottom
+
+    page.drawImage(pngImage, { x, y, width: sigWidth, height: sigHeight });
+
+    // Optional, add printed name and date next to the signature
+    const name = document.getElementById('ownerName')?.value || '';
+    const now  = new Date().toLocaleString();
+    page.drawText(`Signed by ${name}`, { x, y: y + sigHeight + 10, size: 10 });
+    page.drawText(`Date ${now}`,      { x, y: y + sigHeight - 8,  size: 10 });
+
+    // 4) Save and download
+    const signedBytes = await pdfDoc.save();
+    const blob = new Blob([signedBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement('a'), { href: url, download: 'Agreement_Signed.pdf' });
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+</script>
 
 <div id="roofingTypeSection" style="display:none;">
     <h2>Predominant Roofing Type</h2>
