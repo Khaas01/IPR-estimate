@@ -246,21 +246,35 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
  
 <div id="projectTypeSection" style="display:none;">
-    <h2>Project Type</h2>
-    <label>Project Type:</label><br>
-    <label>
-        <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required>
-        Cash
-    </label><br>
-    <label>
-        <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required>
-        Insurance
-    </label>
-    <div id="navigationButtons">
-       <button type="button" onclick="goBack()">Back</button>
-        <button type="button" onclick="nextProjectTypeSection()">Next</button>
-    </div>
+  <h2>Project Type</h2>
+  <label>Project Type:</label><br>
+  <label>
+    <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required
+           onclick="setTemplate('estimate')">
+    Cash
+  </label><br>
+  <label>
+    <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required
+           onclick="setTemplate('insurance-agreement')">
+    Insurance
+  </label>
+
+  <!-- hidden field for template selection -->
+  <input type="hidden" id="pdfTemplate" name="pdfTemplate" value="estimate">
+
+  <div id="navigationButtons">
+    <button type="button" onclick="goBack()">Back</button>
+    <button type="button" onclick="nextProjectTypeSection()">Next</button>
+  </div>
 </div>
+
+<script>
+  function setTemplate(template) {
+    document.getElementById('pdfTemplate').value = template;
+    // If you want to immediately refresh the preview when radio changes:
+    // loadPdfPreview(template);
+  }
+</script>
     
    
     <div id="insuranceInfoSection" style="display:none;">
