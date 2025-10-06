@@ -1001,6 +1001,30 @@ document.addEventListener('DOMContentLoaded', function() {
            margin: 0 auto;
            opacity: 1;">
 </iframe>
+        <!-- Signature Modal -->
+<div id="sigModal" aria-hidden="true" style="display:none; position:fixed; inset:0; z-index:9999;">
+  <div style="position:absolute; inset:0; background:rgba(0,0,0,.6)"></div>
+  <div role="dialog" aria-modal="true"
+       style="position:relative; max-width:720px; margin:5vh auto; background:#fff; border-radius:16px; padding:20px;">
+    <header style="display:flex; justify-content:space-between; align-items:center;">
+      <h3 id="sigTitle" style="margin:0;">Sign</h3>
+      <button id="sigClose" type="button" aria-label="Close" style="font-size:20px; background:none; border:0; cursor:pointer;">×</button>
+    </header>
+
+    <p id="sigSubtitle" style="margin:.5rem 0 1rem; color:#444;"></p>
+
+    <div style="background:#fff; border:1px solid #ccd; border-radius:12px; padding:10px;">
+      <canvas id="sigCanvas" width="640" height="220" style="width:100%; height:220px; display:block;"></canvas>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:12px;">
+      <button id="sigClear" type="button">Clear</button>
+      <div style="flex:1"></div>
+      <button id="sigCancel" type="button">Cancel</button>
+      <button id="sigSave" type="button">Save signature</button>
+    </div>
+  </div>
+</div>
         <!-- Add loading overlay as a sibling to iframe -->
         <div id="loading-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: none;">
             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
