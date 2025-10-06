@@ -476,8 +476,9 @@ document.addEventListener('DOMContentLoaded', function() {
       clearBtn.onclick = () => pad.clear();
 
       // Close helpers
-      const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
-      closeBtn.onclick = close; cancelBtn.onclick = close;
+       const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
+       if (closeBtn) closeBtn.onclick = close;   // guard
+       cancelBtn.onclick = close;
 
       // Save
       saveBtn.onclick = () => {
