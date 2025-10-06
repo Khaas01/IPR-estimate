@@ -248,19 +248,22 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="projectTypeSection" style="display:none;">
   <h2>Project Type</h2>
   <label>Project Type:</label><br>
+
+  <!-- Make values exactly match your sheet/template names -->
   <label>
-    <input type="radio" id="projectTypeCash" name="projectType" value="Cash" required
-           onclick="setTemplate('estimate')">
+    <input type="radio" id="projectTypeCash" name="projectType" value="Estimate" required
+           onchange="onProjectTypeChange(event)">
     Cash
   </label><br>
+
   <label>
-    <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance" required
-           onclick="setTemplate('insurance-agreement')">
+    <input type="radio" id="projectTypeInsurance" name="projectType" value="Insurance Agreement" required
+           onchange="onProjectTypeChange(event)">
     Insurance
   </label>
 
-  <!-- hidden field for template selection -->
-  <input type="hidden" id="pdfTemplate" name="pdfTemplate" value="estimate">
+  <!-- Hidden field used by your PDF generator/preview -->
+  <input type="hidden" id="pdfTemplate" name="pdfTemplate" value="Estimate">
 
   <div id="navigationButtons">
     <button type="button" onclick="goBack()">Back</button>
@@ -269,6 +272,13 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
+  // Keep this tiny and direct: mirror radio value into hidden field
+  function onProjectTypeChange(e) {
+    document.getElementById('pdfTemplate').value = e.target.value; 
+    // If your preview should update immediately, call your preview loader here:
+    // loadPdfPreview(e.target.value);
+  }
+</script>
   function setTemplate(template) {
     document.getElementById('pdfTemplate').value = template;
     // If you want to immediately refresh the preview when radio changes:
