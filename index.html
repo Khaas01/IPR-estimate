@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <header>
     <div class="logo-title">
         <img src="assets/images/logo.png" alt="Prairie Ridge Exteriors Logo" class="logo">
-        <h1>Roofing Estimate Form Version 2</h1>
+        <h1>Roofing Estimate Form Version 3</h1>
     </div>
     <nav class="nav-container">
         <button class="menu-toggle" aria-label="Toggle Menu">
@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 
-<!-- ─────────────────────  CUSTOMER SIGNATURE MODAL + ACK  ───────────────────── -->
+<!-- ───────── CUSTOMER SIGNATURE MODAL + ACK, DRAW ONLY, RESPONSIVE ───────── -->
 
 <style>
   /* Modal base */
@@ -361,31 +361,25 @@ document.addEventListener('DOMContentLoaded', function() {
   .sig-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
 
   .sig-dialog {
-    position: relative; max-width: 760px; margin: 6vh auto;
-    background: #fff; border-radius: 16px; padding: 18px;
+    position: relative;
+    width: min(92vw, 760px);
+    margin: 6vh auto;
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
     box-shadow: 0 20px 50px rgba(0,0,0,.25);
   }
-  .sig-ack { max-width: 520px; margin: 20vh auto; text-align: center; }
+  .sig-ack { width: min(92vw, 520px); margin: 20vh auto; text-align: center; }
 
-  /* Header */
-  .sig-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  /* Header, centered title, no ghost box */
+  .sig-head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+  .sig-title { grid-column: 2; text-align: center; margin: 0; }
+  .sig-close-wrap { grid-column: 3; text-align: right; }
   .sig-close { font-size: 22px; background: none; border: 0; cursor: pointer; line-height: 1; }
 
-  /* Tabs */
-  .sig-tabs { display: flex; gap: 8px; margin: 12px 0; }
-  .sig-tab {
-    padding: 8px 12px; border-radius: 10px; border: 1px solid #d6dbe3;
-    background: #f4f6fa; cursor: pointer;
-  }
-  .sig-tab.active { background: #1f54b0; border-color: #1f54b0; color: #fff; }
-
-  /* Panels */
-  .sig-panel { display: none; }
-  .sig-panel.active { display: block; }
-
-  /* Canvas frames */
+  /* Canvas frame */
   .sig-frame { background: #fff; border: 1px solid #ccd; border-radius: 12px; padding: 8px; }
-  .sig-stage { width: 100%; height: 220px; display: block; }
+  .sig-stage { width: 100%; display: block; height: var(--sig-canvas-h, 220px); }
 
   /* Buttons */
   .sig-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
@@ -394,70 +388,32 @@ document.addEventListener('DOMContentLoaded', function() {
   .sig-btn.primary { background: #1f54b0; color: #fff; }
   .sig-btn.muted { background: #eceff3; color: #111; }
 
-  /* Inputs */
-  .sig-input { padding: 10px 12px; border-radius: 10px; border: 1px solid #ccd; }
+  /* Responsive canvas height, adapts to orientation */
+  @media (orientation: portrait)  { :root { --sig-canvas-h: 34vh; } }
+  @media (orientation: landscape) { :root { --sig-canvas-h: 28vh; } }
+  @media (max-width: 420px)       { :root { --sig-canvas-h: 30vh; } }
 </style>
 
-<!-- Signature Modal -->
+<!-- Signature Modal (Draw only) -->
 <div id="sigModal">
   <div class="sig-backdrop"></div>
   <div class="sig-dialog" role="dialog" aria-modal="true" aria-labelledby="sigTitle">
     <header class="sig-head">
-      <h3 id="sigTitle" style="margin:0;">Client Signature</h3>
-      <button id="sigClose" type="button" aria-label="Close" class="sig-close">×</button>
+      <h3 id="sigTitle" class="sig-title">Client Signature</h3>
+      <div class="sig-close-wrap">
+        <button id="sigClose" type="button" aria-label="Close" class="sig-close">×</button>
+      </div>
     </header>
 
-    <!-- tabs -->
-    <nav class="sig-tabs">
-      <button class="sig-tab active" data-tab="draw">Draw</button>
-      <button class="sig-tab" data-tab="type">Type</button>
-      <button class="sig-tab" data-tab="upload">Upload</button>
-    </nav>
-
-    <!-- Draw -->
-    <section id="sigTab-draw" class="sig-panel active">
+    <section>
       <div class="sig-frame">
-        <canvas id="sigCanvas" width="680" height="220" class="sig-stage"></canvas>
+        <canvas id="sigCanvas" class="sig-stage"></canvas>
       </div>
       <div class="sig-row">
         <button id="sigClear" type="button" class="sig-btn muted">Clear</button>
         <div class="sig-spacer"></div>
         <button id="sigCancel" type="button" class="sig-btn muted">Cancel</button>
         <button id="sigSave" type="button" class="sig-btn primary">Save signature</button>
-      </div>
-    </section>
-
-    <!-- Type -->
-    <section id="sigTab-type" class="sig-panel">
-      <div style="display:grid; gap:8px;">
-        <input id="typedName" class="sig-input" placeholder="Type full name" />
-        <select id="fontSelect" class="sig-input">
-          <option value="Georgia, serif">Cursive Serif</option>
-          <option value="'Brush Script MT', cursive">Brush Script</option>
-          <option value="'Pacifico', cursive">Pacifico</option>
-          <option value="'Segoe Script', cursive">Segoe Script</option>
-        </select>
-      </div>
-      <div style="margin:10px 0;" class="sig-frame">
-        <canvas id="typedCanvas" width="680" height="220" class="sig-stage"></canvas>
-      </div>
-      <div class="sig-row">
-        <div class="sig-spacer"></div>
-        <button id="typedCancel" type="button" class="sig-btn muted">Cancel</button>
-        <button id="typedSave" type="button" class="sig-btn primary">Save signature</button>
-      </div>
-    </section>
-
-    <!-- Upload -->
-    <section id="sigTab-upload" class="sig-panel">
-      <input id="sigFile" type="file" accept="image/*" class="sig-input" />
-      <div style="margin:10px 0;" class="sig-frame">
-        <canvas id="uploadCanvas" width="680" height="220" class="sig-stage"></canvas>
-      </div>
-      <div class="sig-row">
-        <div class="sig-spacer"></div>
-        <button id="uploadCancel" type="button" class="sig-btn muted">Cancel</button>
-        <button id="uploadSave" type="button" class="sig-btn primary">Save signature</button>
       </div>
     </section>
   </div>
@@ -477,113 +433,62 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
 <script>
-  // Public entry point: call this on your Terms "Next" button
+  // Call this from your Terms Next button
   window.startClientSignatureFlow = async function () {
-    const result = await openClientSignatureModal();     // { dataUrl, signedAt, method }
+    const result = await openClientSignatureModal();    // { dataUrl, signedAt }
     if (!result) return;
-    await showClientAccepted();                          // waits for OK
-    // Persist to DB as "Client Signature"
-    await persistSignature('Client Signature', result);  // replace with your real API
-    // continue to your next step here if desired
-    // e.g., showSection('nextSectionId');
+    await showClientAccepted();
+    await persistSignature('Client Signature', result); // replace with real API if needed
   };
 
-  // Opens the modal and resolves with { dataUrl, signedAt, method } or null if canceled
   function openClientSignatureModal() {
     return new Promise(resolve => {
       const modal = document.getElementById('sigModal');
-      const titleEl = document.getElementById('sigTitle');
-      titleEl.textContent = 'Client Signature';
+      const canvas = document.getElementById('sigCanvas');
+      const closeBtn = document.getElementById('sigClose');
+      const cancelBtn = document.getElementById('sigCancel');
+      const clearBtn  = document.getElementById('sigClear');
+      const saveBtn   = document.getElementById('sigSave');
+
       modal.style.display = 'block';
+      const teardown = [];
 
-      // Tabs
-      const tabBtns = Array.from(document.querySelectorAll('.sig-tab'));
-      const panels = {
-        draw: document.getElementById('sigTab-draw'),
-        type: document.getElementById('sigTab-type'),
-        upload: document.getElementById('sigTab-upload'),
+      // High DPI fit, re-fit on resize or orientation change while open
+      const fit = () => {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        const rect = canvas.getBoundingClientRect();
+        const cssH = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
+        canvas.width = Math.max(1, Math.floor(rect.width  * ratio));
+        canvas.height= Math.max(1, Math.floor(cssH       * ratio));
+        const ctx = canvas.getContext('2d');
+        ctx.setTransform(1,0,0,1,0,0);
+        ctx.scale(ratio, ratio);
+        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,rect.width,cssH);
       };
-      function activate(tab) {
-        tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-        Object.entries(panels).forEach(([k, el]) => el.classList.toggle('active', k === tab));
-      }
-      tabBtns.forEach(b => b.onclick = () => activate(b.dataset.tab));
-      activate('draw');
+      fit();
+      const onResize = () => { fit(); pad.clear(); };
+      window.addEventListener('resize', onResize);
+      window.addEventListener('orientationchange', onResize);
+      teardown.push(() => window.removeEventListener('resize', onResize));
+      teardown.push(() => window.removeEventListener('orientationchange', onResize));
 
-      // Draw pad
-      const drawCanvas = document.getElementById('sigCanvas');
-      fitCanvas(drawCanvas, 220);
-      let pad = new window.SignaturePad(drawCanvas, { backgroundColor: 'rgb(255,255,255)' });
+      // Init signature pad
+      const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
+      clearBtn.onclick = () => pad.clear();
 
-      // Type panel
-      const typedCanvas = document.getElementById('typedCanvas');
-      typedCanvas.width = 680; typedCanvas.height = 220;
-      const tctx = typedCanvas.getContext('2d');
-      function renderTyped() {
-        const name = document.getElementById('typedName').value || '';
-        const font = document.getElementById('fontSelect').value;
-        tctx.clearRect(0,0,typedCanvas.width,typedCanvas.height);
-        tctx.fillStyle = '#fff'; tctx.fillRect(0,0,typedCanvas.width,typedCanvas.height);
-        tctx.fillStyle = '#111';
-        tctx.font = `64px ${font}`;
-        tctx.textBaseline = 'middle';
-        tctx.fillText(name, 24, typedCanvas.height / 2);
-      }
-      document.getElementById('typedName').oninput = renderTyped;
-      document.getElementById('fontSelect').onchange = renderTyped;
-      renderTyped();
+      // Close helpers
+      const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
+      closeBtn.onclick = close; cancelBtn.onclick = close;
 
-      // Upload panel
-      const uploadCanvas = document.getElementById('uploadCanvas');
-      uploadCanvas.width = 680; uploadCanvas.height = 220;
-      const uctx = uploadCanvas.getContext('2d');
-      function drawUpload(img) {
-        uctx.fillStyle = '#fff'; uctx.fillRect(0,0,uploadCanvas.width,uploadCanvas.height);
-        const scale = Math.min(uploadCanvas.width / img.width, uploadCanvas.height / img.height);
-        const w = img.width * scale, h = img.height * scale;
-        const x = (uploadCanvas.width - w) / 2, y = (uploadCanvas.height - h) / 2;
-        uctx.drawImage(img, x, y, w, h);
-      }
-      document.getElementById('sigFile').onchange = e => {
-        const f = e.target.files && e.target.files[0]; if (!f) return;
-        const img = new Image(); img.onload = () => drawUpload(img); img.src = URL.createObjectURL(f);
-      };
-
-      // Buttons
-      const close = () => { modal.style.display = 'none'; cleanup(); resolve(null); };
-      const done  = (dataUrl, method) => {
+      // Save
+      saveBtn.onclick = () => {
+        if (pad.isEmpty()) { alert('Please sign first'); return; }
+        const dataUrl = canvas.toDataURL('image/png');
         const signedAt = new Date().toISOString();
         modal.style.display = 'none';
-        cleanup();
-        resolve({ dataUrl, signedAt, method });
+        teardown.forEach(fn => fn());
+        resolve({ dataUrl, signedAt, method: 'draw' });
       };
-
-      document.getElementById('sigClose').onclick = close;
-      document.getElementById('sigCancel').onclick = close;
-      document.getElementById('typedCancel').onclick = close;
-      document.getElementById('uploadCancel').onclick = close;
-
-      document.getElementById('sigClear').onclick = () => pad.clear();
-
-      document.getElementById('sigSave').onclick = () => {
-        if (pad.isEmpty()) { alert('Please sign first'); return; }
-        done(drawCanvas.toDataURL('image/png'), 'draw');
-      };
-      document.getElementById('typedSave').onclick = () => {
-        const name = document.getElementById('typedName').value.trim();
-        if (!name) { alert('Type a name'); return; }
-        done(typedCanvas.toDataURL('image/png'), 'type');
-      };
-      document.getElementById('uploadSave').onclick = () => {
-        const dataUrl = uploadCanvas.toDataURL('image/png');
-        if (!dataUrl || dataUrl.length < 1000) { alert('Upload a signature image'); return; }
-        done(dataUrl, 'upload');
-      };
-
-      function cleanup() {
-        try { pad.off(); } catch(_) {}
-        document.getElementById('sigFile').value = '';
-      }
     });
   }
 
@@ -597,18 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  function fitCanvas(canvas, cssHeight) {
-    // make lines crisp on high DPI displays
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = Math.floor(rect.width * ratio);
-    canvas.height = Math.floor(cssHeight * ratio);
-    canvas.getContext('2d').scale(ratio, ratio);
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,rect.width,cssHeight);
-  }
-
-  // Replace with your real API call
+  // Replace with your real API
   async function persistSignature(header, sig) {
     try {
       await fetch('/api/signatures', {
@@ -618,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
           header,              // "Client Signature"
           imageBase64: sig.dataUrl,
           signedAt: sig.signedAt,
-          method: sig.method   // draw, type, upload
+          method: sig.method   // draw
         })
       });
     } catch (e) {
