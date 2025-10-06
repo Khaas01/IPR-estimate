@@ -492,15 +492,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  function showClientAccepted() {
-    return new Promise(resolve => {
-      const m = document.getElementById('sigAccepted');
-      m.style.display = 'block';
-      const ok = document.getElementById('sigAcceptedOk');
-      const done = () => { m.style.display = 'none'; ok.removeEventListener('click', done); resolve(); };
-      ok.addEventListener('click', done);
-    });
-  }
+ function showClientAccepted() {
+  return new Promise(resolve => {
+    const m  = document.getElementById('sigAccepted');
+    const ok = document.getElementById('sigAcceptedOk');
+
+    const done = async () => {
+      ok.removeEventListener('click', done);
+      m.style.display = 'none';
+      resolve();
+      // chain contractor right here
+      startContractorSignatureFlow();
+    };
+
+    m.style.display = 'block';
+    ok.addEventListener('click', done);
+  });
+}
 
   // Replace with your real API
   async function persistSignature(header, sig) {
