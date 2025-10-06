@@ -1,23 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="assets/favicon/favicon.png">
-    <link rel="shortcut icon" type="image/png" href="assets/favicon/favicon.png">
-</head>
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://accounts.google.com/gsi/client"></script>
-    <title>Prairie Ridge Exteriors - Estimate Form</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
-    <script>
-    // Define the callback function
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Prairie Ridge Exteriors - Estimate Form</title>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="assets/favicon/favicon.png">
+  <link rel="shortcut icon" type="image/png" href="assets/favicon/favicon.png">
+
+  <!-- Global styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- App logic -->
+  <script src="script.js" defer></script>
+
+  <!-- Google APIs -->
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="https://accounts.google.com/gsi/client"></script>
+
+  <!-- Maps callback -->
+  <script>
     function initMap() {
-        console.log('Google Maps API loaded');
-        initializeAutocomplete();
+      console.log("Google Maps API loaded");
+      initializeAutocomplete();
     }
-</script>
+  </script>
+</head>
 <body>
     <script>
 // Check if user is logged in
