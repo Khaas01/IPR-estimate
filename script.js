@@ -676,41 +676,37 @@ function editForm() {
 function displayPDF(pdfId) {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     if (previewFrame && pdfId) {
-        // Clean up the PDF ID
         const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
         const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
-        
+
         console.log('Clean PDF ID:', cleanPdfId);
         console.log('Setting preview URL:', previewUrl);
 
-        // Set necessary attributes for Google Drive embedding
         previewFrame.setAttribute('allowfullscreen', 'true');
         previewFrame.setAttribute('allow', 'autoplay');
-        
-        // Remove any previous content and listeners
-        previewFrame.onload = null;
-        previewFrame.onerror = null;
-        
-        // Set new event listeners
+
         previewFrame.onerror = () => {
             console.error('Failed to load preview frame');
             hideLoading();
-            showError();
-        };
-        
-        previewFrame.onload = () => {
-            console.log('Preview frame loaded successfully');
-            hideLoading(); // Only hide loading when PDF is actually loaded
+            handlePreviewError(); // only insert error if truly failed
         };
 
-        // Set the source directly
+        previewFrame.onload = () => {
+            console.log('Preview frame loaded successfully');
+            hideLoading();
+
+            // 🔑 Remove any error overlay if PDF loads fine
+            const oldError = previewFrame.parentNode.querySelector('.preview-error');
+            if (oldError) oldError.remove();
+        };
+
         if (previewFrame.src !== previewUrl) {
             previewFrame.src = previewUrl;
         }
     } else {
         console.error('Preview frame not found or invalid PDF ID');
         hideLoading();
-        showError();
+        handlePreviewError();
     }
 }
 function handlePdfError() {
