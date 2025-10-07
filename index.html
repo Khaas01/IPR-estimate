@@ -539,18 +539,21 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 }
 
-  // Replace with your real API
-  async function persistSignature(header, sig) {
+ async function persistSignature(header, sig) {
     try {
-      await fetch('/api/signatures', {
+      const payload = {
+        action: 'saveSignature',
+        header,                    // "Customer Signature" | "Contractor Signature"
+        imageBase64: sig.dataUrl,  // data:image/png;base64,....
+        folderId: '1Ua6wnn2q_V4UNdZ1L_WPIDiVfHtxI6oc'
+      };
+
+      // Reuse the same GAS endpoint you already use for submitForm
+      await fetch(window.API_CONFIG ? API_CONFIG.GOOGLE_APPS_SCRIPT_URL : 'YOUR_GAS_DEPLOY_URL', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          header,              // "Client Signature"
-          imageBase64: sig.dataUrl,
-          signedAt: sig.signedAt,
-          method: sig.method   // draw
-        })
+        mode: 'no-cors', // same as your submit; we don't read back the response
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
       });
     } catch (e) {
       console.error('Failed to save signature', e);
