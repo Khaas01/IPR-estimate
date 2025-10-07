@@ -694,7 +694,10 @@ function displayPDF(pdfId) {
         previewFrame.onload = () => {
             console.log('Preview frame loaded successfully');
             hideLoading();
-
+        const errorDiv = document.getElementById('pdf-error-message');
+        if (errorDiv) {
+        errorDiv.remove(); // completely delete error block
+        }
             // 🔑 Remove any error overlay if PDF loads fine
             const oldError = previewFrame.parentNode.querySelector('.preview-error');
             if (oldError) oldError.remove();
