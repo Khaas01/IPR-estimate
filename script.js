@@ -1262,16 +1262,16 @@ async function getLatestPdfId() {
         
         if (data.values && data.values.length > 0) {
             const headers = data.values[0];
-            const pdfIdColumnIndex = headers.indexOf('PDF_ID');
+            const pdfIdColumnIndex = headers.indexOf('Estimate ID');
             
             if (pdfIdColumnIndex !== -1) {
                 const lastRow = data.values[data.values.length - 1];
                 return lastRow[pdfIdColumnIndex];
             }
         }
-        throw new Error('PDF ID not found in spreadsheet');
+        throw new Error('Estimate ID not found in spreadsheet');
     } catch (error) {
-        console.error('Error fetching PDF ID:', error);
+        console.error('Error fetching Estimate ID:', error);
         return null;
     }
 }
