@@ -957,18 +957,12 @@ function handlePreviewError() {
     previewFrame.parentNode.insertBefore(errorMessage, previewFrame);
 }
 
+function shareEstimate() {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     
     if (previewFrame && previewFrame.src) {
-        // Get the current preview URL
         let previewUrl = previewFrame.src;
-        
-        // Convert the preview URL to a direct view URL
-        // From: https://drive.google.com/file/d/{fileId}/preview
-        // To: https://drive.google.com/file/d/{fileId}/view
         previewUrl = previewUrl.replace('/preview', '/view');
-        
-        // Open in a new tab
         window.open(previewUrl, '_blank');
     } else {
         console.error('No preview URL found');
