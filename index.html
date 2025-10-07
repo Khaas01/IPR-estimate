@@ -19,14 +19,7 @@
   <!-- Google APIs -->
   <script src="https://apis.google.com/js/api.js"></script>
   <script src="https://accounts.google.com/gsi/client"></script>
-
-  <!-- Maps callback -->
-  <script>
-    function initMap() {
-      console.log("Google Maps API loaded");
-      initializeAutocomplete();
-    }
-  </script>
+  <!-- (Removed head initMap stub to avoid ReferenceError) -->
 </head>
 <body>
     <script>
@@ -1343,7 +1336,7 @@ function showContractorAccepted() {
 <!-- ************** BEGIN: MINIMAL ADDITIONS (keep your existing flow) ************** -->
 <script>
   // *** ADDED: Track project type based on your existing radios
-  let selectedProjectType = 'Cash';
+  // (Removed duplicate 'let selectedProjectType = "Cash";' to avoid SyntaxError)
   document.addEventListener('change', (e) => {
     if (e.target && e.target.name === 'projectType') {
       selectedProjectType = e.target.value; // "Cash" or "Insurance"
