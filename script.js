@@ -674,45 +674,47 @@ function editForm() {
     }
 }
 function displayPDF(pdfId) {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame && pdfId) {
-        const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
-        const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
+  const previewFrame = document.getElementById('estimatePreviewFrame');
+  if (previewFrame && pdfId) {
+    const cleanPdfId = pdfId.replace(/["\s–]/g, '').trim();
+    const previewUrl = `https://drive.google.com/file/d/${cleanPdfId}/preview`;
 
-        console.log('Clean PDF ID:', cleanPdfId);
-        console.log('Setting preview URL:', previewUrl);
+    console.log('Clean PDF ID:', cleanPdfId);
+    console.log('Setting preview URL:', previewUrl);
 
-        previewFrame.setAttribute('allowfullscreen', 'true');
-        previewFrame.setAttribute('allow', 'autoplay');
+    // Ensure embed attributes
+    previewFrame.setAttribute('allowfullscreen', 'true');
+    previewFrame.setAttribute('allow', 'autoplay');
 
-        previewFrame.onerror = () => {
-            console.error('Failed to load preview frame');
-            hideLoading();
-            handlePreviewError(); // only insert error if truly failed
-        };
+    // Handlers
+    previewFrame.onerror = () => {
+      console.error('Failed to load preview frame');
+      hideLoading();
+      handlePreviewError(); // only insert error if truly failed
+    };
 
-       previewFrame.onload = () => {
-            console.log('Preview frame loaded successfully');
-            hideLoading();
-          // Always clear any leftover error message
-           const err1 = document.getElementById('pdf-error-message');
-            if (err1) err1.remove();
-            const err2 = document.querySelector('.preview-error');
-            if (err2) err2.remove();
-        };
-            // 🔑 Remove any error overlay if PDF loads fine
-            const oldError = previewFrame.parentNode.querySelector('.preview-error');
-            if (oldError) oldError.remove();
-        };
+    previewFrame.onload = () => {
+      console.log('Preview frame loaded successfully');
+      hideLoading();
+      // Always clear any leftover error message
+      const err1 = document.getElementById('pdf-error-message');
+      if (err1) err1.remove();
+      const err2 = document.querySelector('.preview-error');
+      if (err2) err2.remove();
+    };
 
-        if (previewFrame.src !== previewUrl) {
-            previewFrame.src = previewUrl;
-        }
-    } else {
-        console.error('Preview frame not found or invalid PDF ID');
-        hideLoading();
-        handlePreviewError();
+    // Also clear any pre-existing error block before loading
+    const oldError = previewFrame.parentNode.querySelector('.preview-error');
+    if (oldError) oldError.remove();
+
+    if (previewFrame.src !== previewUrl) {
+      previewFrame.src = previewUrl;
     }
+  } else {
+    console.error('Preview frame not found or invalid PDF ID');
+    hideLoading();
+    handlePreviewError();
+  }
 }
 function handlePdfError() {
     const estimatePreviewFrame = document.getElementById('estimatePreviewFrame');
