@@ -957,22 +957,6 @@ function handlePreviewError() {
     previewFrame.parentNode.insertBefore(errorMessage, previewFrame);
 }
 
-function showError() {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame) {
-        previewFrame.srcdoc = `
-            <html>
-            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
-                <div style="color: red; text-align: center;">
-                    <p>Error loading PDF preview.</p>
-                    <p>Please try refreshing the page or contact support if the issue persists.</p>
-                </div>
-            </body>
-            </html>
-        `;
-    }
-}
-function shareEstimate() {
     const previewFrame = document.getElementById('estimatePreviewFrame');
     
     if (previewFrame && previewFrame.src) {
