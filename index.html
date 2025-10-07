@@ -722,20 +722,14 @@ function showContractorAccepted() {
       okBtn.removeEventListener('click', onOk);
       modal.style.display = 'none';
 
-      // 1) SUBMIT TO SHEET using your existing solar submit function
-      //    (this is the one that writes to the database and builds the review)
-      try {
-        if (typeof nextFromSolarDetachReset === 'function') {
-          // In case it's synchronous, Promise.resolve makes it awaitable
-          await Promise.resolve(nextFromSolarDetachReset());
-        } else {
-          console.error('nextFromSolarDetachReset() not found');
-        }
-      } catch (e) {
-        console.error('Submit failed in nextFromSolarDetachReset()', e);
+      // 🔑 Call the same submit function as Solar Submit
+      if (typeof nextFromSolarDetachReset === 'function') {
+        nextFromSolarDetachReset();
+      } else {
+        console.error('nextFromSolarDetachReset() not found');
       }
 
-      // 2) Ensure we are on the review section (in case the submit didn’t navigate)
+      // Show review after submit
       if (typeof showSection === 'function') {
         showSection('review-section');
       }
