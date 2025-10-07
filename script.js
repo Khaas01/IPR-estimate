@@ -1256,24 +1256,32 @@ function handleApiError(error) {
     return false;
 }
 async function getLatestPdfId() {
-    try {
-        const response = await fetch(`${API_CONFIG.API_ENDPOINT}?key=${API_CONFIG.API_KEY}`);
-        const data = await response.json();
-        
-        if (data.values && data.values.length > 0) {
-            const headers = data.values[0];
-            const pdfIdColumnIndex = headers.indexOf('Estimate ID');
-            
-            if (pdfIdColumnIndex !== -1) {
-                const lastRow = data.values[data.values.length - 1];
-                return lastRow[pdfIdColumnIndex];
-            }
-        }
-        throw new Error('Estimate ID not found in spreadsheet');
-    } catch (error) {
-        console.error('Error fetching Estimate ID:', error);
-        return null;
+  try {
+    // cache-bust to avoid stale responses
+    const url = `${API_CONFIG.API_ENDPOINT}?key=${API_CONFIG.API_KEY}&_=${Date.now()}`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const data = await resp.json();
+    if (!data.values || data.values.length === 0) return null;
+
+    const headers = data.values[0].map(h => String(h).trim());
+    // find "Estimate ID" (case-insensitive), fallback to "PDF_ID" just in case
+    let colIdx = headers.findIndex(h => h.toLowerCase() === 'estimate id');
+    if (colIdx === -1) colIdx = headers.findIndex(h => h.toLowerCase() === 'pdf_id');
+    if (colIdx === -1) throw new Error('Estimate ID column not found');
+
+    // walk upwards from the bottom to find the last non-empty value in that column
+    for (let i = data.values.length - 1; i >= 1; i--) {
+      const row = data.values[i] || [];
+      const val = (row[colIdx] || '').toString().trim();
+      if (val) return val; // found the latest non-empty ID
     }
+    return null;
+  } catch (err) {
+    console.error('Error fetching latest Estimate ID:', err);
+    return null;
+  }
 }
 async function getDecodedServiceAccountCredentials() {
     try {
