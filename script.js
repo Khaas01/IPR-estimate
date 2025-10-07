@@ -691,13 +691,15 @@ function displayPDF(pdfId) {
             handlePreviewError(); // only insert error if truly failed
         };
 
-        previewFrame.onload = () => {
+       previewFrame.onload = () => {
             console.log('Preview frame loaded successfully');
             hideLoading();
-        const errorDiv = document.getElementById('pdf-error-message');
-        if (errorDiv) {
-        errorDiv.remove(); // completely delete error block
-        }
+          // Always clear any leftover error message
+           const err1 = document.getElementById('pdf-error-message');
+            if (err1) err1.remove();
+            const err2 = document.querySelector('.preview-error');
+            if (err2) err2.remove();
+        };
             // 🔑 Remove any error overlay if PDF loads fine
             const oldError = previewFrame.parentNode.querySelector('.preview-error');
             if (oldError) oldError.remove();
@@ -757,26 +759,11 @@ window.addEventListener('message', function(event) {
 
 
 function showError() {
-    const previewFrame = document.getElementById('estimatePreviewFrame');
-    if (previewFrame) {
-        // Clear the iframe
-        previewFrame.src = 'about:blank';
-        
-        // Create error message outside the iframe
-        let errorDiv = document.getElementById('pdf-error-message');
-        if (!errorDiv) {
-            errorDiv = document.createElement('div');
-            errorDiv.id = 'pdf-error-message';
-            errorDiv.innerHTML = `
-                <div style="color: red; text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    <p>Error loading PDF preview.</p>
-                    <p>Please try refreshing the page or contact support if the issue persists.</p>
-                </div>
-            `;
-            previewFrame.parentNode.insertBefore(errorDiv, previewFrame.nextSibling);
-        }
-        errorDiv.style.display = 'block';
-    }
+  // Do nothing and remove any existing error block
+  const err1 = document.getElementById('pdf-error-message');
+  if (err1) err1.remove();
+  const err2 = document.querySelector('.preview-error');
+  if (err2) err2.remove();
 }
 
 
