@@ -412,8 +412,8 @@ function collectFormData() {
     // New: IDs + Signatures
     "Estimate ID": estimateId,
     "Insurance ID": insuranceId,
-    "Customer Signature": customerSig,
-    "Contractor Signature": contractorSig,
+   "customerSignatureDataUrl": document.getElementById('customerSignatureDataUrl')?.value || '',
+"contractorSignatureDataUrl": document.getElementById('contractorSignatureDataUrl')?.value || '',
 
     // Legacy / optional
     "Amount Collected": '',
