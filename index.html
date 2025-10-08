@@ -488,118 +488,30 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
 <script>
-  // Call this from your Terms Next button
+  // Entry from “Next” on Insurance Terms
   window.startClientSignatureFlow = async function () {
-    const result = await openClientSignatureModal();    // { dataUrl, signedAt }
+    const result = await openClientSignatureModal(); // { dataUrl, signedAt }
     if (!result) return;
     await showClientAccepted();
-    await persistSignature('Client Signature', result); // replace with real API if needed
-  };
-function openClientSignatureModal() {
-  return new Promise(resolve => {
-    const modal    = document.getElementById('sigModal');
-    const canvas   = document.getElementById('sigCanvas');
-    const closeBtn = document.getElementById('sigClose');
-    const cancelBtn= document.getElementById('sigCancel');
-    const clearBtn = document.getElementById('sigClear');
-    const saveBtn  = document.getElementById('sigSave');
-
-    modal.style.display = 'block';
-    const teardown = [];
-
-    // High DPI fit
-    const fit = () => {
-      const ratio = Math.max(window.devicePixelRatio || 1, 1);
-      const rect  = canvas.getBoundingClientRect();
-      const cssH  = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
-      canvas.width  = Math.max(1, Math.floor(rect.width  * ratio));
-      canvas.height = Math.max(1, Math.floor(cssH       * ratio));
-      const ctx = canvas.getContext('2d');
-      ctx.setTransform(1,0,0,1,0,0);
-      ctx.scale(ratio, ratio);
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0,0,rect.width,cssH);
-    };
-    fit();
-
-    // Init signature pad FIRST
-    const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
-    clearBtn.onclick = () => pad.clear();
-
-    // Then add listeners that reference pad
-    const onResize = () => { fit(); if (pad) pad.clear(); };
-    window.addEventListener('resize', onResize);
-    window.addEventListener('orientationchange', onResize);
-    teardown.push(() => window.removeEventListener('resize', onResize));
-    teardown.push(() => window.removeEventListener('orientationchange', onResize));
-
-    // Close helpers
-    const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
-    if (closeBtn) closeBtn.onclick = close;
-    cancelBtn.onclick = close;
-
-    // Save to Drive and stash fileId in hidden input
-    saveBtn.onclick = async () => {
-      if (pad.isEmpty()) { alert('Please sign first'); return; }
-      const dataUrl  = canvas.toDataURL('image/png');
-      const signedAt = new Date().toISOString();
-
-      modal.style.display = 'none';
-      teardown.forEach(fn => fn());
-
-      try {
-        const { fileId, viewUrl } = await uploadSignatureToDrive({ role: 'client', dataUrl });
-        const input = document.getElementById('customerSignatureDataUrl');
-        if (input) input.value = fileId;   // or viewUrl if you prefer
-        resolve({ dataUrl, signedAt, method: 'draw', fileId, viewUrl });
-      } catch (err) {
-        console.error('Client signature upload failed:', err);
-        alert('Could not save client signature to Drive.');
-        resolve(null);
-      }
-    };
-  });
-}
- function showClientAccepted() {
-  return new Promise(resolve => {
-    const m  = document.getElementById('sigAccepted');
-    const ok = document.getElementById('sigAcceptedOk');
-
-    const done = async () => {
-      ok.removeEventListener('click', done);
-      m.style.display = 'none';
-      resolve();
-      // chain contractor right here
-      startContractorSignatureFlow();
-    };
-
-    m.style.display = 'block';
-    ok.addEventListener('click', done);
-  });
-}
-
-window.startClientSignatureFlow = async function () {
-    const result = await openClientSignatureModal();    // { dataUrl, signedAt }
-    if (!result) return;
-    await showClientAccepted();
-    await persistSignature('Client Signature', result); // stores in hidden input
+    await persistSignature('Client Signature', result); // stores base64 in hidden input
   };
 
   function openClientSignatureModal() {
     return new Promise(resolve => {
-      const modal = document.getElementById('sigModal');
+      const modal  = document.getElementById('sigModal');
       const canvas = document.getElementById('sigCanvas');
-      const cancelBtn = document.getElementById('sigCancel');
-      const clearBtn  = document.getElementById('sigClear');
-      const saveBtn   = document.getElementById('sigSave');
+      const cancel = document.getElementById('sigCancel');
+      const clear  = document.getElementById('sigClear');
+      const save   = document.getElementById('sigSave');
 
       modal.style.display = 'block';
       const teardown = [];
 
+      // High-DPI fit
       const fit = () => {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        const rect = canvas.getBoundingClientRect();
-        const cssH = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
+        const rect  = canvas.getBoundingClientRect();
+        const cssH  = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
         canvas.width  = Math.max(1, Math.floor(rect.width  * ratio));
         canvas.height = Math.max(1, Math.floor(cssH       * ratio));
         const ctx = canvas.getContext('2d');
@@ -609,22 +521,26 @@ window.startClientSignatureFlow = async function () {
         ctx.fillRect(0,0,rect.width,cssH);
       };
       fit();
+
+      const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
+      clear.onclick = () => pad.clear();
+
       const onResize = () => { fit(); pad.clear(); };
       window.addEventListener('resize', onResize);
       window.addEventListener('orientationchange', onResize);
       teardown.push(() => window.removeEventListener('resize', onResize));
       teardown.push(() => window.removeEventListener('orientationchange', onResize));
 
-      const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
-      clearBtn.onclick = () => pad.clear();
-
       const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
-      cancelBtn.onclick = close;
+      cancel.onclick = close;
 
-      saveBtn.onclick = () => {
+      // Save => put base64 into hidden input; backend saves PNG
+      save.onclick = () => {
         if (pad.isEmpty()) { alert('Please sign first'); return; }
         const dataUrl  = canvas.toDataURL('image/png');
         const signedAt = new Date().toISOString();
+        const input    = document.getElementById('customerSignatureDataUrl');
+        if (input) input.value = dataUrl;
         modal.style.display = 'none';
         teardown.forEach(fn => fn());
         resolve({ dataUrl, signedAt, method: 'draw' });
@@ -640,7 +556,7 @@ window.startClientSignatureFlow = async function () {
         ok.removeEventListener('click', done);
         m.style.display = 'none';
         resolve();
-        startContractorSignatureFlow(); // chain contractor
+        startContractorSignatureFlow(); // chain to contractor
       };
       m.style.display = 'block';
       ok.addEventListener('click', done);
@@ -651,7 +567,7 @@ window.startClientSignatureFlow = async function () {
     const isClient = /client/i.test(header);
     const fieldId  = isClient ? 'customerSignatureDataUrl' : 'contractorSignatureDataUrl';
     const input    = document.getElementById(fieldId);
-    if (input) input.value = sig.dataUrl; // store base64 in hidden input
+    if (input) input.value = sig.dataUrl; // store base64
   }
 </script>
 
@@ -793,29 +709,27 @@ window.startClientSignatureFlow = async function () {
     const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
     cancel.onclick = close;
 
-    // Save -> upload to Drive -> stash fileId in hidden input
-    save.onclick = async () => {
-      if (pad.isEmpty()) { alert('Please sign first'); return; }
-      const dataUrl  = canvas.toDataURL('image/png');
-      const signedAt = new Date().toISOString();
+  // Save -> upload to Drive -> stash fileId in hidden input
+save.onclick = async () => {
+  if (pad.isEmpty()) { alert('Please sign first'); return; }
+  const dataUrl  = canvas.toDataURL('image/png');
+  const signedAt = new Date().toISOString();
 
-      modal.style.display = 'none';
-      teardown.forEach(fn => fn());
+  modal.style.display = 'none';
+  teardown.forEach(fn => fn());
 
-      try {
-        // must exist and return {fileId, viewUrl}
-        const { fileId, viewUrl } = await uploadSignatureToDrive({ role: 'contractor', dataUrl });
-        const input = document.getElementById('contractorSignatureDataUrl');
-        if (input) input.value = fileId;     // or set to viewUrl if you prefer
-        resolve({ dataUrl, signedAt, method: 'draw', fileId, viewUrl });
-      } catch (err) {
-        console.error('Contractor signature upload failed:', err);
-        alert('Could not save contractor signature to Drive.');
-        resolve(null);
-      }
-    };
-  });
-}
+  try {
+    // must exist and return {fileId, viewUrl}
+    const { fileId, viewUrl } = await uploadSignatureToDrive({ role: 'contractor', dataUrl });
+    const input = document.getElementById('contractorSignatureDataUrl');
+    if (input) input.value = fileId;     // or set to viewUrl if you prefer
+    resolve({ dataUrl, signedAt, method: 'draw', fileId, viewUrl });
+  } catch (err) {
+    console.error('Contractor signature upload failed:', err);
+    alert('Could not save contractor signature to Drive.');
+    resolve(null);
+  }
+};
 
 function showContractorAccepted() {
   return new Promise(resolve => {
