@@ -709,26 +709,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
     cancel.onclick = close;
 
-  // Save -> upload to Drive -> stash fileId in hidden input
-save.onclick = async () => {
+// Save -> stash base64 in hidden input; backend saves PNG
+save.onclick = () => {
   if (pad.isEmpty()) { alert('Please sign first'); return; }
   const dataUrl  = canvas.toDataURL('image/png');
   const signedAt = new Date().toISOString();
 
+  const input = document.getElementById('contractorSignatureDataUrl');
+  if (input) input.value = dataUrl;
+
   modal.style.display = 'none';
   teardown.forEach(fn => fn());
-
-  try {
-    // must exist and return {fileId, viewUrl}
-    const { fileId, viewUrl } = await uploadSignatureToDrive({ role: 'contractor', dataUrl });
-    const input = document.getElementById('contractorSignatureDataUrl');
-    if (input) input.value = fileId;     // or set to viewUrl if you prefer
-    resolve({ dataUrl, signedAt, method: 'draw', fileId, viewUrl });
-  } catch (err) {
-    console.error('Contractor signature upload failed:', err);
-    alert('Could not save contractor signature to Drive.');
-    resolve(null);
-  }
+  resolve({ dataUrl, signedAt, method: 'draw' });
 };
 
 function showContractorAccepted() {
