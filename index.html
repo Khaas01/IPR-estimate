@@ -495,59 +495,71 @@ document.addEventListener('DOMContentLoaded', function() {
     await showClientAccepted();
     await persistSignature('Client Signature', result); // replace with real API if needed
   };
+function openClientSignatureModal() {
+  return new Promise(resolve => {
+    const modal    = document.getElementById('sigModal');
+    const canvas   = document.getElementById('sigCanvas');
+    const closeBtn = document.getElementById('sigClose');
+    const cancelBtn= document.getElementById('sigCancel');
+    const clearBtn = document.getElementById('sigClear');
+    const saveBtn  = document.getElementById('sigSave');
 
-  function openClientSignatureModal() {
-    return new Promise(resolve => {
-      const modal = document.getElementById('sigModal');
-      const canvas = document.getElementById('sigCanvas');
-      const closeBtn = document.getElementById('sigClose');
-      const cancelBtn = document.getElementById('sigCancel');
-      const clearBtn  = document.getElementById('sigClear');
-      const saveBtn   = document.getElementById('sigSave');
+    modal.style.display = 'block';
+    const teardown = [];
 
-      modal.style.display = 'block';
-      const teardown = [];
+    // High DPI fit
+    const fit = () => {
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      const rect  = canvas.getBoundingClientRect();
+      const cssH  = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
+      canvas.width  = Math.max(1, Math.floor(rect.width  * ratio));
+      canvas.height = Math.max(1, Math.floor(cssH       * ratio));
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.scale(ratio, ratio);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0,0,rect.width,cssH);
+    };
+    fit();
 
-      // High DPI fit, re-fit on resize or orientation change while open
-      const fit = () => {
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        const rect = canvas.getBoundingClientRect();
-        const cssH = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
-        canvas.width = Math.max(1, Math.floor(rect.width  * ratio));
-        canvas.height= Math.max(1, Math.floor(cssH       * ratio));
-        const ctx = canvas.getContext('2d');
-        ctx.setTransform(1,0,0,1,0,0);
-        ctx.scale(ratio, ratio);
-        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,rect.width,cssH);
-      };
-      fit();
-      const onResize = () => { fit(); pad.clear(); };
-      window.addEventListener('resize', onResize);
-      window.addEventListener('orientationchange', onResize);
-      teardown.push(() => window.removeEventListener('resize', onResize));
-      teardown.push(() => window.removeEventListener('orientationchange', onResize));
+    // Init signature pad FIRST
+    const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
+    clearBtn.onclick = () => pad.clear();
 
-      // Init signature pad
-      const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
-      clearBtn.onclick = () => pad.clear();
+    // Then add listeners that reference pad
+    const onResize = () => { fit(); if (pad) pad.clear(); };
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+    teardown.push(() => window.removeEventListener('resize', onResize));
+    teardown.push(() => window.removeEventListener('orientationchange', onResize));
 
-      // Close helpers
-       const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
-       if (closeBtn) closeBtn.onclick = close;   // guard
-       cancelBtn.onclick = close;
+    // Close helpers
+    const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
+    if (closeBtn) closeBtn.onclick = close;
+    cancelBtn.onclick = close;
 
-      // Save
-      saveBtn.onclick = () => {
-        if (pad.isEmpty()) { alert('Please sign first'); return; }
-        const dataUrl = canvas.toDataURL('image/png');
-        const signedAt = new Date().toISOString();
-        modal.style.display = 'none';
-        teardown.forEach(fn => fn());
-        resolve({ dataUrl, signedAt, method: 'draw' });
-      };
-    });
-  }
+    // Save to Drive and stash fileId in hidden input
+    saveBtn.onclick = async () => {
+      if (pad.isEmpty()) { alert('Please sign first'); return; }
+      const dataUrl  = canvas.toDataURL('image/png');
+      const signedAt = new Date().toISOString();
 
+      modal.style.display = 'none';
+      teardown.forEach(fn => fn());
+
+      try {
+        const { fileId, viewUrl } = await uploadSignatureToDrive({ role: 'client', dataUrl });
+        const input = document.getElementById('customerSignatureDataUrl');
+        if (input) input.value = fileId;   // or viewUrl if you prefer
+        resolve({ dataUrl, signedAt, method: 'draw', fileId, viewUrl });
+      } catch (err) {
+        console.error('Client signature upload failed:', err);
+        alert('Could not save client signature to Drive.');
+        resolve(null);
+      }
+    };
+  });
+}
  function showClientAccepted() {
   return new Promise(resolve => {
     const m  = document.getElementById('sigAccepted');
@@ -741,54 +753,69 @@ window.startClientSignatureFlow = async function () {
   };
 
   function openContractorSignatureModal() {
-    return new Promise(resolve => {
-      const modal   = document.getElementById('sigModalContractor');
-      const canvas  = document.getElementById('sigCanvasContractor');
-      const cancel  = document.getElementById('sigCancelContractor');
-      const clear   = document.getElementById('sigClearContractor');
-      const save    = document.getElementById('sigSaveContractor');
+  return new Promise(resolve => {
+    const modal   = document.getElementById('sigModalContractor');
+    const canvas  = document.getElementById('sigCanvasContractor');
+    const cancel  = document.getElementById('sigCancelContractor');
+    const clear   = document.getElementById('sigClearContractor');
+    const save    = document.getElementById('sigSaveContractor');
 
-      modal.style.display = 'block';
-      const teardown = [];
+    modal.style.display = 'block';
+    const teardown = [];
 
-      // High DPI fit, re-fit on resize or orientation change while open
-      const fit = () => {
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        const rect  = canvas.getBoundingClientRect();
-        const cssH  = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
-        canvas.width  = Math.max(1, Math.floor(rect.width  * ratio));
-        canvas.height = Math.max(1, Math.floor(cssH       * ratio));
-        const ctx = canvas.getContext('2d');
-        ctx.setTransform(1,0,0,1,0,0);
-        ctx.scale(ratio, ratio);
-        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,rect.width,cssH);
-      };
-      fit();
-      const onResize = () => { fit(); pad.clear(); };
-      window.addEventListener('resize', onResize);
-      window.addEventListener('orientationchange', onResize);
-      teardown.push(() => window.removeEventListener('resize', onResize));
-      teardown.push(() => window.removeEventListener('orientationchange', onResize));
+    // High-DPI fit
+    const fit = () => {
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      const rect  = canvas.getBoundingClientRect();
+      const cssH  = parseFloat(getComputedStyle(canvas).getPropertyValue('height'));
+      canvas.width  = Math.max(1, Math.floor(rect.width  * ratio));
+      canvas.height = Math.max(1, Math.floor(cssH       * ratio));
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.scale(ratio, ratio);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0,0,rect.width,cssH);
+    };
+    fit();
 
-      // Init signature pad
-      const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
-      clear.onclick  = () => pad.clear();
+    // Init pad FIRST
+    const pad = new window.SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)' });
+    clear.onclick = () => pad.clear();
 
-      // Close helpers
-      const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
-      cancel.onclick = close;
+    // Then add listeners that reference pad
+    const onResize = () => { fit(); if (pad) pad.clear(); };
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+    teardown.push(() => window.removeEventListener('resize', onResize));
+    teardown.push(() => window.removeEventListener('orientationchange', onResize));
 
-      // Save
-      save.onclick = () => {
-        if (pad.isEmpty()) { alert('Please sign first'); return; }
-        const dataUrl  = canvas.toDataURL('image/png');
-        const signedAt = new Date().toISOString();
-        modal.style.display = 'none';
-        teardown.forEach(fn => fn());
-        resolve({ dataUrl, signedAt, method: 'draw' });
-      };
-    });
-  }
+    // Close helper
+    const close = () => { modal.style.display = 'none'; teardown.forEach(fn => fn()); resolve(null); };
+    cancel.onclick = close;
+
+    // Save -> upload to Drive -> stash fileId in hidden input
+    save.onclick = async () => {
+      if (pad.isEmpty()) { alert('Please sign first'); return; }
+      const dataUrl  = canvas.toDataURL('image/png');
+      const signedAt = new Date().toISOString();
+
+      modal.style.display = 'none';
+      teardown.forEach(fn => fn());
+
+      try {
+        // must exist and return {fileId, viewUrl}
+        const { fileId, viewUrl } = await uploadSignatureToDrive({ role: 'contractor', dataUrl });
+        const input = document.getElementById('contractorSignatureDataUrl');
+        if (input) input.value = fileId;     // or set to viewUrl if you prefer
+        resolve({ dataUrl, signedAt, method: 'draw', fileId, viewUrl });
+      } catch (err) {
+        console.error('Contractor signature upload failed:', err);
+        alert('Could not save contractor signature to Drive.');
+        resolve(null);
+      }
+    };
+  });
+}
 
 function showContractorAccepted() {
   return new Promise(resolve => {
