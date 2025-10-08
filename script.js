@@ -8,7 +8,7 @@ const SHEET_ID = "1fM11c84e-D01z3hbpjLLl2nRaL2grTkDEl5iGsJDLPw";
 const SHEET_NAME = "Form Responses";
 
 const API_CONFIG = {
-  GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbysgDKV5-EIy75ZxUP4zhLoqNq8qu-FbCe-52pZ27wBHoYCegYF4lqTjO5giddZcce55Q/exec',
+  GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby94k2emfWuESiIjYL35zF9v2d7ES0iyUGn8324QqPXU57C2Qw2OMdeCddD-oIkc2AP3w/exec',
   API_KEY: 'AIzaSyDFVaRrTxOyR-fX3XAOp1tjoeg58mkj254',
   CLIENT_ID: '900437232674-krleqgjop3u7cl4sggmo20rkmrsl5vh5.apps.googleusercontent.com',
   REDIRECT_URI: 'https://khaas01.github.io/IPR-estimate/',
@@ -319,15 +319,35 @@ function goBack() {
 
 // ——— FORM DATA ———
 function collectFormData() {
+  // Try to grab a Drive fileId from the preview iframe (if already showing one)
+  const frame = document.getElementById('estimatePreviewFrame');
+  const src = frame?.src || '';
+  const idMatch = typeof src === 'string' ? src.match(/\/d\/([^/]+)/) : null;
+  const previewFileId = idMatch ? idMatch[1] : '';
+
+  // Determine which project type is selected
+  const projectType = document.querySelector('input[name="projectType"]:checked')?.value || '';
+
+  // Put the preview file id (if any) into the appropriate column
+  const estimateId  = projectType === 'Insurance' ? '' : (previewFileId || '');
+  const insuranceId = projectType === 'Insurance' ? (previewFileId || '') : '';
+
+  // Read signatures from hidden inputs (Base64 data URLs)
+  const customerSig   = document.getElementById('customerSignatureDataUrl')?.value || '';
+  const contractorSig = document.getElementById('contractorSignatureDataUrl')?.value || '';
+
   const formData = {
+    // System fields
     "Timestamp": new Date().toISOString(),
     "User Login": "Khaas01",
 
+    // Sales Rep
     "Sales Rep Name": document.getElementById('salesRepName')?.value || '',
     "Sales Rep Email": document.getElementById('salesRepEmail')?.value || '',
     "Sales Rep Phone": document.getElementById('salesRepPhone')?.value || '',
     "Company Name": document.getElementById('companyName')?.value || '',
 
+    // Owner
     "Owner Name": document.getElementById('ownerName')?.value || '',
     "Owner Address": document.getElementById('ownerAddress')?.value || '',
     "Owner City": document.getElementById('ownerCity')?.value || '',
@@ -336,29 +356,35 @@ function collectFormData() {
     "Owner Phone": document.getElementById('ownerPhone')?.value || '',
     "Owner Email": document.getElementById('ownerEmail')?.value || '',
 
-    "Project Type": document.querySelector('input[name="projectType"]:checked')?.value || '',
+    // Project
+    "Project Type": projectType,
 
+    // Insurance details
     "Insurance Company": document.getElementById('insuranceCompany')?.value || '',
     "Insurance Phone": document.getElementById('insurancePhone')?.value || '',
     "Claim Number": document.getElementById('claimNumber')?.value || '',
     "Policy Number": document.getElementById('policyNumber')?.value || '',
     "Date of Loss": document.getElementById('dateOfLoss')?.value || '',
 
+    // Roofing details
     "Roofing Type": document.querySelector('input[name="roofingType"]:checked')?.value || '',
     "Shingle Type": document.querySelector('input[name="shingleType"]:checked')?.value || '',
     "Shingles Repaired": document.getElementById('shingles-repaired')?.value || '',
     "Additional Repairs": document.getElementById('repair-anything-else')?.value || '',
     "Shingle Replacement Squares": document.getElementById('shingle-replacement')?.value || '',
 
+    // Tile
     "Tile Roofing Type": document.querySelector('input[name="tile-roofing-type"]:checked')?.value || '',
     "Tile Repair Squares": document.getElementById('tile-repair-sq')?.value || '',
     "Tile Underlayment Squares": document.getElementById('tile-underlayment-sq')?.value || '',
     "Tile Type": document.querySelector('input[name="tile-type"]:checked')?.value || '',
     "Tile Remove/Replace Squares": document.getElementById('tile-roof-rr')?.value || '',
 
+    // Flat / coating
     "Modified Bitumen Squares": document.getElementById('modified-bitumen-sq')?.value || '',
     "Coating Squares": document.getElementById('coating-squares')?.value || '',
 
+    // Secondary roof
     "Has Secondary Roof": document.querySelector('input[name="secondary-roof"]:checked')?.value || '',
     "Secondary Roofing Type": document.querySelector('input[name="secondary-roofing-type"]:checked')?.value || '',
     "Secondary Shingles Squares": document.getElementById('shingles-squares')?.value || '',
@@ -366,6 +392,7 @@ function collectFormData() {
     "Secondary Modified Bitumen Squares": document.getElementById('modified-bitumen-squares')?.value || '',
     "Secondary Coating Squares": document.getElementById('coating-squares')?.value || '',
 
+    // Third roof
     "Has Third Roof": document.querySelector('input[name="third-roof"]:checked')?.value || '',
     "Third Roof Style": document.querySelector('input[name="third-roof-style"]:checked')?.value || '',
     "Third Shingles Squares": document.getElementById('shingles-squares')?.value || '',
@@ -373,17 +400,27 @@ function collectFormData() {
     "Third Modified Squares": document.getElementById('modified-squares')?.value || '',
     "Third Coating Squares": document.getElementById('coatings-squares')?.value || '',
 
+    // Extras
     "Has Additional Charges": document.querySelector('input[name="additional-charges"]:checked')?.value || '',
     "Additional Charges Description": document.getElementById('additional-charges-description')?.value || '',
     "Additional Charges Price": document.getElementById('additional-charges-price')?.value || '',
 
+    // Solar
     "Has Solar Panels": document.querySelector('input[name="solar"]:checked')?.value || '',
     "Solar Detach/Reset Cost": document.getElementById('solar-detach-reset')?.value || '',
 
+    // New: IDs + Signatures
+    "Estimate ID": estimateId,
+    "Insurance ID": insuranceId,
+    "Customer Signature": customerSig,
+    "Contractor Signature": contractorSig,
+
+    // Legacy / optional
     "Amount Collected": '',
     "Unforseen Additions": '',
     "PDF_ID": '' // legacy
   };
+
   return formData;
 }
 
