@@ -75,7 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
    <!--Sales Rep Section -->
    <div id="salesRepSection" style="display:block;">
     <h2>Sales Rep Information</h2>
-    
+    <input type="hidden" id="customerSignatureDataUrl" name="customerSignatureDataUrl">
+    <input type="hidden" id="contractorSignatureDataUrl" name="contractorSignatureDataUrl">
     <!-- Name field -->
     <label for="salesRepName">Sales Rep's Name:</label>
     <input type="text" 
@@ -539,14 +540,12 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 }
 
- async function persistSignature(header, sig) {
-    try {
-      const payload = {
-        action: 'saveSignature',
-        header,                    // "Customer Signature" | "Contractor Signature"
-        imageBase64: sig.dataUrl,  // data:image/png;base64,....
-        folderId: '1Ua6wnn2q_V4UNdZ1L_WPIDiVfHtxI6oc'
-      };
+async function persistSignature(header, sig) {
+    const isClient = /client/i.test(header);
+    const fieldId  = isClient ? 'customerSignatureDataUrl' : 'contractorSignatureDataUrl';
+    const input    = document.getElementById(fieldId);
+    if (input) input.value = sig.dataUrl;   // data:image/png;base64,....
+  }
 
       // Reuse the same GAS endpoint you already use for submitForm
       await fetch(window.API_CONFIG ? API_CONFIG.GOOGLE_APPS_SCRIPT_URL : 'YOUR_GAS_DEPLOY_URL', {
