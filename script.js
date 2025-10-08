@@ -412,8 +412,8 @@ function collectFormData() {
     // New: IDs + Signatures
     "Estimate ID": estimateId,
     "Insurance ID": insuranceId,
-   "customerSignatureDataUrl": document.getElementById('customerSignatureDataUrl')?.value || '',
-"contractorSignatureDataUrl": document.getElementById('contractorSignatureDataUrl')?.value || '',
+    "customerSignatureDataUrl": document.getElementById('customerSignatureDataUrl')?.value || '',
+    "contractorSignatureDataUrl": document.getElementById('contractorSignatureDataUrl')?.value || '',
 
     // Legacy / optional
     "Amount Collected": '',
@@ -588,8 +588,8 @@ function submitForm() {
         "Unforseen Additions": formData["Unforseen Additions"],
         "Estimate ID": currentEditRow || "", // GAS will overwrite with new ID(s)
         "Insurance ID": "",
-        "Customer Signature": "",
-        "Contractor Signature": ""
+        "customerSignatureDataUrl": formData["customerSignatureDataUrl"],
+        "contractorSignatureDataUrl": formData["contractorSignatureDataUrl"]
       },
       editRow: currentEditRow || ""
     };
